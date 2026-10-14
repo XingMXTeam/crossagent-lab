@@ -20,8 +20,8 @@ const color = agentColor(agent);
 const dateStr = formatDateMonthYear(date);
 const fresh = isNew(date);
 const promptHref = `${href}#prompt`;
-const caseUrl = `https://crossagent.maoxunxing.com${href}`;
-const wantMailto = `mailto:xunxing1989@gmail.com?subject=${encodeURIComponent(`我想要这个: ${title}`)}&body=${encodeURIComponent(`我想要这个用例：${title}\n${caseUrl}\n\n（来自 CrossAgent Lab）`)}`;
+const caseSlug = href.match(/\/cases\/([^/?#]+)\/?/)?.[1] ?? '';
+const wantHref = caseSlug ? `/want/${caseSlug}/` : '/want/';
 ---
 <li>
   <article class="case-card">
@@ -44,7 +44,7 @@ const wantMailto = `mailto:xunxing1989@gmail.com?subject=${encodeURIComponent(`�
       <div class="case-actions">
         {showPromptLink && <a href={promptHref}>查看 Prompt</a>}
         <button type="button" class="share-btn" data-share-title={title} data-share-url={href}>分享</button>
-        <a class="want-link" href={wantMailto}>我想要这个</a>
+        <a class="want-link" href={wantHref}>我想要这个</a>
       </div>
     </div>
   </article>

@@ -13,6 +13,13 @@
 | Astro base | `/` |
 | 构建 | 37 pages + rss.xml（25 用例） |
 
+## 我想要这个
+
+- 卡片与用例详情都进 `/want/{slug}/`：邮箱必填，备注可选，页上展示用例标题和规范 URL
+- 表单直接 POST 到 FormSubmit（不用访客的邮件客户端），`_next` 回到 `/want/{slug}/thanks/`
+- 收件：`xunxing1989@gmail.com`。首次需在该邮箱点 FormSubmit 的 Activate Form；激活前的提交按 FormSubmit 说明暂存约 30 天
+- 不进 Mailchimp：mxteam 只有 Email / First / Last / Birthday，放不下链接和备注，也会把「想要这条」记成周报订阅
+
 ## 订阅（Mailchimp）
 
 - Audience：mxteam（`u=c3b0164459768548b7bef380c` / `id=1103acd526`）
@@ -24,7 +31,7 @@
 
 - Brand → Agents chips → meta 行（条数 · Updated · Sources · RSS · 赞助 · 隐私 · 导航）
 - Feed：`N 条较新用例` + `Wed, Oct 7 · 以下精选`
-- 卡片：avatar · 标题 · 摘要 · Agent New · 来源 · Mon YYYY · 查看 Prompt / 分享 / 我想要这个 mailto
+- 卡片：avatar · 标题 · 摘要 · Agent New · 来源 · Mon YYYY · 查看 Prompt / 分享 / 我想要这个 → `/want/{slug}/`
 - `/rss.xml` · About `#privacy` · SponsorBar → `/sponsor/`
 - Stripe Payment Link 未改
 
