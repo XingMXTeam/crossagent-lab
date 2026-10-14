@@ -100,23 +100,21 @@ const fresh = isNew(d.date);
       const setLabel = (value) => {
         if (label) label.textContent = value;
       };
+      const reset = () => {
+        btn.classList.remove('is-copied', 'is-error');
+        setLabel('复制 Prompt');
+      };
+      btn.classList.add('is-copied');
+      btn.classList.remove('is-error');
+      setLabel('✓ 已复制');
       try {
         await navigator.clipboard.writeText(text);
-        btn.classList.add('is-copied');
-        btn.classList.remove('is-error');
-        setLabel('已复制');
-        setTimeout(() => {
-          btn.classList.remove('is-copied');
-          setLabel('复制 Prompt');
-        }, 1800);
+        setTimeout(reset, 2600);
       } catch {
-        btn.classList.add('is-error');
         btn.classList.remove('is-copied');
+        btn.classList.add('is-error');
         setLabel('请手动复制');
-        setTimeout(() => {
-          btn.classList.remove('is-error');
-          setLabel('复制 Prompt');
-        }, 1800);
+        setTimeout(reset, 2600);
       }
     });
   </script>

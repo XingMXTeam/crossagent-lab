@@ -176,7 +176,11 @@ const ogImage = new URL('/og.png', site).href;
           if (!main || main.querySelector('.filter-empty')) return;
           const note = document.createElement('p');
           note.className = 'filter-empty wrap';
-          note.append('这个 Agent 下还没有用例。');
+          const name = document.createElement('strong');
+          name.textContent = agent;
+          note.append('没有「');
+          note.append(name);
+          note.append('」的用例。');
           const link = document.createElement('a');
           link.href = location.pathname;
           link.textContent = '查看全部';
@@ -232,13 +236,27 @@ const ogImage = new URL('/og.png', site).href;
           else delete map[id];
         }
         var counts = {};
+        var localEdits = {};
+        function mergeFresh(incoming) {
+          var next = Object.assign({}, incoming);
+          Object.keys(localEdits).forEach(function (id) {
+            if (localEdits[id] > 0) next[id] = localEdits[id];
+            else delete next[id];
+          });
+          return next;
+        }
         paint(counts);
         fetch('/api/votes', { headers: { accept: 'application/json' } })
           .then(function (res) { return res.ok ? res.json() : null; })
           .then(function (data) {
             if (!data || typeof data !== 'object' || Array.isArray(data)) return;
-            counts = data.counts && typeof data.counts === 'object' ? data.counts : data;
-            paint(counts);
+            var incoming = data.counts && typeof data.counts === 'object' ? data.counts : data;
+            counts = mergeFresh(incoming);
+            var busy = false;
+            buttons.forEach(function (btn) {
+              if (btn.getAttribute('data-busy') === '1') busy = true;
+            });
+            if (!busy) paint(counts);
           })
           .catch(function () {});
         buttons.forEach(function (btn) {
@@ -271,6 +289,7 @@ const ogImage = new URL('/og.png', site).href;
               })
               .then(function (data) {
                 if (typeof data.count === 'number') applyCount(counts, id, data.count);
+                localEdits[id] = counts[id] || 0;
                 if (on) mine[id] = true;
                 else delete mine[id];
                 writeStore(mine);
