@@ -12,7 +12,7 @@ const allCount = typeof totalCases === 'number' ? totalCases : agents.reduce((s,
 ---
 <div class="agent-filter" data-agent-filter>
   <button type="button" class="agent-filter-toggle" data-agent-filter-toggle aria-expanded="false" aria-controls="agent-chips-panel">
-    <span>筛选 Agent</span>
+    <span data-agent-filter-label>筛选 Agent</span>
     <span class="agent-filter-chevron" aria-hidden="true">▾</span>
   </button>
   <div class="agent-filter-panel" id="agent-chips-panel" data-agent-filter-panel>

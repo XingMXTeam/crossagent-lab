@@ -26,9 +26,9 @@ const fresh = isNew(d.date);
       <p class="crumb">
         <a href="/">用例</a> · <a href={`/categories/${d.category}/`}>{cat.zh}</a>
       </p>
-      <div style="display:flex;align-items:flex-start;gap:0.85rem;margin-top:0.75rem;">
+      <div class="article-title-row">
         <div class="case-avatar" style={`background:${color}`} aria-hidden="true">{code}</div>
-        <div style="min-width:0;">
+        <div class="article-title-copy">
           <h1>{d.title}</h1>
           {d.titleEn && <p class="title-en">{d.titleEn}</p>}
         </div>
@@ -73,31 +73,50 @@ const fresh = isNew(d.date);
       </div>
       <div class="prompt-box">
         <div class="prompt-actions">
-          <button class="copy-btn" type="button" data-copy>复制 Prompt</button>
-          <button class="share-btn" type="button" data-share-title={d.title} data-share-url={`/cases/${entry.slug}/`}>分享</button>
+          <button class="copy-btn" type="button" data-copy>
+            <span data-copy-label>复制 Prompt</span>
+          </button>
+          <button class="share-btn" type="button" data-share-title={d.title} data-share-url={`/cases/${entry.slug}/`}>
+            <span data-share-label>分享</span>
+          </button>
         </div>
         <pre id="prompt-text">{d.prompt}</pre>
       </div>
     </section>
 
-    <p style="margin-bottom:2rem;">
+    <p class="detail-foot">
       <a href="/">← 全部用例</a>
-      <span style="color:var(--muted);margin:0 0.5rem;">·</span>
+      <span class="sep">·</span>
       <a href={`/categories/${d.category}/`}>{cat.zh}</a>
-      <span style="color:var(--muted);margin:0 0.5rem;">·</span>
+      <span class="sep">·</span>
       <VoteButton id={entry.slug} />
     </p>
   </article>
   <script is:inline>
     document.querySelector('[data-copy]')?.addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
+      const label = btn.querySelector('[data-copy-label]');
       const text = document.getElementById('prompt-text')?.textContent || '';
-      const btn = e.target;
+      const setLabel = (value) => {
+        if (label) label.textContent = value;
+      };
       try {
         await navigator.clipboard.writeText(text);
-        btn.textContent = '已复制';
-        setTimeout(() => { btn.textContent = '复制 Prompt'; }, 1500);
+        btn.classList.add('is-copied');
+        btn.classList.remove('is-error');
+        setLabel('已复制');
+        setTimeout(() => {
+          btn.classList.remove('is-copied');
+          setLabel('复制 Prompt');
+        }, 1800);
       } catch {
-        btn.textContent = '选中手动复制';
+        btn.classList.add('is-error');
+        btn.classList.remove('is-copied');
+        setLabel('请手动复制');
+        setTimeout(() => {
+          btn.classList.remove('is-error');
+          setLabel('复制 Prompt');
+        }, 1800);
       }
     });
   </script>
