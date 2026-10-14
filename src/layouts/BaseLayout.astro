@@ -14,10 +14,11 @@ interface Props {
   caseCount?: number;
   updatedLabel?: string;
   noindex?: boolean;
+  showTagline?: boolean;
 }
 const {
   title,
-  description = '跨境卖家真实在用的 AI Agent 用例目录（附 Prompt / 工作流）',
+  description = '别人正在用的跨境 Agent 做法。偷一个灵感。 Real things sellers do with AI agents. Steal an idea.',
   canonicalPath = '/',
   showAgents = false,
   agentStats = [],
@@ -26,9 +27,11 @@ const {
   caseCount = 0,
   updatedLabel = '',
   noindex = false,
+  showTagline = false,
 } = Astro.props;
 const site = 'https://crossagent.maoxunxing.com';
 const canonical = new URL(canonicalPath, site).href;
+const ogImage = new URL('/og.png', site).href;
 ---
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -40,10 +43,16 @@ const canonical = new URL(canonicalPath, site).href;
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <meta property="og:site_name" content="CrossAgent Lab" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:type" content="website" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#fafafa" />
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -53,7 +62,16 @@ const canonical = new URL(canonicalPath, site).href;
   <body>
     <header class="site-header">
       <div class="wrap">
-        <a class="brand" href="/">crossagent<span>.lab</span></a>
+        <a class:list={['brand', { 'has-tagline': showTagline }]} href="/">
+          <img class="brand-mark" src="/logo.svg" width="28" height="28" alt="" />
+          crossagent<span>.lab</span>
+        </a>
+        {showTagline && (
+          <p class="brand-tagline">
+            <span class="zh">别人正在用的跨境 Agent 做法。偷一个灵感。</span>
+            <span class="en">Real things sellers do with AI agents. Steal an idea.</span>
+          </p>
+        )}
         {showAgents && agentStats.length > 0 && (
           <AgentChips agents={agentStats} active={activeAgent} totalCases={caseCount} />
         )}
@@ -149,6 +167,71 @@ const canonical = new URL(canonicalPath, site).href;
           if (!meta) return;
           const text = meta.textContent || '';
           li.style.display = text.includes(agent) ? '' : 'none';
+        });
+      })();
+      (function () {
+        var buttons = document.querySelectorAll('[data-vote]');
+        if (!buttons.length) return;
+        var storeKey = 'crossagent-votes';
+        function readStore() {
+          try {
+            var raw = JSON.parse(localStorage.getItem(storeKey) || '{}');
+            return raw && typeof raw === 'object' ? raw : {};
+          } catch (e) {
+            return {};
+          }
+        }
+        function writeStore(store) {
+          try { localStorage.setItem(storeKey, JSON.stringify(store)); } catch (e) {}
+        }
+        function paint(counts) {
+          var mine = readStore();
+          buttons.forEach(function (btn) {
+            var id = btn.getAttribute('data-vote') || '';
+            var n = counts && typeof counts[id] === 'number' ? counts[id] : 0;
+            var on = !!mine[id];
+            btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+            btn.classList.toggle('is-on', on);
+            var countEl = btn.querySelector('[data-vote-count]');
+            if (countEl) countEl.textContent = String(n);
+          });
+        }
+        var counts = {};
+        paint(counts);
+        fetch('/api/votes', { headers: { accept: 'application/json' } })
+          .then(function (res) { return res.ok ? res.json() : null; })
+          .then(function (data) {
+            if (!data || typeof data !== 'object' || Array.isArray(data)) return;
+            counts = data.counts && typeof data.counts === 'object' ? data.counts : data;
+            paint(counts);
+          })
+          .catch(function () {});
+        buttons.forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var id = btn.getAttribute('data-vote');
+            if (!id || btn.getAttribute('data-busy') === '1') return;
+            var mine = readStore();
+            var on = !mine[id];
+            btn.setAttribute('data-busy', '1');
+            fetch('/api/votes', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json', accept: 'application/json' },
+              body: JSON.stringify({ id: id, on: on }),
+            })
+              .then(function (res) {
+                if (!res.ok) throw new Error('vote');
+                return res.json();
+              })
+              .then(function (data) {
+                if (typeof data.count === 'number') counts[id] = data.count;
+                if (on) mine[id] = true;
+                else delete mine[id];
+                writeStore(mine);
+                paint(counts);
+              })
+              .catch(function () {})
+              .then(function () { btn.removeAttribute('data-busy'); });
+          });
         });
       })();
     </script>

@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import VoteButton from '../../components/VoteButton.astro';
 import { categoryMeta } from '../../content/config';
 import { agentCode, agentColor, formatDateNice, isNew, primaryAgent } from '../../lib/agents';
 
@@ -52,7 +53,7 @@ const fresh = isNew(d.date);
         )}
       </div>
       <div class="detail-actions">
-        <a class="btn" href={`/want/${entry.slug}/`}>我想要这个</a>
+        <VoteButton id={entry.slug} variant="button" />
       </div>
     </div>
 
@@ -61,7 +62,15 @@ const fresh = isNew(d.date);
     </div>
 
     <section class="prompt-section" id="prompt">
-      <h2>可复制 Prompt</h2>
+      <div class="prompt-head">
+        <h2>可复制 Prompt</h2>
+        {d.sourceUrl && (
+          <a class="btn read-original" href={d.sourceUrl} target="_blank" rel="noopener noreferrer">
+            <span>读原文</span>
+            <span class="read-original-en">Read the original</span>
+          </a>
+        )}
+      </div>
       <div class="prompt-box">
         <div class="prompt-actions">
           <button class="copy-btn" type="button" data-copy>复制 Prompt</button>
@@ -76,7 +85,7 @@ const fresh = isNew(d.date);
       <span style="color:var(--muted);margin:0 0.5rem;">·</span>
       <a href={`/categories/${d.category}/`}>{cat.zh}</a>
       <span style="color:var(--muted);margin:0 0.5rem;">·</span>
-      <a href={`/want/${entry.slug}/`}>我想要这个</a>
+      <VoteButton id={entry.slug} />
     </p>
   </article>
   <script is:inline>

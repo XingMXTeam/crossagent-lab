@@ -1,6 +1,7 @@
 # CrossAgent Lab
 
-跨境卖家真实在用的 AI Agent 用例目录（附 Prompt / 工作流）。
+别人正在用的跨境 Agent 做法。偷一个灵感。
+Real things sellers do with AI agents. Steal an idea.
 
 - **生产域名**：https://crossagent.maoxunxing.com（maoxunxing.com 子域；暂不买独立域名）
 - **技术**：Astro 4 静态站，`base: '/'`，产物 `dist/`

@@ -7,7 +7,7 @@ export async function GET(context: { site?: URL }) {
   );
   return rss({
     title: 'CrossAgent Lab',
-    description: '跨境卖家真实在用的 AI Agent 用例目录（附 Prompt / 工作流）',
+    description: '别人正在用的跨境 Agent 做法。偷一个灵感。',
     site: context.site ?? 'https://crossagent.maoxunxing.com',
     items: cases.map((c) => ({
       title: c.data.title,

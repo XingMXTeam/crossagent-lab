@@ -1,6 +1,7 @@
 ---
 import { agentCode, agentColor, primaryAgent, formatDateMonthYear, isNew } from '../lib/agents';
 import { categories } from '../content/config';
+import VoteButton from './VoteButton.astro';
 
 interface Props {
   href: string;
@@ -21,7 +22,6 @@ const dateStr = formatDateMonthYear(date);
 const fresh = isNew(date);
 const promptHref = `${href}#prompt`;
 const caseSlug = href.match(/\/cases\/([^/?#]+)\/?/)?.[1] ?? '';
-const wantHref = caseSlug ? `/want/${caseSlug}/` : '/want/';
 ---
 <li>
   <article class="case-card">
@@ -44,7 +44,7 @@ const wantHref = caseSlug ? `/want/${caseSlug}/` : '/want/';
       <div class="case-actions">
         {showPromptLink && <a href={promptHref}>查看 Prompt</a>}
         <button type="button" class="share-btn" data-share-title={title} data-share-url={href}>分享</button>
-        <a class="want-link" href={wantHref}>我想要这个</a>
+        {caseSlug && <VoteButton id={caseSlug} />}
       </div>
     </div>
   </article>
