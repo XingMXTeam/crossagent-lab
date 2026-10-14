@@ -51,6 +51,9 @@ const fresh = isNew(d.date);
           </>
         )}
       </div>
+      <div class="detail-actions">
+        <a class="btn" href={`/want/${entry.slug}/`}>我想要这个</a>
+      </div>
     </div>
 
     <div class="prose">
@@ -72,6 +75,8 @@ const fresh = isNew(d.date);
       <a href="/">← 全部用例</a>
       <span style="color:var(--muted);margin:0 0.5rem;">·</span>
       <a href={`/categories/${d.category}/`}>{cat.zh}</a>
+      <span style="color:var(--muted);margin:0 0.5rem;">·</span>
+      <a href={`/want/${entry.slug}/`}>我想要这个</a>
     </p>
   </article>
   <script is:inline>

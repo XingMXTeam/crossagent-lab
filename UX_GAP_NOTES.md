@@ -2,6 +2,10 @@
 
 Date: 2026-10-13 (Asia/Shanghai)
 
+## Update 2026-10-14 — 「我想要这个」
+
+Card and case-detail CTA go to `/want/{slug}/`. Delivery is FormSubmit → `xunxing1989@gmail.com` (on-site form). Newsletter stays Mailchimp. `/submit/` mailto is unchanged.
+
 ## Form delivery path
 
 **Chosen: `mailto:xunxing1989@gmail.com`** (client-side prefilled subject + body).

@@ -1,0 +1,31 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const cases = await getCollection('cases');
+  return cases.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const title = entry.data.title;
+const casePath = `/cases/${entry.slug}/`;
+---
+<BaseLayout
+  title={`已发送 — ${title}`}
+  description="想要这条用例的信息已经提交。"
+  canonicalPath={`/want/${entry.slug}/thanks/`}
+  noindex={true}
+>
+  <section class="hero-simple wrap">
+    <h1>已发送</h1>
+    <p class="lead">站长邮箱会收到「{title}」和你留下的地址。</p>
+  </section>
+  <section class="section wrap">
+    <p>
+      <a href={casePath}>返回这条用例</a>
+      <span style="color:var(--muted);margin:0 0.5rem;">·</span>
+      <a href="/">全部用例</a>
+    </p>
+  </section>
+</BaseLayout>

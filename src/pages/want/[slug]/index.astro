@@ -1,0 +1,116 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const cases = await getCollection('cases');
+  return cases.map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const title = entry.data.title;
+const casePath = `/cases/${entry.slug}/`;
+const caseUrl = new URL(casePath, Astro.site).href;
+const thanksPath = `/want/${entry.slug}/thanks/`;
+const thanksUrl = new URL(thanksPath, Astro.site).href;
+const subject = `我想要这个: ${title}`;
+const inbox = 'xunxing1989@gmail.com';
+---
+<BaseLayout
+  title={`我想要这个 — ${title}`}
+  description={`留下邮箱，获取「${title}」的落地帮助。提交留在站内。`}
+  canonicalPath={`/want/${entry.slug}/`}
+  noindex={true}
+>
+  <section class="hero-simple wrap">
+    <h1>我想要这个</h1>
+    <p class="lead">留下邮箱。用例标题和链接会一起发给站长，对方按这个邮箱回复你。不会打开邮件客户端。</p>
+  </section>
+
+  <section class="section wrap">
+    <div class="panel want-case">
+      <p class="muted-note" style="margin-top:0;">用例</p>
+      <p class="want-case-title">{title}</p>
+      <p class="want-case-url"><a href={casePath}>{caseUrl}</a></p>
+    </div>
+
+    <div id="want-thanks" class="panel" hidden>
+      <h2 id="want-thanks-title" tabindex="-1">已发送</h2>
+      <p>站长邮箱会收到「{title}」和你留下的地址。</p>
+      <p>
+        <a href={casePath}>返回这条用例</a>
+        <span style="color:var(--muted);margin:0 0.5rem;">·</span>
+        <a href="/">全部用例</a>
+      </p>
+    </div>
+
+    <form
+      id="want-form"
+      class="form-stack"
+      action={`https://formsubmit.co/${inbox}`}
+      method="POST"
+      accept-charset="UTF-8"
+    >
+      <input type="hidden" name="_subject" value={subject} />
+      <input type="hidden" name="_template" value="table" />
+      <input type="hidden" name="_captcha" value="false" />
+      <input type="hidden" name="_next" value={thanksUrl} />
+      <input type="hidden" name="用例" value={title} />
+      <input type="hidden" name="链接" value={caseUrl} />
+
+      <div class="mc-honeypot" aria-hidden="true">
+        <label for="want-honey">Leave blank</label>
+        <input type="text" name="_honey" id="want-honey" tabindex="-1" autocomplete="off" value="" />
+      </div>
+
+      <div class="form-field">
+        <label for="want-email">邮箱 <span class="hint">必填</span></label>
+        <input
+          id="want-email"
+          name="email"
+          type="email"
+          required
+          maxlength="120"
+          autocomplete="email"
+          placeholder="you@example.com"
+        />
+      </div>
+      <div class="form-field">
+        <label for="want-note">备注 <span class="hint">可选</span></label>
+        <textarea
+          id="want-note"
+          name="备注"
+          maxlength="500"
+          placeholder="平台、或最想先做的一步"
+        ></textarea>
+      </div>
+      <div class="cta-row">
+        <button class="btn" type="submit">发送</button>
+      </div>
+      <p class="muted-note">点发送后由 FormSubmit 转发到 {inbox}，然后回到本站确认页。本站不单独保存这份表单。周报订阅不受影响。</p>
+    </form>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+  (function () {
+    const form = document.getElementById('want-form');
+    const thanks = document.getElementById('want-thanks');
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+      const honey = form.querySelector('[name="_honey"]');
+      if (honey && honey.value) {
+        e.preventDefault();
+        form.hidden = true;
+        if (thanks) {
+          thanks.hidden = false;
+          document.getElementById('want-thanks-title')?.focus();
+        }
+        return;
+      }
+      const btn = form.querySelector('button[type="submit"]');
+      setTimeout(function () { if (btn) btn.disabled = true; }, 0);
+    });
+  })();
+</script>
