@@ -1,15 +1,19 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<BaseLayout title="关于 — CrossAgent Lab" description="为什么做 CrossAgent Lab" canonicalPath="/about/">
+<BaseLayout
+  title="关于 CrossAgent Lab — 别人正在用的跨境 Agent 做法"
+  description="别人正在用的跨境 Agent 做法。偷一个灵感。公开帖文与文章的摘要，附原文链接与可复制 Prompt。"
+  canonicalPath="/about/"
+>
   <section class="hero-simple wrap">
     <h1>关于 CrossAgent Lab</h1>
     <p class="lead">
-      跨境卖家每天泡在选品、刊登、客服、广告和中后台里。本站对齐
+      别人正在用的跨境 Agent 做法。偷一个灵感。本站对齐
       <a href="https://agentusecases.ai/" target="_blank" rel="noopener noreferrer">agentusecases.ai</a>
       的口径：<strong>摘要人们公开发布的帖文与文章（用自己的话），每条附原文链接与可复制 Prompt</strong>。
     </p>
-    <p class="en">A vertical agentusecases-style directory for cross-border sellers — public sources only, with links.</p>
+    <p class="en">Real things sellers do with AI agents. Steal an idea. Public posts and articles only — summarized in our own words, with the original link and a reusable prompt.</p>
   </section>
   <section class="section wrap prose">
     <h2>内容原则</h2>
@@ -25,11 +29,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <p>目前站点部署在 <code>https://crossagent.maoxunxing.com</code>（maoxunxing.com 子域），先验证内容与赞助转化，再考虑独立域名。</p>
     <h2 id="privacy">隐私</h2>
     <p>
-      本站为静态内容站，当前未接入第三方分析或广告追踪脚本，也没有账号登录。
+      本站没有账号登录，当前未接入第三方分析或广告追踪脚本。
       周报订阅经 Mailchimp 处理邮箱。
-      「我想要这个」在站内表单提交：邮箱、用例标题与链接，以及选填备注，经
+      卡片和详情上的「我想要这个」只切换喜欢并显示公开计数，不收集邮箱。
+      直接打开 <a href="/want/">/want/</a> 仍会看到旧的站内表单（经
       <a href="https://formsubmit.co/" target="_blank" rel="noopener noreferrer">FormSubmit</a>
-      发往 <a href="mailto:xunxing1989@gmail.com">xunxing1989@gmail.com</a>，提交过程留在浏览器里。
+      发往 <a href="mailto:xunxing1989@gmail.com">xunxing1989@gmail.com</a>）；卡片和详情不再进入该页。
       投稿仍通过你本机邮件客户端发往同一地址。
       赞助跳转至 Stripe Checkout（由其处理支付信息）。
       若你有隐私相关问题，请邮件联系。

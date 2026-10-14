@@ -1,0 +1,16 @@
+---
+interface Props {
+  id: string;
+  variant?: "link" | "button";
+}
+const { id, variant = "link" } = Astro.props;
+---
+<button
+  type="button"
+  class:list={["vote-btn", variant === "button" && "btn"]}
+  data-vote={id}
+  aria-pressed="false"
+>
+  <span class="vote-label">我想要这个</span>
+  <span class="vote-count" data-vote-count>0</span>
+</button>

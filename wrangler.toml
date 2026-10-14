@@ -1,0 +1,16 @@
+# Local Pages config only.
+# pages_build_output_dir is intentionally omitted. Adding it makes this file
+# the production Pages config on the next `wrangler pages deploy` and can
+# overwrite dashboard bindings. Do not add it until TT has a real KV id.
+#
+# Binding the Function reads: env.VOTES
+# Local: npx wrangler pages dev dist --kv VOTES
+#
+# Before merge, TT (do not skip — votes return 503 until this exists):
+#   1. Create a KV namespace (suggested name: crossagent-lab-votes)
+#   2. Pages project crossagent-lab → Settings → Bindings → Add → KV namespace
+#   3. Variable name: VOTES
+#   4. Attach it to Production, and to Preview if preview deployments are used
+# Counts are one JSON object stored at key "counts".
+name = "crossagent-lab"
+compatibility_date = "2026-10-14"

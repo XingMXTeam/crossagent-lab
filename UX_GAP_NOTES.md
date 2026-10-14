@@ -2,9 +2,9 @@
 
 Date: 2026-10-13 (Asia/Shanghai)
 
-## Update 2026-10-14 — 「我想要这个」
+## Update 2026-10-14 — 「我想要这个」 is a like
 
-Card and case-detail CTA go to `/want/{slug}/`. Delivery is FormSubmit → `xunxing1989@gmail.com` (on-site form). Newsletter stays Mailchimp. `/submit/` mailto is unchanged.
+Card and case-detail 「我想要这个」 toggles a public count via `GET/POST /api/votes` (`{ id, on }`). It does not open a form or mailto. Same-browser state is `localStorage` key `crossagent-votes`. `/want/*` FormSubmit pages remain for direct URLs only. Newsletter stays Mailchimp. `/submit/` mailto is unchanged. Production KV binding name: `VOTES` (not created in this change).
 
 ## Form delivery path
 
