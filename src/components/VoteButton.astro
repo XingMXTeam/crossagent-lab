@@ -1,16 +1,23 @@
 ---
 interface Props {
   id: string;
-  variant?: "link" | "button";
+  variant?: 'stack' | 'button';
 }
-const { id, variant = "link" } = Astro.props;
+const { id, variant = 'stack' } = Astro.props;
 ---
-<button
-  type="button"
-  class:list={["vote-btn", variant === "button" && "btn"]}
-  data-vote={id}
-  aria-pressed="false"
->
-  <span class="vote-label">我想要这个</span>
-  <span class="vote-count" data-vote-count>0</span>
-</button>
+{variant === 'button' ? (
+  <button type="button" class="btn secondary vote-btn" data-vote={id} aria-pressed="false" aria-label="我想要这个">
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <path d="M8 1.75 14.25 13.75H1.75Z" fill="currentColor"></path>
+    </svg>
+    <span class="vote-label">我想要这个</span>
+    <span class="vote-count" data-vote-count>0</span>
+  </button>
+) : (
+  <button type="button" class="vote-stack" data-vote={id} aria-pressed="false" aria-label="我想要这个" title="我想要这个">
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M8 1.75 14.25 13.75H1.75Z" fill="currentColor"></path>
+    </svg>
+    <span class="vote-count" data-vote-count>0</span>
+  </button>
+)}

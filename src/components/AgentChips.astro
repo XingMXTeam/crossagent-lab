@@ -3,66 +3,28 @@ import { agentCode, agentColor } from '../lib/agents';
 
 interface Props {
   agents: { name: string; count: number }[];
-  active?: string | null;
-  basePath?: string;
-  totalCases?: number;
 }
-const { agents, active = null, basePath = '/', totalCases } = Astro.props;
-const allCount = typeof totalCases === 'number' ? totalCases : agents.reduce((s, a) => s + a.count, 0);
+const { agents } = Astro.props;
+const limit = 8;
 ---
-<div class="agent-filter" data-agent-filter>
-  <button type="button" class="agent-filter-toggle" data-agent-filter-toggle aria-expanded="false" aria-controls="agent-chips-panel">
-    <span>筛选 Agent</span>
-    <span class="agent-filter-chevron" aria-hidden="true">▾</span>
-  </button>
-  <div class="agent-filter-panel" id="agent-chips-panel" data-agent-filter-panel>
-    <p class="agents-label">Agents</p>
-    <ul class="agent-chips" role="list">
-      <li>
-        <a class={`agent-chip ${!active ? 'active' : ''}`} href={basePath}>
-          <span class="chip-badge" style="background:#71717a">AL</span>
-          <span>全部</span>
-          <span class="chip-count">{allCount}</span>
+<div class="side-block">
+  <div class="side-label-row">
+    <h2>Agents</h2>
+  </div>
+  <ul class="side-list" data-agent-list>
+    {agents.map((a, i) => (
+      <li class:list={[{ 'is-extra': i >= limit }]}>
+        <a class="side-link agent-row" href={`/?agent=${encodeURIComponent(a.name)}`} data-agent={a.name}>
+          <span class="mark mark-sm" style={`background:${agentColor(a.name)}`} aria-hidden="true">{agentCode(a.name)}</span>
+          <span class="side-name">{a.name}</span>
+          <span class="mono-count">{a.count}</span>
         </a>
       </li>
-      {agents.map((a) => (
-        <li>
-          <a
-            class={`agent-chip ${active === a.name ? 'active' : ''}`}
-            href={`${basePath}?agent=${encodeURIComponent(a.name)}`}
-            data-agent={a.name}
-          >
-            <span class="chip-badge" style={`background:${agentColor(a.name)}`}>{agentCode(a.name)}</span>
-            <span>{a.name}</span>
-            <span class="chip-count">{a.count}</span>
-          </a>
-        </li>
-      ))}
-    </ul>
-  </div>
+    ))}
+  </ul>
+  {agents.length > limit && (
+    <button type="button" class="show-all" data-show-agents data-count={agents.length}>
+      显示全部 {agents.length}
+    </button>
+  )}
 </div>
-<script is:inline>
-  (function () {
-    const root = document.querySelector('[data-agent-filter]');
-    if (!root) return;
-    const btn = root.querySelector('[data-agent-filter-toggle]');
-    const panel = root.querySelector('[data-agent-filter-panel]');
-    if (!btn || !panel) return;
-    const mq = window.matchMedia('(max-width: 720px)');
-    function sync() {
-      if (mq.matches) {
-        root.classList.remove('is-open');
-        btn.setAttribute('aria-expanded', 'false');
-      } else {
-        root.classList.add('is-open');
-        btn.setAttribute('aria-expanded', 'true');
-      }
-    }
-    sync();
-    mq.addEventListener('change', sync);
-    btn.addEventListener('click', function () {
-      const open = root.classList.toggle('is-open');
-      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
-  })();
-</script>

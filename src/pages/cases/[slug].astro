@@ -16,88 +16,101 @@ const d = entry.data;
 const cat = categoryMeta[d.category];
 const dateStr = formatDateNice(d.date);
 const agent = primaryAgent(d.agents);
-const code = agentCode(agent);
-const color = agentColor(agent);
 const fresh = isNew(d.date);
+const all = await getCollection('cases');
+const agentCount = all.filter((c) => c.data.agents.includes(agent)).length;
+const catCount = all.filter((c) => c.data.category === d.category).length;
 ---
 <BaseLayout title={`${d.title} — CrossAgent Lab`} description={d.summary} canonicalPath={`/cases/${entry.slug}/`}>
-  <article class="wrap">
-    <div class="article-head">
-      <p class="crumb">
-        <a href="/">用例</a> · <a href={`/categories/${d.category}/`}>{cat.zh}</a>
-      </p>
-      <div style="display:flex;align-items:flex-start;gap:0.85rem;margin-top:0.75rem;">
-        <div class="case-avatar" style={`background:${color}`} aria-hidden="true">{code}</div>
-        <div style="min-width:0;">
-          <h1>{d.title}</h1>
-          {d.titleEn && <p class="title-en">{d.titleEn}</p>}
-        </div>
-      </div>
+  <article>
+    <header class="article-head">
+      <p class="kicker"><a href={`/categories/${d.category}/`}>{cat.zh}</a></p>
+      <h1>{d.title}</h1>
+      {d.titleEn && <p class="title-en">{d.titleEn}</p>}
       <p class="lead">{d.summary}</p>
-      <div class="case-meta" style="margin-bottom:0.5rem;">
-        <span>{d.agents.join(' · ')}</span>
-        {fresh && <><span class="sep">·</span><span class="badge-new">New</span></>}
-        <span class="sep">·</span>
-        {d.sourceUrl ? (
-          <a href={d.sourceUrl} target="_blank" rel="noopener noreferrer">{d.source}</a>
-        ) : (
-          <span>{d.source}</span>
-        )}
-        <span class="sep">·</span>
-        <span>{dateStr}{d.dateNote ? ` · ${d.dateNote}` : ''}</span>
-        {d.tools.length > 0 && (
-          <>
-            <span class="sep">·</span>
-            <span>工具：{d.tools.join(' · ')}</span>
-          </>
-        )}
+      <div class="with-agents">
+        <span>用</span>
+        {d.agents.map((name) => (
+          <a class="agent-pill" href={`/?agent=${encodeURIComponent(name)}`}>
+            <span class="mark mark-xs" style={`background:${agentColor(name)}`} aria-hidden="true">{agentCode(name)}</span>
+            {name}
+          </a>
+        ))}
       </div>
-      <div class="detail-actions">
-        <VoteButton id={entry.slug} variant="button" />
-      </div>
-    </div>
+    </header>
 
     <div class="prose">
       <Content />
     </div>
 
     <section class="prompt-section" id="prompt">
-      <div class="prompt-head">
-        <h2>可复制 Prompt</h2>
-        {d.sourceUrl && (
-          <a class="btn read-original" href={d.sourceUrl} target="_blank" rel="noopener noreferrer">
-            <span>读原文</span>
-            <span class="read-original-en">Read the original</span>
-          </a>
-        )}
-      </div>
-      <div class="prompt-box">
-        <div class="prompt-actions">
-          <button class="copy-btn" type="button" data-copy>复制 Prompt</button>
-          <button class="share-btn" type="button" data-share-title={d.title} data-share-url={`/cases/${entry.slug}/`}>分享</button>
+      <div class="prompt-box" data-prompt-box>
+        <div class="prompt-head">
+          <p class="prompt-title">可复制 Prompt <span>用 {agent}</span></p>
+          <button class="copy-btn" type="button" data-copy aria-live="polite">复制 Prompt</button>
         </div>
         <pre id="prompt-text">{d.prompt}</pre>
       </div>
     </section>
 
-    <p style="margin-bottom:2rem;">
-      <a href="/">← 全部用例</a>
-      <span style="color:var(--muted);margin:0 0.5rem;">·</span>
-      <a href={`/categories/${d.category}/`}>{cat.zh}</a>
-      <span style="color:var(--muted);margin:0 0.5rem;">·</span>
-      <VoteButton id={entry.slug} />
+    <div class="detail-actions">
+      {d.sourceUrl && (
+        <a class="btn" href={d.sourceUrl} target="_blank" rel="noopener noreferrer">
+          读原文
+          <span class="btn-en">Read the original</span>
+          <span aria-hidden="true">↗</span>
+        </a>
+      )}
+      <VoteButton id={entry.slug} variant="button" />
+      <button class="btn secondary" type="button" data-share-title={d.title} data-share-url={`/cases/${entry.slug}/`}>分享</button>
+    </div>
+    <p class="source-line">
+      来源：
+      {d.sourceUrl ? (
+        <a href={d.sourceUrl} target="_blank" rel="noopener noreferrer">{d.source}</a>
+      ) : (
+        d.source
+      )}
+      {fresh && <> · <span class="badge-new">New</span></>}
+      · {dateStr}{d.dateNote ? ` · ${d.dateNote}` : ''}
+      {d.tools.length > 0 && <> · 工具：{d.tools.join(' · ')}</>}
     </p>
+
+    <nav class="keep-browsing" aria-label="继续浏览">
+      <h2>继续看</h2>
+      <a href={`/?agent=${encodeURIComponent(agent)}`}>全部 {agentCount} 条 {agent}</a>
+      <a href={`/categories/${d.category}/`}>全部 {catCount} 条 {cat.zh}</a>
+    </nav>
   </article>
   <script is:inline>
     document.querySelector('[data-copy]')?.addEventListener('click', async (e) => {
+      const btn = e.currentTarget;
       const text = document.getElementById('prompt-text')?.textContent || '';
-      const btn = e.target;
+      const box = document.querySelector('[data-prompt-box]');
+      const done = () => {
+        btn.classList.add('is-copied');
+        box?.classList.add('is-copied');
+        btn.textContent = '已复制';
+        setTimeout(() => {
+          btn.classList.remove('is-copied');
+          box?.classList.remove('is-copied');
+          btn.textContent = '复制 Prompt';
+        }, 2000);
+      };
       try {
         await navigator.clipboard.writeText(text);
-        btn.textContent = '已复制';
-        setTimeout(() => { btn.textContent = '复制 Prompt'; }, 1500);
+        done();
       } catch {
-        btn.textContent = '选中手动复制';
+        const pre = document.getElementById('prompt-text');
+        if (pre) {
+          const range = document.createRange();
+          range.selectNodeContents(pre);
+          const sel = getSelection();
+          sel?.removeAllRanges();
+          sel?.addRange(range);
+        }
+        btn.textContent = '已选中，请手动复制';
+        setTimeout(() => { btn.textContent = '复制 Prompt'; }, 2000);
       }
     });
   </script>

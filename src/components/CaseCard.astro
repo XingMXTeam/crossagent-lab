@@ -22,30 +22,34 @@ const dateStr = formatDateMonthYear(date);
 const fresh = isNew(date);
 const promptHref = `${href}#prompt`;
 const caseSlug = href.match(/\/cases\/([^/?#]+)\/?/)?.[1] ?? '';
+const search = `${title} ${summary} ${agents.join(' ')} ${source}`.toLowerCase();
 ---
-<li>
-  <article class="case-card">
-    <div class="case-avatar" style={`background:${color}`} aria-hidden="true">{code}</div>
+<li data-search={search} data-agents={agents.join('|')} data-fresh={fresh ? '1' : '0'}>
+  <article class="case-row">
+    <span class="mark case-mark" style={`background:${color}`} aria-hidden="true">{code}</span>
     <div class="case-body">
-      <a class="case-title" href={href}>{title}</a>
+      <h3 class="case-title"><a href={href}>{title}</a></h3>
       <p class="case-summary">{summary}</p>
       <div class="case-meta">
-        <span class="meta-agent">{agent}</span>
-        {fresh && <><span class="sep">·</span><span class="badge-new">New</span></>}
-        <span class="sep">·</span>
+        <a class="meta-agent" href={`/?agent=${encodeURIComponent(agent)}`}>
+          <span class="mark-dot" style={`background:${color}`} aria-hidden="true"></span>
+          {agent}
+        </a>
+        {fresh && <span class="badge-new">New</span>}
+        <span class="sep" aria-hidden="true">·</span>
         {sourceUrl ? (
           <a class="source-link" href={sourceUrl} target="_blank" rel="noopener noreferrer">{source}</a>
         ) : (
           <span>{source}</span>
         )}
-        <span class="sep">·</span>
+        <span class="sep" aria-hidden="true">·</span>
         <span>{dateStr}</span>
       </div>
       <div class="case-actions">
-        {showPromptLink && <a href={promptHref}>查看 Prompt</a>}
-        <button type="button" class="share-btn" data-share-title={title} data-share-url={href}>分享</button>
-        {caseSlug && <VoteButton id={caseSlug} />}
+        {showPromptLink && <a class="chip-btn" href={promptHref}>查看 Prompt</a>}
+        <button type="button" class="chip-btn" data-share-title={title} data-share-url={href}>分享</button>
       </div>
     </div>
+    {caseSlug && <VoteButton id={caseSlug} />}
   </article>
 </li>

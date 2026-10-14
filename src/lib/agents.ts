@@ -6,17 +6,18 @@ export type AgentInfo = {
   color: string;
 };
 
+/** Bright fills + black type, same mark treatment as agentusecases.ai */
 const KNOWN: Record<string, AgentInfo> = {
-  'Grok Bot': { name: 'Grok Bot', code: 'GB', color: '#1a1a1a' },
-  Claude: { name: 'Claude', code: 'CL', color: '#d97706' },
-  'Claude Code': { name: 'Claude Code', code: 'CC', color: '#b45309' },
-  'Cursor Agent': { name: 'Cursor Agent', code: 'CA', color: '#0ea5e9' },
-  ChatGPT: { name: 'ChatGPT', code: 'GPT', color: '#10a37f' },
-  'ChatGPT Agent': { name: 'ChatGPT Agent', code: 'GA', color: '#0d9488' },
-  Manus: { name: 'Manus', code: 'MA', color: '#6366f1' },
-  n8n: { name: 'n8n', code: 'N8', color: '#ea4b71' },
-  'LLM via n8n': { name: 'LLM via n8n', code: 'N8', color: '#ea4b71' },
-  Shopify: { name: 'Shopify', color: '#96bf48', code: 'SH' },
+  'Grok Bot': { name: 'Grok Bot', code: 'GB', color: '#ffffff' },
+  Claude: { name: 'Claude', code: 'CL', color: '#c4b5fd' },
+  'Claude Code': { name: 'Claude Code', code: 'CC', color: '#a78bfa' },
+  'Cursor Agent': { name: 'Cursor Agent', code: 'CA', color: '#93c5fd' },
+  ChatGPT: { name: 'ChatGPT', code: 'GPT', color: '#34d399' },
+  'ChatGPT Agent': { name: 'ChatGPT Agent', code: 'GA', color: '#4ade80' },
+  Manus: { name: 'Manus', code: 'MA', color: '#7dd3fc' },
+  n8n: { name: 'n8n', code: 'N8', color: '#fb7185' },
+  'LLM via n8n': { name: 'LLM via n8n', code: 'N8', color: '#fb7185' },
+  Shopify: { name: 'Shopify', color: '#bef264', code: 'SH' },
 };
 
 export function agentCode(name: string): string {
@@ -40,7 +41,7 @@ export function agentColor(name: string): string {
   if (lower.includes('n8n')) return '#ea4b71';
   if (lower.includes('chatgpt') || lower.includes('gpt')) return '#10a37f';
   if (lower.includes('claude')) return '#d97706';
-  const palette = ['#1a1a1a', '#0f766e', '#b45309', '#1d4ed8', '#7c3aed', '#be123c'];
+  const palette = ['#fde047', '#93c5fd', '#f9a8d4', '#86efac', '#fdba74', '#c4b5fd', '#67e8f9', '#fca5a5'];
   let h = 0;
   for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
   return palette[h % palette.length];
