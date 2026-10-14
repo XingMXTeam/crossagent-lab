@@ -1,37 +1,52 @@
 ---
 import '../styles/global.css';
+import { getCollection } from 'astro:content';
 import SponsorBar from '../components/SponsorBar.astro';
 import AgentChips from '../components/AgentChips.astro';
+import { categories, categoryMeta } from '../content/config';
+import { formatDateNice, isNew } from '../lib/agents';
 
 interface Props {
   title: string;
   description?: string;
   canonicalPath?: string;
-  showAgents?: boolean;
-  agentStats?: { name: string; count: number }[];
-  activeAgent?: string | null;
-  metaLine?: boolean;
-  caseCount?: number;
-  updatedLabel?: string;
   noindex?: boolean;
-  showTagline?: boolean;
+  layout?: 'feed' | 'article';
 }
 const {
   title,
   description = '别人正在用的跨境 Agent 做法。偷一个灵感。 Real things sellers do with AI agents. Steal an idea.',
   canonicalPath = '/',
-  showAgents = false,
-  agentStats = [],
-  activeAgent = null,
-  metaLine = false,
-  caseCount = 0,
-  updatedLabel = '',
   noindex = false,
-  showTagline = false,
+  layout = 'article',
 } = Astro.props;
 const site = 'https://crossagent.maoxunxing.com';
 const canonical = new URL(canonicalPath, site).href;
 const ogImage = new URL('/og.png', site).href;
+const feed = layout === 'feed';
+
+const allCases = feed ? await getCollection('cases') : [];
+const totalCases = allCases.length;
+const agentMap = new Map<string, number>();
+const catCounts = Object.fromEntries(categories.map((id) => [id, 0])) as Record<string, number>;
+let latest = allCases[0]?.data.date ?? new Date();
+let freshCount = 0;
+for (const c of allCases) {
+  if (c.data.date > latest) latest = c.data.date;
+  if (isNew(c.data.date, 30)) freshCount += 1;
+  catCounts[c.data.category] = (catCounts[c.data.category] || 0) + 1;
+  for (const a of c.data.agents) agentMap.set(a, (agentMap.get(a) || 0) + 1);
+}
+const agentStats = [...agentMap.entries()]
+  .map(([name, count]) => ({ name, count }))
+  .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+const updatedLabel = formatDateNice(latest);
+const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const freshWhen = `${weekdays[latest.getUTCDay()]}, ${months[latest.getUTCMonth()]} ${latest.getUTCDate()}`;
+const path = Astro.url.pathname;
+const activeCategory = categories.find((id) => path.startsWith(`/categories/${id}`)) ?? null;
+const subscribeHref = path === '/' ? '/#subscribe' : '/newsletter/#subscribe';
 ---
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -53,126 +68,159 @@ const ogImage = new URL('/og.png', site).href;
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="zh_CN" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#fafafa" />
+    <meta name="theme-color" content="#ffffff" />
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@500;600&family=Funnel+Sans:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <header class="site-header">
-      <div class="wrap">
-        <a class:list={['brand', { 'has-tagline': showTagline }]} href="/">
-          <img class="brand-mark" src="/logo.svg" width="28" height="28" alt="" />
-          crossagent<span>.lab</span>
-        </a>
-        {showTagline && (
+    {feed ? (
+      <div class="shell">
+        <aside class="sidebar">
+          <a class="brand" href="/">
+            <img class="brand-mark" src="/logo.svg" width="36" height="36" alt="" />
+            <span class="brand-name">crossagent<span class="brand-tld">.lab</span></span>
+          </a>
           <p class="brand-tagline">
             <span class="zh">别人正在用的跨境 Agent 做法。偷一个灵感。</span>
             <span class="en">Real things sellers do with AI agents. Steal an idea.</span>
           </p>
-        )}
-        {showAgents && agentStats.length > 0 && (
-          <AgentChips agents={agentStats} active={activeAgent} totalCases={caseCount} />
-        )}
-        {metaLine && (
-          <p class="site-meta">
-            <strong class="meta-count">{caseCount}</strong> 条用例
-            Updated {updatedLabel}
-            Sources: 公开网页与社群
-            <span class="dot">·</span>
-            <a href="/rss.xml">RSS</a>
-            <span class="dot">·</span>
-            <a href="/sponsor/">赞助</a>
-            <span class="dot">·</span>
-            <a href="/about/#privacy">隐私</a>
-            <span class="dot">·</span>
+          <div class="side-ctas">
+            <a class="btn" href={subscribeHref}>订阅每周精选</a>
+            <a class="btn secondary" href="/submit/">提交用例</a>
+          </div>
+          {freshCount > 0 && (
+            <a class="fresh-link" href="/#latest">
+              <span class="fresh-dot" aria-hidden="true"></span>
+              <span>较新</span>
+              <span class="fresh-when">{freshWhen}</span>
+              <span class="fresh-count">{freshCount}</span>
+            </a>
+          )}
+          <button type="button" class="filter-toggle" data-filter-toggle aria-expanded="false" aria-controls="side-tools">
+            <span>筛选</span>
+            <span class="filter-value" data-filter-label>全部</span>
+          </button>
+          <div class="side-tools" id="side-tools" data-filter-panel>
+            {agentStats.length > 0 && <AgentChips agents={agentStats} />}
+            <nav aria-label="分类">
+              <div class="side-label-row">
+                <h2>分类</h2>
+              </div>
+              <ul class="side-list">
+                {categories.map((id) => (
+                  <li>
+                    <a class:list={['side-link', { 'is-active': activeCategory === id }]} href={`/categories/${id}/`}>
+                      <span class="side-name">{categoryMeta[id].zh}</span>
+                      <span class="mono-count">{catCounts[id] || 0}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+          <p class="side-meta">
+            <span class="meta-count">{totalCases}</span> 条用例<br />
+            Updated {updatedLabel}<br />
+            Sources: 公开网页与社群<br />
             <a href="/">用例</a>
-            <span class="dot">·</span>
-            <a href="/submit/">提交</a>
-            <span class="dot">·</span>
-            <a href="/newsletter/">简报</a>
-            <span class="dot">·</span>
-            <a href="/about/">关于</a>
+            · <a href="/submit/">提交</a>
+            · <a href="/newsletter/">简报</a>
+            · <a href="/about/">关于</a>
+            · <a href="/rss.xml">RSS</a>
+            · <a href="/sponsor/">赞助</a>
+            · <a href="/about/#privacy">隐私</a>
           </p>
-        )}
-        {!metaLine && (
-          <p class="site-meta">
+        </aside>
+        <div class="feed-col">
+          <div class="feed-toolbar">
+            <label class="search-label">
+              <svg class="search-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+                <circle cx="7" cy="7" r="4.25" fill="none" stroke="currentColor" stroke-width="1.25"></circle>
+                <path d="M10.5 10.5 13 13" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"></path>
+              </svg>
+              <input type="search" data-search-input placeholder="搜索用例" aria-label="搜索用例" autocomplete="off" />
+            </label>
+            <div class="pill-row">
+              <a class:list={['pill', { 'is-on': path === '/' }]} href="/" data-pill-all>全部 {totalCases}</a>
+              <button type="button" class="pill" data-fresh-toggle aria-pressed="false">较新 {freshCount}</button>
+              {categories.map((id) => (
+                <a class:list={['pill', { 'is-on': activeCategory === id }]} href={`/categories/${id}/`}>
+                  {categoryMeta[id].zh} {catCounts[id] || 0}
+                </a>
+              ))}
+            </div>
+          </div>
+          <p class="search-empty" data-search-empty hidden>
+            没有匹配的用例。
+            <button type="button" data-clear-filters>查看全部</button>
+          </p>
+          <main class="feed-main">
+            <slot />
+          </main>
+          <footer class="feed-foot">
             <a href="/">用例</a>
-            <span class="dot">·</span>
             <a href="/submit/">提交</a>
-            <span class="dot">·</span>
             <a href="/newsletter/">简报</a>
-            <span class="dot">·</span>
-            <a href="/sponsor/">赞助</a>
-            <span class="dot">·</span>
             <a href="/about/">关于</a>
-            <span class="dot">·</span>
-            <a href="/about/#privacy">隐私</a>
-            <span class="dot">·</span>
             <a href="/rss.xml">RSS</a>
-          </p>
-        )}
-      </div>
-    </header>
-    <main>
-      <slot />
-    </main>
-    <SponsorBar />
-    <footer class="site-footer">
-      <div class="wrap inner">
-        <div>
-          <strong>CrossAgent Lab</strong> · 毛训星 / Momo（杭州）
-          <br />宿主于 <code>crossagent.maoxunxing.com</code>
+            <a href="/sponsor/">赞助</a>
+            <a href="/about/#privacy">隐私</a>
+          </footer>
         </div>
-        <div>
-          <a href="mailto:xunxing1989@gmail.com">xunxing1989@gmail.com</a>
-          <span class="dot">·</span>
-          <a href="/sponsor/">赞助</a>
-          <span class="dot">·</span>
-          <a href="/about/#privacy">隐私</a>
-          <span class="dot">·</span>
+      </div>
+    ) : (
+      <div class="article-frame">
+        <header class="article-top">
+          <a class="brand" href="/">
+            <img class="brand-mark" src="/logo.svg" width="24" height="24" alt="" />
+            <span class="brand-name">crossagent<span class="brand-tld">.lab</span></span>
+          </a>
+          <a class="article-all" href="/">全部用例</a>
+        </header>
+        <main>
+          <slot />
+        </main>
+        <footer class="article-foot">
+          <a href="/">用例</a>
+          <a href="/submit/">提交</a>
+          <a href="/newsletter/">简报</a>
+          <a href="/about/">关于</a>
           <a href="/rss.xml">RSS</a>
-        </div>
+          <a href="/sponsor/">赞助</a>
+          <a href="/about/#privacy">隐私</a>
+        </footer>
       </div>
-    </footer>
+    )}
+    <SponsorBar />
     <script is:inline>
       document.querySelectorAll('[data-share-title]').forEach((btn) => {
         btn.addEventListener('click', async () => {
           const title = btn.getAttribute('data-share-title') || '';
           const path = btn.getAttribute('data-share-url') || '/';
           const url = new URL(path, location.origin).href;
+          const prev = btn.textContent;
           try {
             if (navigator.share) {
               await navigator.share({ title, url });
             } else {
               await navigator.clipboard.writeText(url);
-              const prev = btn.textContent;
+              btn.classList.add('is-copied');
               btn.textContent = '已复制链接';
-              setTimeout(() => { btn.textContent = prev; }, 1500);
+              setTimeout(() => {
+                btn.classList.remove('is-copied');
+                btn.textContent = prev;
+              }, 1600);
             }
           } catch { /* user cancelled */ }
         });
       });
-      // Client filter for agent chips when ?agent= is present (static site)
-      (function () {
-        const params = new URLSearchParams(location.search);
-        const agent = params.get('agent');
-        if (!agent) return;
-        document.querySelectorAll('.agent-chip').forEach((el) => {
-          el.classList.toggle('active', el.getAttribute('data-agent') === agent || (!el.getAttribute('data-agent') && !agent));
-        });
-        document.querySelectorAll('.case-list > li').forEach((li) => {
-          const meta = li.querySelector('.case-meta');
-          if (!meta) return;
-          const text = meta.textContent || '';
-          li.style.display = text.includes(agent) ? '' : 'none';
-        });
-      })();
       (function () {
         var buttons = document.querySelectorAll('[data-vote]');
         if (!buttons.length) return;
         var storeKey = 'crossagent-votes';
+        var seenClick = false;
         function readStore() {
           try {
             var raw = JSON.parse(localStorage.getItem(storeKey) || '{}');
@@ -192,8 +240,11 @@ const ogImage = new URL('/og.png', site).href;
             var on = !!mine[id];
             btn.setAttribute('aria-pressed', on ? 'true' : 'false');
             btn.classList.toggle('is-on', on);
+            btn.setAttribute('aria-label', on ? '已想要' : '我想要这个');
             var countEl = btn.querySelector('[data-vote-count]');
             if (countEl) countEl.textContent = String(n);
+            var label = btn.querySelector('.vote-label');
+            if (label) label.textContent = on ? '已想要' : '我想要这个';
           });
         }
         var counts = {};
@@ -201,7 +252,7 @@ const ogImage = new URL('/og.png', site).href;
         fetch('/api/votes', { headers: { accept: 'application/json' } })
           .then(function (res) { return res.ok ? res.json() : null; })
           .then(function (data) {
-            if (!data || typeof data !== 'object' || Array.isArray(data)) return;
+            if (seenClick || !data || typeof data !== 'object' || Array.isArray(data)) return;
             counts = data.counts && typeof data.counts === 'object' ? data.counts : data;
             paint(counts);
           })
@@ -212,6 +263,7 @@ const ogImage = new URL('/og.png', site).href;
             if (!id || btn.getAttribute('data-busy') === '1') return;
             var mine = readStore();
             var on = !mine[id];
+            seenClick = true;
             btn.setAttribute('data-busy', '1');
             fetch('/api/votes', {
               method: 'POST',
@@ -233,6 +285,78 @@ const ogImage = new URL('/og.png', site).href;
               .then(function () { btn.removeAttribute('data-busy'); });
           });
         });
+      })();
+      (function () {
+        var toggle = document.querySelector('[data-filter-toggle]');
+        var panel = document.querySelector('[data-filter-panel]');
+        if (toggle && panel) {
+          toggle.addEventListener('click', function () {
+            var open = panel.classList.toggle('is-open');
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+          });
+        }
+        var more = document.querySelector('[data-show-agents]');
+        var list = document.querySelector('[data-agent-list]');
+        if (more && list) {
+          more.addEventListener('click', function () {
+            var open = list.classList.toggle('is-expanded');
+            var n = more.getAttribute('data-count') || '';
+            more.textContent = open ? '收起' : '显示全部 ' + n;
+          });
+        }
+        var search = document.querySelector('[data-search-input]');
+        var freshBtn = document.querySelector('[data-fresh-toggle]');
+        var empty = document.querySelector('[data-search-empty]');
+        var allPill = document.querySelector('[data-pill-all]');
+        var filterLabel = document.querySelector('[data-filter-label]');
+        if (!search && !freshBtn) return;
+        var freshOnly = false;
+        function applyFilters() {
+          var q = (search && search.value || '').trim().toLowerCase();
+          var agent = new URLSearchParams(location.search).get('agent');
+          var visible = 0;
+          document.querySelectorAll('.case-list > li').forEach(function (li) {
+            var hay = (li.getAttribute('data-search') || '').toLowerCase();
+            var agents = (li.getAttribute('data-agents') || '').split('|').filter(Boolean);
+            var ok = true;
+            if (q && hay.indexOf(q) === -1) ok = false;
+            if (agent && agents.indexOf(agent) === -1) ok = false;
+            if (freshOnly && li.getAttribute('data-fresh') !== '1') ok = false;
+            li.hidden = !ok;
+            if (ok) visible += 1;
+          });
+          document.querySelectorAll('[data-case-section]').forEach(function (sec) {
+            var any = sec.querySelector('.case-list > li:not([hidden])');
+            sec.hidden = !any;
+          });
+          if (empty) empty.hidden = visible !== 0;
+          document.querySelectorAll('.agent-row').forEach(function (el) {
+            el.classList.toggle('is-active', !!agent && el.getAttribute('data-agent') === agent);
+          });
+          if (freshBtn) freshBtn.setAttribute('aria-pressed', freshOnly ? 'true' : 'false');
+          if (allPill && location.pathname === '/') allPill.classList.toggle('is-on', !freshOnly && !agent);
+          if (filterLabel) filterLabel.textContent = agent || (freshOnly ? '较新' : '全部');
+        }
+        if (search) search.addEventListener('input', applyFilters);
+        if (freshBtn) {
+          freshBtn.addEventListener('click', function () {
+            freshOnly = !freshOnly;
+            applyFilters();
+          });
+        }
+        var clearBtn = document.querySelector('[data-clear-filters]');
+        if (clearBtn) {
+          clearBtn.addEventListener('click', function () {
+            freshOnly = false;
+            if (search) search.value = '';
+            if (location.search) {
+              location.href = location.pathname;
+              return;
+            }
+            applyFilters();
+          });
+        }
+        applyFilters();
       })();
     </script>
   </body>
