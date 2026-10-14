@@ -1,0 +1,37 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout title="关于 — CrossAgent Lab" description="为什么做 CrossAgent Lab" canonicalPath="/about/">
+  <section class="hero-simple wrap">
+    <h1>关于 CrossAgent Lab</h1>
+    <p class="lead">
+      跨境卖家每天泡在选品、刊登、客服、广告和中后台里。本站对齐
+      <a href="https://agentusecases.ai/" target="_blank" rel="noopener noreferrer">agentusecases.ai</a>
+      的口径：<strong>摘要人们公开发布的帖文与文章（用自己的话），每条附原文链接与可复制 Prompt</strong>。
+    </p>
+    <p class="en">A vertical agentusecases-style directory for cross-border sellers — public sources only, with links.</p>
+  </section>
+  <section class="section wrap prose">
+    <h2>内容原则</h2>
+    <ul>
+      <li>每条必须有可点击的真实原文 URL；不伪造用户名、新闻链接或「某卖家说」。</li>
+      <li>用自己的话摘要：做了什么、用了什么 Agent/工具、结果如何；Prompt 为可复用提示，不伪造原话。</li>
+      <li>标注来源平台（博客 / Reddit / X / GitHub / n8n / 官网等）；字段 <code>sourceType: public</code>。</li>
+      <li>不编造流量与订阅数据。欢迎投稿真实公开案例。</li>
+    </ul>
+    <h2>作者</h2>
+    <p>毛训星 / Momo，杭州。前跨境中后台相关经验；用个人 Agent 跑微生意实验。</p>
+    <h2>托管说明</h2>
+    <p>目前站点部署在 <code>https://crossagent.maoxunxing.com</code>（maoxunxing.com 子域），先验证内容与赞助转化，再考虑独立域名。</p>
+    <h2 id="privacy">隐私</h2>
+    <p>
+      本站为静态内容站，当前未接入第三方分析或广告追踪脚本，也没有账号登录。
+      周报订阅经 Mailchimp 处理邮箱；「我想要这个」与投稿通过你本机邮件客户端发往
+      <a href="mailto:xunxing1989@gmail.com">xunxing1989@gmail.com</a>；
+      赞助跳转至 Stripe Checkout（由其处理支付信息）。
+      若你有隐私相关问题，请邮件联系。
+    </p>
+    <h2>联系</h2>
+    <p><a href="mailto:xunxing1989@gmail.com">xunxing1989@gmail.com</a></p>
+  </section>
+</BaseLayout>

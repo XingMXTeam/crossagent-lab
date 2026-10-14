@@ -1,0 +1,104 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CaseCard from '../components/CaseCard.astro';
+import { categories, categoryMeta } from '../content/config';
+import { formatDateNice, formatFeedSubline, isNew } from '../lib/agents';
+import MailchimpSubscribeForm from '../components/MailchimpSubscribeForm.astro';
+
+const cases = (await getCollection('cases')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const agentMap = new Map<string, number>();
+for (const c of cases) {
+  for (const a of c.data.agents) {
+    agentMap.set(a, (agentMap.get(a) || 0) + 1);
+  }
+}
+const agentStats = [...agentMap.entries()]
+  .map(([name, count]) => ({ name, count }))
+  .sort((a, b) => b.count - a.count);
+
+const latestDate = cases[0]?.data.date ?? new Date();
+const updatedLabel = formatDateNice(latestDate);
+const feedSubline = formatFeedSubline(latestDate);
+
+const newCases = cases.filter((c) => isNew(c.data.date, 30));
+const feedCases = newCases.length >= 3 ? newCases : cases.slice(0, Math.min(8, cases.length));
+const feedIds = new Set(feedCases.map((c) => c.id));
+const feedHeading =
+  newCases.length >= 3 ? `${newCases.length} 条较新用例` : '最新用例';
+---
+<BaseLayout
+  title="CrossAgent Lab — 跨境卖家 Agent 用例目录"
+  canonicalPath="/"
+  showAgents={true}
+  agentStats={agentStats}
+  metaLine={true}
+  caseCount={cases.length}
+  updatedLabel={updatedLabel}
+>
+  <section class="feed-section wrap">
+    <h2>{feedHeading}</h2>
+    <p class="feed-sub">{feedSubline}</p>
+    <ul class="case-list">
+      {feedCases.map((c) => (
+        <CaseCard
+          href={`/cases/${c.slug}/`}
+          title={c.data.title}
+          summary={c.data.summary}
+          category={c.data.category}
+          source={c.data.source}
+          sourceUrl={c.data.sourceUrl}
+          date={c.data.date}
+          agents={c.data.agents}
+        />
+      ))}
+    </ul>
+  </section>
+
+  {categories.map((id) => {
+    const m = categoryMeta[id];
+    const catCases = cases.filter((c) => c.data.category === id);
+    if (catCases.length === 0) return null;
+    let list = catCases.filter((c) => !feedIds.has(c.id));
+    if (list.length === 0) list = catCases;
+    list = list.slice(0, 4);
+    return (
+      <section class="cat-section wrap" id={id === categories[0] ? 'categories' : undefined}>
+        <h2>{m.zh}</h2>
+        <p class="cat-desc">{m.en} · {m.desc}</p>
+        <ul class="case-list">
+          {list.map((c) => (
+            <CaseCard
+              href={`/cases/${c.slug}/`}
+              title={c.data.title}
+              summary={c.data.summary}
+              category={c.data.category}
+              source={c.data.source}
+              sourceUrl={c.data.sourceUrl}
+              date={c.data.date}
+              agents={c.data.agents}
+            />
+          ))}
+        </ul>
+        <p style="margin-top:0.75rem;">
+          <a class="cat-link" href={`/categories/${id}/`}>查看全部 {m.zh} →</a>
+        </p>
+      </section>
+    );
+  })}
+
+  <section class="section wrap" id="subscribe">
+    <div class="panel">
+      <h3>每周精选跨境 Agent 用例</h3>
+      <p>每周 1 封：新用例与可复制 Prompt。加入 mxteam 名单并打上 CrossAgent Lab 标签，可随时退订。</p>
+      <MailchimpSubscribeForm variant="compact" formId="mc-home" />
+      <p class="muted-note" style="margin-top:0.65rem;">
+        <a href="/newsletter/#subscribe">订阅页说明</a>
+        · 也可 <a href="/submit/">提交用例</a> · 审后再入库
+      </p>
+    </div>
+  </section>
+</BaseLayout>

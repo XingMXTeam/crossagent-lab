@@ -1,0 +1,81 @@
+---
+/**
+ * Mailchimp embed → mxteam Audience + tag "CrossAgent Lab".
+ * u/id from us5; tags=4555940 applies CrossAgent Lab.
+ */
+interface Props {
+  variant?: 'full' | 'compact';
+  formId?: string;
+}
+const { variant = 'full', formId = 'mc-embedded-subscribe-form' } = Astro.props;
+const action =
+  'https://gmail.us5.list-manage.com/subscribe/post?u=c3b0164459768548b7bef380c&id=1103acd526&f_id=000042edf0';
+---
+<form
+  action={action}
+  method="post"
+  id={formId}
+  name="mc-embedded-subscribe-form"
+  class={variant === 'compact' ? 'mc-form mc-form-compact' : 'mc-form form-stack'}
+  accept-charset="UTF-8"
+>
+  {variant === 'full' ? (
+    <>
+      <div class="form-field">
+        <label for={`${formId}-EMAIL`}>邮箱 <span class="hint">必填</span></label>
+        <input
+          type="email"
+          name="EMAIL"
+          id={`${formId}-EMAIL`}
+          required
+          autocomplete="email"
+          placeholder="you@example.com"
+        />
+      </div>
+      <div class="form-field">
+        <label for={`${formId}-FNAME`}>名字 <span class="hint">可选</span></label>
+        <input
+          type="text"
+          name="FNAME"
+          id={`${formId}-FNAME`}
+          autocomplete="given-name"
+          placeholder="怎么称呼你"
+        />
+      </div>
+    </>
+  ) : (
+    <div class="form-inline">
+      <label class="sr-only" for={`${formId}-EMAIL`}>邮箱</label>
+      <input
+        type="email"
+        name="EMAIL"
+        id={`${formId}-EMAIL`}
+        required
+        autocomplete="email"
+        placeholder="邮箱"
+      />
+      <button type="submit" class="btn" name="subscribe" id={`${formId}-submit`}>订阅周报</button>
+    </div>
+  )}
+
+  <input type="hidden" name="tags" value="4555940" />
+
+  {/* Mailchimp honeypot — leave empty */}
+  <div class="mc-honeypot" aria-hidden="true">
+    <label for={`${formId}-honeypot`}>Leave blank</label>
+    <input
+      type="text"
+      name="b_c3b0164459768548b7bef380c_1103acd526"
+      id={`${formId}-honeypot`}
+      tabindex="-1"
+      value=""
+      autocomplete="off"
+    />
+  </div>
+
+  {variant === 'full' && (
+    <div class="cta-row">
+      <button type="submit" class="btn" name="subscribe" id={`${formId}-submit`}>订阅周报</button>
+    </div>
+  )}
+</form>

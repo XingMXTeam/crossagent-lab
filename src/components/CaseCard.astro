@@ -1,0 +1,51 @@
+---
+import { agentCode, agentColor, primaryAgent, formatDateMonthYear, isNew } from '../lib/agents';
+import { categories } from '../content/config';
+
+interface Props {
+  href: string;
+  title: string;
+  summary: string;
+  category: (typeof categories)[number];
+  source: string;
+  sourceUrl?: string;
+  date: Date;
+  agents: string[];
+  showPromptLink?: boolean;
+}
+const { href, title, summary, source, sourceUrl, date, agents, showPromptLink = true } = Astro.props;
+const agent = primaryAgent(agents);
+const code = agentCode(agent);
+const color = agentColor(agent);
+const dateStr = formatDateMonthYear(date);
+const fresh = isNew(date);
+const promptHref = `${href}#prompt`;
+const caseUrl = `https://crossagent.maoxunxing.com${href}`;
+const wantMailto = `mailto:xunxing1989@gmail.com?subject=${encodeURIComponent(`我想要这个: ${title}`)}&body=${encodeURIComponent(`我想要这个用例：${title}\n${caseUrl}\n\n（来自 CrossAgent Lab）`)}`;
+---
+<li>
+  <article class="case-card">
+    <div class="case-avatar" style={`background:${color}`} aria-hidden="true">{code}</div>
+    <div class="case-body">
+      <a class="case-title" href={href}>{title}</a>
+      <p class="case-summary">{summary}</p>
+      <div class="case-meta">
+        <span class="meta-agent">{agent}</span>
+        {fresh && <><span class="sep">·</span><span class="badge-new">New</span></>}
+        <span class="sep">·</span>
+        {sourceUrl ? (
+          <a class="source-link" href={sourceUrl} target="_blank" rel="noopener noreferrer">{source}</a>
+        ) : (
+          <span>{source}</span>
+        )}
+        <span class="sep">·</span>
+        <span>{dateStr}</span>
+      </div>
+      <div class="case-actions">
+        {showPromptLink && <a href={promptHref}>查看 Prompt</a>}
+        <button type="button" class="share-btn" data-share-title={title} data-share-url={href}>分享</button>
+        <a class="want-link" href={wantMailto}>我想要这个</a>
+      </div>
+    </div>
+  </article>
+</li>

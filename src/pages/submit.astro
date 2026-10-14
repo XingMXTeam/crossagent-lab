@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+<BaseLayout
+  title="提交用例 — CrossAgent Lab"
+  description="提交公开来源的跨境 Agent 用例；审后再入库"
+  canonicalPath="/submit/"
+>
+  <section class="hero-simple wrap">
+    <h1>提交用例</h1>
+    <p class="lead">
+      分享你在公开帖文或文章里看到、或自己做过的跨境 Agent 用例。
+      我们审过后才会入库；每条需要可点击的原文链接。
+    </p>
+    <p class="en">Submit a public-source cross-border agent use case. Reviewed before publish.</p>
+  </section>
+
+  <section class="section wrap">
+    <div class="panel">
+      <h3>用例表单</h3>
+      <p>必填：标题、原文链接、简短描述、Agent 名称。署名与邮箱可选。</p>
+      <p class="muted-note">提交会打开你的邮件客户端，发到 <a href="mailto:xunxing1989@gmail.com">xunxing1989@gmail.com</a>。审后再入库；本站不单独存表单数据。</p>
+
+      <form id="submit-case-form" class="form-stack" novalidate>
+        <div class="form-field">
+          <label for="title">用例标题 <span aria-hidden="true">*</span></label>
+          <input id="title" name="title" type="text" required maxlength="160" placeholder="例：用 ChatGPT 拆竞品 Listing 五点描述" />
+        </div>
+        <div class="form-field">
+          <label for="sourceUrl">原文链接 <span aria-hidden="true">*</span></label>
+          <input id="sourceUrl" name="sourceUrl" type="url" required placeholder="https://…" />
+          <span class="hint">公开网页、X、Reddit、博客、GitHub 等均可</span>
+        </div>
+        <div class="form-field">
+          <label for="description">简短描述 <span aria-hidden="true">*</span></label>
+          <textarea id="description" name="description" required maxlength="800" placeholder="做了什么、用了什么工具、结果如何（用自己的话）"></textarea>
+        </div>
+        <div class="form-field">
+          <label for="agent">Agent 名称 <span aria-hidden="true">*</span></label>
+          <input id="agent" name="agent" type="text" required maxlength="80" placeholder="例：ChatGPT / Claude / n8n + Claude" />
+        </div>
+        <div class="form-field">
+          <label for="credit">署名 / 署名账号（可选）</label>
+          <input id="credit" name="credit" type="text" maxlength="80" placeholder="你的名字或 @handle；发布时作 credit" />
+        </div>
+        <div class="form-field">
+          <label for="email">联系邮箱（可选）</label>
+          <input id="email" name="email" type="email" maxlength="120" placeholder="方便我们追问细节" />
+        </div>
+        <div class="cta-row">
+          <button class="btn" type="submit">打开邮件提交</button>
+          <a class="btn secondary" href="mailto:xunxing1989@gmail.com?subject=CrossAgent%20Lab%20%E7%94%A8%E4%BE%8B%E6%8F%90%E4%BA%A4">直接发邮件</a>
+        </div>
+        <p id="submit-status" class="form-status" role="status"></p>
+      </form>
+    </div>
+
+    <div class="panel">
+      <h3>审稿标准（摘要）</h3>
+      <ul>
+        <li>必须有可点击的真实原文 URL；不编造来源。</li>
+        <li>描述用自己的话：场景、Agent/工具、结果。</li>
+        <li>跨境相关优先（选品、刊登、客服、广告、中后台、物流等）。</li>
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline>
+  (function () {
+    const form = document.getElementById('submit-case-form');
+    const status = document.getElementById('submit-status');
+    if (!form) return;
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const title = (form.title.value || '').trim();
+      const sourceUrl = (form.sourceUrl.value || '').trim();
+      const description = (form.description.value || '').trim();
+      const agent = (form.agent.value || '').trim();
+      const credit = (form.credit.value || '').trim();
+      const email = (form.email.value || '').trim();
+      if (!title || !sourceUrl || !description || !agent) {
+        status.textContent = '请填写所有必填项。';
+        status.className = 'form-status visible err';
+        return;
+      }
+      try {
+        new URL(sourceUrl);
+      } catch {
+        status.textContent = '原文链接需要是完整 URL（含 https://）。';
+        status.className = 'form-status visible err';
+        return;
+      }
+      const body = [
+        '【CrossAgent Lab 用例提交】',
+        '',
+        '标题: ' + title,
+        '原文链接: ' + sourceUrl,
+        'Agent: ' + agent,
+        '描述:',
+        description,
+        '',
+        '署名: ' + (credit || '（未填）'),
+        '联系邮箱: ' + (email || '（未填）'),
+        '',
+        '— 审后再入库 —'
+      ].join('\n');
+      const mailto =
+        'mailto:xunxing1989@gmail.com' +
+        '?subject=' + encodeURIComponent('CrossAgent Lab 用例提交: ' + title.slice(0, 60)) +
+        '&body=' + encodeURIComponent(body);
+      status.textContent = '正在打开邮件客户端…';
+      status.className = 'form-status visible';
+      window.location.href = mailto;
+    });
+  })();
+</script>

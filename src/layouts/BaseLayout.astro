@@ -1,0 +1,153 @@
+---
+import '../styles/global.css';
+import SponsorBar from '../components/SponsorBar.astro';
+import AgentChips from '../components/AgentChips.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonicalPath?: string;
+  showAgents?: boolean;
+  agentStats?: { name: string; count: number }[];
+  activeAgent?: string | null;
+  metaLine?: boolean;
+  caseCount?: number;
+  updatedLabel?: string;
+}
+const {
+  title,
+  description = '跨境卖家真实在用的 AI Agent 用例目录（附 Prompt / 工作流）',
+  canonicalPath = '/',
+  showAgents = false,
+  agentStats = [],
+  activeAgent = null,
+  metaLine = false,
+  caseCount = 0,
+  updatedLabel = '',
+} = Astro.props;
+const site = 'https://crossagent.maoxunxing.com';
+const canonical = new URL(canonicalPath, site).href;
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" type="application/rss+xml" title="CrossAgent Lab RSS" href="/rss.xml" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#fafafa" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href="/">crossagent<span>.lab</span></a>
+        {showAgents && agentStats.length > 0 && (
+          <AgentChips agents={agentStats} active={activeAgent} totalCases={caseCount} />
+        )}
+        {metaLine && (
+          <p class="site-meta">
+            <strong class="meta-count">{caseCount}</strong> 条用例
+            Updated {updatedLabel}
+            Sources: 公开网页与社群
+            <span class="dot">·</span>
+            <a href="/rss.xml">RSS</a>
+            <span class="dot">·</span>
+            <a href="/sponsor/">赞助</a>
+            <span class="dot">·</span>
+            <a href="/about/#privacy">隐私</a>
+            <span class="dot">·</span>
+            <a href="/">用例</a>
+            <span class="dot">·</span>
+            <a href="/submit/">提交</a>
+            <span class="dot">·</span>
+            <a href="/newsletter/">简报</a>
+            <span class="dot">·</span>
+            <a href="/about/">关于</a>
+          </p>
+        )}
+        {!metaLine && (
+          <p class="site-meta">
+            <a href="/">用例</a>
+            <span class="dot">·</span>
+            <a href="/submit/">提交</a>
+            <span class="dot">·</span>
+            <a href="/newsletter/">简报</a>
+            <span class="dot">·</span>
+            <a href="/sponsor/">赞助</a>
+            <span class="dot">·</span>
+            <a href="/about/">关于</a>
+            <span class="dot">·</span>
+            <a href="/about/#privacy">隐私</a>
+            <span class="dot">·</span>
+            <a href="/rss.xml">RSS</a>
+          </p>
+        )}
+      </div>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <SponsorBar />
+    <footer class="site-footer">
+      <div class="wrap inner">
+        <div>
+          <strong>CrossAgent Lab</strong> · 毛训星 / Momo（杭州）
+          <br />宿主于 <code>crossagent.maoxunxing.com</code>
+        </div>
+        <div>
+          <a href="mailto:xunxing1989@gmail.com">xunxing1989@gmail.com</a>
+          <span class="dot">·</span>
+          <a href="/sponsor/">赞助</a>
+          <span class="dot">·</span>
+          <a href="/about/#privacy">隐私</a>
+          <span class="dot">·</span>
+          <a href="/rss.xml">RSS</a>
+        </div>
+      </div>
+    </footer>
+    <script is:inline>
+      document.querySelectorAll('[data-share-title]').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const title = btn.getAttribute('data-share-title') || '';
+          const path = btn.getAttribute('data-share-url') || '/';
+          const url = new URL(path, location.origin).href;
+          try {
+            if (navigator.share) {
+              await navigator.share({ title, url });
+            } else {
+              await navigator.clipboard.writeText(url);
+              const prev = btn.textContent;
+              btn.textContent = '已复制链接';
+              setTimeout(() => { btn.textContent = prev; }, 1500);
+            }
+          } catch { /* user cancelled */ }
+        });
+      });
+      // Client filter for agent chips when ?agent= is present (static site)
+      (function () {
+        const params = new URLSearchParams(location.search);
+        const agent = params.get('agent');
+        if (!agent) return;
+        document.querySelectorAll('.agent-chip').forEach((el) => {
+          el.classList.toggle('active', el.getAttribute('data-agent') === agent || (!el.getAttribute('data-agent') && !agent));
+        });
+        document.querySelectorAll('.case-list > li').forEach((li) => {
+          const meta = li.querySelector('.case-meta');
+          if (!meta) return;
+          const text = meta.textContent || '';
+          li.style.display = text.includes(agent) ? '' : 'none';
+        });
+      })();
+    </script>
+  </body>
+</html>
