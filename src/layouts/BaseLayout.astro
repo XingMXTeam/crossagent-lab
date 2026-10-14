@@ -63,7 +63,7 @@ const ogImage = new URL('/og.png', site).href;
     <header class="site-header">
       <div class="wrap">
         <a class:list={['brand', { 'has-tagline': showTagline }]} href="/">
-          <img class="brand-mark" src="/logo.svg" width="28" height="28" alt="" />
+          <img class="brand-mark" src="/logo.svg" width="32" height="32" alt="" />
           crossagent<span>.lab</span>
         </a>
         {showTagline && (
@@ -78,41 +78,21 @@ const ogImage = new URL('/og.png', site).href;
         {metaLine && (
           <p class="site-meta">
             <strong class="meta-count">{caseCount}</strong> 条用例
+            <span class="dot">·</span>
             Updated {updatedLabel}
+            <span class="dot">·</span>
             Sources: 公开网页与社群
-            <span class="dot">·</span>
-            <a href="/rss.xml">RSS</a>
-            <span class="dot">·</span>
-            <a href="/sponsor/">赞助</a>
-            <span class="dot">·</span>
-            <a href="/about/#privacy">隐私</a>
-            <span class="dot">·</span>
-            <a href="/">用例</a>
-            <span class="dot">·</span>
-            <a href="/submit/">提交</a>
-            <span class="dot">·</span>
-            <a href="/newsletter/">简报</a>
-            <span class="dot">·</span>
-            <a href="/about/">关于</a>
           </p>
         )}
-        {!metaLine && (
-          <p class="site-meta">
-            <a href="/">用例</a>
-            <span class="dot">·</span>
-            <a href="/submit/">提交</a>
-            <span class="dot">·</span>
-            <a href="/newsletter/">简报</a>
-            <span class="dot">·</span>
-            <a href="/sponsor/">赞助</a>
-            <span class="dot">·</span>
-            <a href="/about/">关于</a>
-            <span class="dot">·</span>
-            <a href="/about/#privacy">隐私</a>
-            <span class="dot">·</span>
-            <a href="/rss.xml">RSS</a>
-          </p>
-        )}
+        <nav class="site-nav" aria-label="站点">
+          <a href="/">用例</a>
+          <a href="/submit/">提交</a>
+          <a href="/newsletter/">简报</a>
+          <a href="/sponsor/">赞助</a>
+          <a href="/about/">关于</a>
+          <a href="/about/#privacy">隐私</a>
+          <a href="/rss.xml">RSS</a>
+        </nav>
       </div>
     </header>
     <main>
@@ -142,14 +122,21 @@ const ogImage = new URL('/og.png', site).href;
           const title = btn.getAttribute('data-share-title') || '';
           const path = btn.getAttribute('data-share-url') || '/';
           const url = new URL(path, location.origin).href;
+          const label = btn.querySelector('[data-share-label]');
+          const setLabel = (value) => {
+            if (label) label.textContent = value;
+          };
           try {
             if (navigator.share) {
               await navigator.share({ title, url });
             } else {
               await navigator.clipboard.writeText(url);
-              const prev = btn.textContent;
-              btn.textContent = '已复制链接';
-              setTimeout(() => { btn.textContent = prev; }, 1500);
+              btn.classList.add('is-copied');
+              setLabel('已复制链接');
+              setTimeout(() => {
+                btn.classList.remove('is-copied');
+                setLabel('分享');
+              }, 1600);
             }
           } catch { /* user cancelled */ }
         });
@@ -162,17 +149,54 @@ const ogImage = new URL('/og.png', site).href;
         document.querySelectorAll('.agent-chip').forEach((el) => {
           el.classList.toggle('active', el.getAttribute('data-agent') === agent || (!el.getAttribute('data-agent') && !agent));
         });
+        const toggle = document.querySelector('[data-agent-filter-toggle]');
+        const toggleLabel = document.querySelector('[data-agent-filter-label]');
+        if (toggle) toggle.classList.add('is-filtering');
+        if (toggleLabel) toggleLabel.textContent = agent;
         document.querySelectorAll('.case-list > li').forEach((li) => {
           const meta = li.querySelector('.case-meta');
           if (!meta) return;
           const text = meta.textContent || '';
           li.style.display = text.includes(agent) ? '' : 'none';
         });
+        const sections = document.querySelectorAll('.feed-section, .cat-section');
+        let any = false;
+        sections.forEach((section) => {
+          const cards = section.querySelectorAll('.case-list > li');
+          let visible = 0;
+          cards.forEach((li) => {
+            if (li.style.display === 'none') return;
+            if (li.querySelector('.case-card')) visible += 1;
+          });
+          if (visible === 0) section.classList.add('is-filtered-out');
+          else any = true;
+        });
+        if (!any) {
+          const main = document.querySelector('main');
+          if (!main || main.querySelector('.filter-empty')) return;
+          const note = document.createElement('p');
+          note.className = 'filter-empty wrap';
+          const name = document.createElement('strong');
+          name.textContent = agent;
+          note.append('没有「');
+          note.append(name);
+          note.append('」的用例。');
+          const link = document.createElement('a');
+          link.href = location.pathname;
+          link.textContent = '查看全部';
+          note.append(' ');
+          note.append(link);
+          main.prepend(note);
+        }
       })();
       (function () {
         var buttons = document.querySelectorAll('[data-vote]');
         if (!buttons.length) return;
         var storeKey = 'crossagent-votes';
+        var live = document.createElement('p');
+        live.className = 'sr-only';
+        live.setAttribute('aria-live', 'polite');
+        document.body.appendChild(live);
         function readStore() {
           try {
             var raw = JSON.parse(localStorage.getItem(storeKey) || '{}');
@@ -184,26 +208,55 @@ const ogImage = new URL('/og.png', site).href;
         function writeStore(store) {
           try { localStorage.setItem(storeKey, JSON.stringify(store)); } catch (e) {}
         }
-        function paint(counts) {
-          var mine = readStore();
+        function paint(counts, opts) {
+          var mine = (opts && opts.mine) || readStore();
+          var bumpId = opts && opts.bumpId;
           buttons.forEach(function (btn) {
             var id = btn.getAttribute('data-vote') || '';
             var n = counts && typeof counts[id] === 'number' ? counts[id] : 0;
             var on = !!mine[id];
             btn.setAttribute('aria-pressed', on ? 'true' : 'false');
             btn.classList.toggle('is-on', on);
+            btn.setAttribute('aria-label', (on ? '已想要' : '我想要这个') + ' ' + n);
+            var label = btn.querySelector('.vote-label');
+            if (label) label.textContent = on ? '已想要' : '我想要这个';
             var countEl = btn.querySelector('[data-vote-count]');
-            if (countEl) countEl.textContent = String(n);
+            if (!countEl) return;
+            var next = String(n);
+            if (bumpId === id && countEl.textContent !== next) {
+              countEl.classList.remove('is-bump');
+              void countEl.offsetWidth;
+              countEl.classList.add('is-bump');
+            }
+            countEl.textContent = next;
           });
         }
+        function applyCount(map, id, value) {
+          if (value > 0) map[id] = value;
+          else delete map[id];
+        }
         var counts = {};
+        var localEdits = {};
+        function mergeFresh(incoming) {
+          var next = Object.assign({}, incoming);
+          Object.keys(localEdits).forEach(function (id) {
+            if (localEdits[id] > 0) next[id] = localEdits[id];
+            else delete next[id];
+          });
+          return next;
+        }
         paint(counts);
         fetch('/api/votes', { headers: { accept: 'application/json' } })
           .then(function (res) { return res.ok ? res.json() : null; })
           .then(function (data) {
             if (!data || typeof data !== 'object' || Array.isArray(data)) return;
-            counts = data.counts && typeof data.counts === 'object' ? data.counts : data;
-            paint(counts);
+            var incoming = data.counts && typeof data.counts === 'object' ? data.counts : data;
+            counts = mergeFresh(incoming);
+            var busy = false;
+            buttons.forEach(function (btn) {
+              if (btn.getAttribute('data-busy') === '1') busy = true;
+            });
+            if (!busy) paint(counts);
           })
           .catch(function () {});
         buttons.forEach(function (btn) {
@@ -212,7 +265,19 @@ const ogImage = new URL('/og.png', site).href;
             if (!id || btn.getAttribute('data-busy') === '1') return;
             var mine = readStore();
             var on = !mine[id];
-            btn.setAttribute('data-busy', '1');
+            var optimisticMine = Object.assign({}, mine);
+            if (on) optimisticMine[id] = true;
+            else delete optimisticMine[id];
+            var optimisticCounts = Object.assign({}, counts);
+            var nextN = Math.max(0, (optimisticCounts[id] || 0) + (on ? 1 : -1));
+            applyCount(optimisticCounts, id, nextN);
+            buttons.forEach(function (other) {
+              if (other.getAttribute('data-vote') === id) {
+                other.setAttribute('data-busy', '1');
+                other.classList.remove('is-error');
+              }
+            });
+            paint(optimisticCounts, { mine: optimisticMine, bumpId: id });
             fetch('/api/votes', {
               method: 'POST',
               headers: { 'content-type': 'application/json', accept: 'application/json' },
@@ -223,14 +288,35 @@ const ogImage = new URL('/og.png', site).href;
                 return res.json();
               })
               .then(function (data) {
-                if (typeof data.count === 'number') counts[id] = data.count;
+                if (typeof data.count === 'number') applyCount(counts, id, data.count);
+                localEdits[id] = counts[id] || 0;
                 if (on) mine[id] = true;
                 else delete mine[id];
                 writeStore(mine);
-                paint(counts);
+                paint(counts, { bumpId: id });
+                live.textContent = (on ? '已想要' : '已取消') + ' ' + (counts[id] || 0);
               })
-              .catch(function () {})
-              .then(function () { btn.removeAttribute('data-busy'); });
+              .catch(function () {
+                paint(counts);
+                buttons.forEach(function (other) {
+                  if (other.getAttribute('data-vote') !== id) return;
+                  other.classList.add('is-error');
+                  var label = other.querySelector('.vote-label');
+                  if (label) label.textContent = '请重试';
+                });
+                live.textContent = '未记下，请重试';
+                setTimeout(function () {
+                  buttons.forEach(function (other) {
+                    if (other.getAttribute('data-vote') === id) other.classList.remove('is-error');
+                  });
+                  paint(counts);
+                }, 1600);
+              })
+              .then(function () {
+                buttons.forEach(function (other) {
+                  if (other.getAttribute('data-vote') === id) other.removeAttribute('data-busy');
+                });
+              });
           });
         });
       })();

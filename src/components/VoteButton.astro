@@ -7,10 +7,13 @@ const { id, variant = "link" } = Astro.props;
 ---
 <button
   type="button"
-  class:list={["vote-btn", variant === "button" && "btn"]}
+  class:list={["vote-btn", variant === "button" && "vote-btn-lg"]}
   data-vote={id}
   aria-pressed="false"
 >
+  <svg class="vote-heart" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 20.2S5.4 16.1 5.4 11.6C5.4 8.8 7.1 7.2 9.2 7.2c1.2 0 2.2.6 2.8 1.5.6-.9 1.6-1.5 2.8-1.5 2.1 0 3.8 1.6 3.8 4.4 0 4.5-6.6 8.6-6.6 8.6z" />
+  </svg>
   <span class="vote-label">我想要这个</span>
   <span class="vote-count" data-vote-count>0</span>
 </button>

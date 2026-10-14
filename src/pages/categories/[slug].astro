@@ -20,11 +20,11 @@ const cases = (await getCollection('cases'))
     <p class="en">{meta.en}</p>
     <p class="lead">{meta.desc}</p>
   </section>
-  <section class="feed-section wrap" style="padding-top:0;">
+  <section class="feed-section wrap cat-feed">
     <p class="feed-sub">{cases.length} 条用例</p>
     <ul class="case-list">
       {cases.length === 0 && (
-        <li><p class="case-summary" style="padding:1rem 0;">该分类暂无用例，后续补充。</p></li>
+        <li class="empty-row"><p class="empty-state">该分类暂无用例，后续补充。</p></li>
       )}
       {cases.map((c) => (
         <CaseCard

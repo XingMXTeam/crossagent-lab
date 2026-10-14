@@ -42,8 +42,10 @@ const caseSlug = href.match(/\/cases\/([^/?#]+)\/?/)?.[1] ?? '';
         <span>{dateStr}</span>
       </div>
       <div class="case-actions">
-        {showPromptLink && <a href={promptHref}>查看 Prompt</a>}
-        <button type="button" class="share-btn" data-share-title={title} data-share-url={href}>分享</button>
+        {showPromptLink && <a class="action-secondary" href={promptHref}>查看 Prompt</a>}
+        <button type="button" class="action-ghost share-btn" data-share-title={title} data-share-url={href}>
+          <span data-share-label>分享</span>
+        </button>
         {caseSlug && <VoteButton id={caseSlug} />}
       </div>
     </div>
