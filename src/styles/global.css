@@ -1013,6 +1013,14 @@ a.btn.secondary, button.btn.secondary { color: var(--muted); }
 }
 .prose a:hover, .section a:hover, .panel a:hover { color: var(--text); }
 a.btn, a.btn.secondary { text-decoration: none; }
+/* .section/.panel/prose `a` matches a.btn at equal specificity and wins later.
+   Primary filled buttons stay light on the black fill, including on hover. */
+a.btn:not(.secondary),
+button.btn:not(.secondary),
+a.btn:not(.secondary):hover,
+button.btn:not(.secondary):hover {
+  color: var(--bg);
+}
 
 .form-stack { display: flex; flex-direction: column; gap: 1rem; margin-top: 0.75rem; }
 .form-field label { display: block; margin-bottom: 0.35rem; font-size: 0.875rem; font-weight: 500; }
