@@ -22,12 +22,15 @@
 - `/want/*` 旧 FormSubmit 页还在，但卡片和详情不再链过去。合并前须在 Pages 项目绑上 `VOTES`，否则接口 503
 - 不进 Mailchimp
 
-## 订阅（Mailchimp）
+## 订阅（Mailchimp + Resend 欢迎样刊）
 
 - Audience：mxteam（`u=c3b0164459768548b7bef380c` / `id=1103acd526`）
 - Tag：CrossAgent Lab（`tags=4555940`）
-- 表单：`/newsletter/#subscribe` 完整表单；首页 compact 表单
-- 未新建 Audience（免费版限额）；未升级付费
+- 表单：`/newsletter/#subscribe` 完整表单；首页 compact 表单（仍 POST 到 Mailchimp）
+- 欢迎样刊：`POST /api/newsletter-welcome` → Resend（`from` 默认 `CrossAgent Lab <me@maoxunxing.com>`）
+- Smoke：`GET /api/newsletter-welcome` → `{ ok, configured, from }`
+- Pages 密钥：**`RESEND_API_KEY`**（Production + Preview）；可选 `RESEND_FROM`
+- Mailchimp Journey 保持 Draft；**不升级付费**
 
 ## UI（对齐 agentusecases.ai）
 
