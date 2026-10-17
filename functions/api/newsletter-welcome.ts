@@ -3,28 +3,40 @@
  *
  * GET  /api/newsletter-welcome → { ok, configured, from }
  * POST /api/newsletter-welcome → body { email: string, name?: string }
- *                              → { ok: true, id } | { error, ... }
+ *                              → { ok: true, id, contactOk } | { error, ... }
  *
  * Secret (CF Pages → Settings → Environment variables, Production + Preview):
- *   RESEND_API_KEY  — Resend API key with send permission for maoxunxing.com
+ *   RESEND_API_KEY  — Resend API key for maoxunxing.com. Needs email send
+ *                     and contacts write (a send-only key still delivers the
+ *                     welcome; contactOk will be false).
  * Optional:
- *   RESEND_FROM     — default "CrossAgent Lab <me@maoxunxing.com>"
+ *   RESEND_FROM        — default "CrossAgent Lab <me@maoxunxing.com>"
+ *   RESEND_SEGMENT_ID  — Resend segment that receives broadcast subscribers.
+ *                        CF Pages should set this (Production + Preview) so
+ *                        ops can rotate the segment without a code change.
+ *                        Optional: when unset, defaults to the CrossAgent Lab
+ *                        segment b5d0de18-840a-4741-a6e1-40a3375dfe91.
  *
- * Mailchimp list collection stays on the embed form; this only sends the
- * one-off welcome sample. Same-origin POST only.
+ * After a successful welcome send, the subscriber is upserted as a Resend
+ * Contact in that segment (unsubscribed: false). Contact failures are logged
+ * and returned as contactOk: false; they do not fail the welcome response.
+ * Mailchimp list collection stays on the embed form. Same-origin POST only.
  */
 
 interface WelcomeEnv {
   RESEND_API_KEY?: string;
   RESEND_FROM?: string;
+  RESEND_SEGMENT_ID?: string;
 }
 
 type WelcomeContext = {
   request: Request;
   env: WelcomeEnv;
+  waitUntil?: (promise: Promise<unknown>) => void;
 };
 
 const DEFAULT_FROM = "CrossAgent Lab <me@maoxunxing.com>";
+const DEFAULT_SEGMENT_ID = "b5d0de18-840a-4741-a6e1-40a3375dfe91";
 const SUBJECT = "CrossAgent Lab sample — 3 Amazon seller agent cases";
 const SITE = "https://crossagent.maoxunxing.com";
 const CASES = [
@@ -115,6 +127,126 @@ function buildHtml(name?: string): string {
 </html>`;
 }
 
+function segmentIdFrom(env: WelcomeEnv): string {
+  const configured = env.RESEND_SEGMENT_ID?.trim();
+  return configured || DEFAULT_SEGMENT_ID;
+}
+
+function resendHeaders(apiKey: string): HeadersInit {
+  return {
+    authorization: `Bearer ${apiKey}`,
+    "content-type": "application/json",
+  };
+}
+
+function errorLabel(payload: unknown): string {
+  if (!payload || typeof payload !== "object") return "unknown";
+  const obj = payload as { name?: unknown; message?: unknown };
+  const name = typeof obj.name === "string" ? obj.name : "";
+  const message =
+    typeof obj.message === "string" ? obj.message.slice(0, 180) : "";
+  return [name, message].filter(Boolean).join(": ") || "unknown";
+}
+
+/** 409, or 422 whose body says the contact (or segment membership) already exists. */
+function isExistingContact(status: number, payload: unknown): boolean {
+  if (status === 409) return true;
+  if (status !== 422 || !payload || typeof payload !== "object") return false;
+  const obj = payload as { name?: unknown; message?: unknown };
+  const name = typeof obj.name === "string" ? obj.name.toLowerCase() : "";
+  const message =
+    typeof obj.message === "string" ? obj.message.toLowerCase() : "";
+  if (name.includes("already_exists") || name.includes("duplicate")) return true;
+  return /already exists|already a contact|duplicate contact|already.+(segment|audience)/.test(
+    message,
+  );
+}
+
+async function readJson(res: Response): Promise<unknown> {
+  return res.json().catch(() => ({}));
+}
+
+/**
+ * Upsert the subscriber into the broadcast segment.
+ * Create uses the current Contacts API: email, first_name, unsubscribed,
+ * segments: [{ id }]. A duplicate contact does not get that segments field
+ * applied, so the existing contact is patched and added explicitly.
+ * Never throws.
+ */
+async function upsertResendContact(opts: {
+  apiKey: string;
+  email: string;
+  firstName?: string;
+  segmentId: string;
+}): Promise<boolean> {
+  const headers = resendHeaders(opts.apiKey);
+  const createBody: Record<string, unknown> = {
+    email: opts.email,
+    unsubscribed: false,
+    segments: [{ id: opts.segmentId }],
+  };
+  if (opts.firstName) createBody.first_name = opts.firstName;
+
+  try {
+    const created = await fetch("https://api.resend.com/contacts", {
+      method: "POST",
+      headers,
+      body: JSON.stringify(createBody),
+    });
+    const createdPayload = await readJson(created);
+    if (created.ok) return true;
+
+    if (!isExistingContact(created.status, createdPayload)) {
+      console.error(
+        "resend_contact_failed",
+        created.status,
+        errorLabel(createdPayload),
+      );
+      return false;
+    }
+
+    const contactUrl = `https://api.resend.com/contacts/${encodeURIComponent(opts.email)}`;
+    const patchBody: Record<string, unknown> = { unsubscribed: false };
+    if (opts.firstName) patchBody.first_name = opts.firstName;
+
+    const [patched, added] = await Promise.all([
+      fetch(contactUrl, {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify(patchBody),
+      }),
+      fetch(`${contactUrl}/segments/${encodeURIComponent(opts.segmentId)}`, {
+        method: "POST",
+        headers,
+      }),
+    ]);
+    const patchedPayload = await readJson(patched);
+    const addedPayload = await readJson(added);
+    const inSegment = added.ok || isExistingContact(added.status, addedPayload);
+    if (!patched.ok) {
+      console.error(
+        "resend_contact_update_failed",
+        patched.status,
+        errorLabel(patchedPayload),
+      );
+    }
+    if (!inSegment) {
+      console.error(
+        "resend_contact_segment_failed",
+        added.status,
+        errorLabel(addedPayload),
+      );
+    }
+    return patched.ok && inSegment;
+  } catch (err) {
+    console.error(
+      "resend_contact_unavailable",
+      err instanceof Error ? err.message : "fetch_failed",
+    );
+    return false;
+  }
+}
+
 export const onRequestGet = async (context: WelcomeContext): Promise<Response> => {
   const from = (context.env.RESEND_FROM || DEFAULT_FROM).trim();
   return json({
@@ -201,7 +333,29 @@ export const onRequestPost = async (context: WelcomeContext): Promise<Response> 
         502,
       );
     }
-    return json({ ok: true, id: payload.id || null });
+
+    const emailId = payload.id || null;
+    // Contact write must not change the welcome status. waitUntil keeps the
+    // upsert alive if the Mailchimp form aborts this request after its timeout.
+    let contactOk = false;
+    try {
+      const contactTask = upsertResendContact({
+        apiKey,
+        email,
+        firstName: name,
+        segmentId: segmentIdFrom(context.env),
+      });
+      if (typeof context.waitUntil === "function") {
+        context.waitUntil(contactTask);
+      }
+      contactOk = await contactTask;
+    } catch (err) {
+      console.error(
+        "resend_contact_unavailable",
+        err instanceof Error ? err.message : "fetch_failed",
+      );
+    }
+    return json({ ok: true, id: emailId, contactOk });
   } catch {
     return json({ error: "resend_unavailable" }, 503);
   }
