@@ -1,0 +1,250 @@
+---
+/**
+ * Post-save card. Visible copy is zh-CN (site UI). English equivalents, for a
+ * future locale switch — not shown, because this site has no EN locale:
+ *   Saved. Want this list emailed to you?
+ *   Send my list
+ *   Also send me the weekly newsletter
+ */
+---
+<div class="save-prompt-anchor" data-save-anchor hidden>
+  <div
+    class="save-prompt"
+    data-save-prompt
+    role="dialog"
+    aria-modal="false"
+    aria-labelledby="save-prompt-title"
+  >
+    <form data-save-form autocomplete="on">
+      <div class="save-prompt-main">
+        <p class="save-prompt-copy" id="save-prompt-title">已保存。要把这份清单发到你邮箱吗？</p>
+        <label class="sr-only" for="save-list-email">邮箱</label>
+        <input
+          id="save-list-email"
+          class="save-prompt-email"
+          data-save-email
+          type="email"
+          name="email"
+          required
+          maxlength="254"
+          autocomplete="email"
+          inputmode="email"
+          placeholder="you@example.com"
+          title="Email"
+        />
+        <button type="submit" class="save-prompt-send" data-save-submit title="Send my list">发送清单</button>
+        <button type="button" class="save-prompt-close" data-save-dismiss aria-label="关闭" title="Close">×</button>
+      </div>
+      <label class="save-prompt-news" title="Also send me the weekly newsletter">
+        <input type="checkbox" name="newsletter" data-save-news checked />
+        <span>同时订阅周刊</span>
+      </label>
+      <p class="save-prompt-status" data-save-status role="status" hidden></p>
+    </form>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    var anchor = document.querySelector('[data-save-anchor]');
+    var prompt = document.querySelector('[data-save-prompt]');
+    if (!anchor || !prompt) return;
+    var buttons = document.querySelectorAll('[data-save]');
+    var form = prompt.querySelector('[data-save-form]');
+    var emailInput = prompt.querySelector('[data-save-email]');
+    var statusEl = prompt.querySelector('[data-save-status]');
+    var submitBtn = prompt.querySelector('[data-save-submit]');
+    var newsInput = prompt.querySelector('[data-save-news]');
+    var storeKey = 'crossagent-saves';
+    var emailKey = 'crossagent-save-email';
+    var memory = null;
+    var lastFocus = null;
+    var slugRe = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+    function readStore() {
+      if (memory) return memory;
+      try {
+        var raw = JSON.parse(localStorage.getItem(storeKey) || '{}');
+        memory = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+      } catch (e) {
+        memory = {};
+      }
+      return memory;
+    }
+
+    function writeStore(store) {
+      memory = store;
+      try { localStorage.setItem(storeKey, JSON.stringify(store)); } catch (e) {}
+    }
+
+    function isSlug(id) {
+      return !!id && id.length <= 80 && slugRe.test(id);
+    }
+
+    function paint() {
+      var mine = readStore();
+      buttons.forEach(function (btn) {
+        var id = btn.getAttribute('data-save') || '';
+        var on = !!(id && mine[id]);
+        var title = btn.getAttribute('data-save-title') || '';
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        btn.classList.toggle('is-on', on);
+        btn.setAttribute('aria-label', (on ? '已收藏：' : '收藏：') + title);
+        var label = btn.querySelector('[data-save-label]');
+        if (label) label.textContent = on ? '已收藏' : '收藏';
+        var en = btn.querySelector('[data-save-en]');
+        if (en) en.textContent = on ? 'Saved' : 'Save';
+      });
+    }
+
+    function itemsFrom(store) {
+      var items = [];
+      Object.keys(store).forEach(function (slug) {
+        if (!isSlug(slug)) return;
+        var row = store[slug] || {};
+        var title = row && typeof row.title === 'string' && row.title.trim() ? row.title.trim() : slug;
+        var path = '/cases/' + slug + '/';
+        var url = path;
+        try { url = new URL(path, location.origin).href; } catch (e) {}
+        items.push({ slug: slug, title: title, url: url });
+      });
+      return items;
+    }
+
+    function openPrompt(opener) {
+      lastFocus = opener || document.activeElement;
+      anchor.hidden = false;
+      if (statusEl) {
+        statusEl.hidden = true;
+        statusEl.textContent = '';
+        statusEl.classList.remove('is-err');
+      }
+      var saved = '';
+      try { saved = localStorage.getItem(emailKey) || ''; } catch (e) {}
+      if (emailInput && saved && !emailInput.value) emailInput.value = saved;
+      if (emailInput) {
+        try { emailInput.focus({ preventScroll: true }); }
+        catch (e) { emailInput.focus(); }
+      }
+    }
+
+    function closePrompt() {
+      if (anchor.hidden) return;
+      anchor.hidden = true;
+      if (lastFocus && typeof lastFocus.focus === 'function') {
+        try { lastFocus.focus({ preventScroll: true }); }
+        catch (e) { lastFocus.focus(); }
+      }
+    }
+
+    function showStatus(message, isErr) {
+      if (!statusEl) return;
+      statusEl.hidden = false;
+      statusEl.textContent = message;
+      statusEl.classList.toggle('is-err', !!isErr);
+    }
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-save');
+        if (!isSlug(id)) return;
+        var mine = readStore();
+        if (mine[id]) {
+          delete mine[id];
+          writeStore(mine);
+          paint();
+          return;
+        }
+        var title = btn.getAttribute('data-save-title') || id;
+        var path = btn.getAttribute('data-save-url') || ('/cases/' + id + '/');
+        var url = path;
+        try { url = new URL(path, location.origin).href; } catch (e) {}
+        mine[id] = { title: title, url: url };
+        writeStore(mine);
+        paint();
+        openPrompt(btn);
+      });
+    });
+
+    prompt.querySelectorAll('[data-save-dismiss]').forEach(function (el) {
+      el.addEventListener('click', function () { closePrompt(); });
+    });
+
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape' && !anchor.hidden) {
+        ev.preventDefault();
+        closePrompt();
+      }
+    });
+
+    document.addEventListener('pointerdown', function (ev) {
+      if (anchor.hidden) return;
+      var target = ev.target;
+      if (!target || target.nodeType !== 1) return;
+      if (prompt.contains(target)) return;
+      if (target.closest && target.closest('[data-save]')) return;
+      closePrompt();
+    });
+
+    if (form) {
+      form.addEventListener('submit', function (ev) {
+        ev.preventDefault();
+        if (!emailInput || !submitBtn || submitBtn.disabled) return;
+        var email = String(emailInput.value || '').trim();
+        var newsletter = !!(newsInput && newsInput.checked);
+        var items = itemsFrom(readStore());
+        if (!items.length) {
+          showStatus('还没有收藏。先点收藏再发送。', true);
+          return;
+        }
+        submitBtn.disabled = true;
+        var prevLabel = submitBtn.textContent;
+        submitBtn.textContent = '发送中…';
+        if (statusEl) statusEl.hidden = true;
+        var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+        var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 12000);
+        fetch('/api/send-saved-list', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          credentials: 'same-origin',
+          body: JSON.stringify({ email: email, newsletter: newsletter, items: items }),
+          signal: ctrl ? ctrl.signal : undefined,
+        })
+          .then(function (res) {
+            return res.json().catch(function () { return {}; }).then(function (data) {
+              return { ok: res.ok, data: data };
+            });
+          })
+          .then(function (result) {
+            if (!result.ok) {
+              var code = result.data && result.data.error;
+              if (code === 'bad_email') throw new Error('bad_email');
+              if (code === 'empty_list') throw new Error('empty_list');
+              throw new Error('send');
+            }
+            try { localStorage.setItem(emailKey, email); } catch (e) {}
+            var msg = '清单已发到 ' + email + '。';
+            if (newsletter) {
+              if (result.data && result.data.newsletterOk) msg += '周刊欢迎信也会寄到这个邮箱。';
+              else msg += '周刊这次没订上，可到简报页再试。';
+            }
+            showStatus(msg, false);
+          })
+          .catch(function (err) {
+            var code = err && err.name === 'AbortError' ? 'timeout' : (err && err.message);
+            if (code === 'bad_email') showStatus('这个邮箱格式不对。', true);
+            else if (code === 'empty_list') showStatus('还没有收藏。先点收藏再发送。', true);
+            else if (code === 'timeout') showStatus('发送超时。如果邮箱里没有清单，请再试一次。', true);
+            else showStatus('发送失败，请稍后再试。', true);
+          })
+          .then(function () {
+            clearTimeout(timer);
+            submitBtn.disabled = false;
+            submitBtn.textContent = prevLabel;
+          });
+      });
+    }
+
+    paint();
+  })();
+</script>
