@@ -4,7 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const listingPay = 'https://buy.stripe.com/9B66oH9qRcSjeDg75m6AM03';
 const newsletterPay = 'https://buy.stripe.com/7sYfZh32t5pRfHkdtK6AM04';
 const foundingPay = 'https://buy.stripe.com/cNi7sLeLb4lN7aO9du6AM02';
-const inbox = 'xunxing1989@gmail.com';
+const inbox = 'me@maoxunxing.com';
 const listingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent Listing Boost')}`;
 const newsletterMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent Newsletter Insert')}`;
 const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent Lab Sponsorship Question')}`;
@@ -126,7 +126,7 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
   </section>
 </BaseLayout>
 
-<script is:inline>
+<script is:inline define:vars={{ contactInbox: inbox }}>
   (function () {
     var params = new URLSearchParams(location.search);
     var slug = params.get('case') || '';
@@ -154,7 +154,7 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
     var mail = document.getElementById('listing-mail');
     if (mail) {
       var body = '用例 slug: ' + slug + '\n用例链接: ' + location.origin + '/cases/' + slug + '/\n\n品牌名:\n链接:\n';
-      mail.href = 'mailto:xunxing1989@gmail.com?subject=' + encodeURIComponent('CrossAgent Listing Boost: ' + slug) + '&body=' + encodeURIComponent(body);
+      mail.href = 'mailto:' + contactInbox + '?subject=' + encodeURIComponent('CrossAgent Listing Boost: ' + slug) + '&body=' + encodeURIComponent(body);
     }
   })();
 </script>

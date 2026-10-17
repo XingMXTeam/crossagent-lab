@@ -8,7 +8,7 @@ Card and case-detail 「我想要这个」 toggles a public count via `GET/POST 
 
 ## Form delivery path
 
-**Chosen: `mailto:xunxing1989@gmail.com`** (client-side prefilled subject + body).
+**Chosen: `mailto:me@maoxunxing.com`** (client-side prefilled subject + body).
 
 Checked repo / env / stores for Web3Forms `access_key`, Formspree endpoint, Buttondown public form, Lemon Squeezy / Paddle URLs — **none found**. Did not invent keys.
 

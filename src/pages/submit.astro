@@ -19,7 +19,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="panel">
       <h3>用例表单</h3>
       <p>必填：标题、原文链接、简短描述、Agent 名称。署名与邮箱可选。</p>
-      <p class="muted-note">提交会打开你的邮件客户端，发到 <a href="mailto:xunxing1989@gmail.com">xunxing1989@gmail.com</a>。审后再入库；本站不单独存表单数据。</p>
+      <p class="muted-note">提交会打开你的邮件客户端，发到 <a href="mailto:me@maoxunxing.com">me@maoxunxing.com</a>。审后再入库；本站不单独存表单数据。</p>
 
       <form id="submit-case-form" class="form-stack" novalidate>
         <div class="form-field">
@@ -49,7 +49,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
         <div class="cta-row">
           <button class="btn" type="submit">打开邮件提交</button>
-          <a class="btn secondary" href="mailto:xunxing1989@gmail.com?subject=CrossAgent%20Lab%20%E7%94%A8%E4%BE%8B%E6%8F%90%E4%BA%A4">直接发邮件</a>
+          <a class="btn secondary" href="mailto:me@maoxunxing.com?subject=CrossAgent%20Lab%20%E7%94%A8%E4%BE%8B%E6%8F%90%E4%BA%A4">直接发邮件</a>
         </div>
         <p id="submit-status" class="form-status" role="status"></p>
       </form>
@@ -106,7 +106,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         '— 审后再入库 —'
       ].join('\n');
       const mailto =
-        'mailto:xunxing1989@gmail.com' +
+        'mailto:me@maoxunxing.com' +
         '?subject=' + encodeURIComponent('CrossAgent Lab 用例提交: ' + title.slice(0, 60)) +
         '&body=' + encodeURIComponent(body);
       status.textContent = '正在打开邮件客户端…';

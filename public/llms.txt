@@ -26,4 +26,4 @@ Checkout is Stripe (CrossAgent Lab). After payment, email the brand name, link, 
 
 ## Contact
 
-xunxing1989@gmail.com
+me@maoxunxing.com
