@@ -62,6 +62,10 @@ const catCount = all.filter((c) => c.data.category === d.category).length;
         </a>
       )}
       <VoteButton id={entry.slug} variant="button" />
+      <a class="btn secondary" href={`/sponsor/?case=${encodeURIComponent(entry.slug)}#listing`}>
+        推广此用例
+        <span class="btn-en">Boost this case</span>
+      </a>
       <button class="btn secondary" type="button" data-share-title={d.title} data-share-url={`/cases/${entry.slug}/`}>分享</button>
     </div>
     <p class="source-line">

@@ -1,0 +1,21 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonicalPath?: string;
+  lang?: string;
+}
+const {
+  title,
+  description,
+  canonicalPath = '/guides/amazon-seller-mcp-cross-border/',
+  lang = 'en',
+} = Astro.props;
+---
+<BaseLayout title={title} description={description} canonicalPath={canonicalPath} lang={lang}>
+  <article class="section wrap prose guide">
+    <slot />
+  </article>
+</BaseLayout>

@@ -1,64 +1,160 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const listingPay = 'https://buy.stripe.com/9B66oH9qRcSjeDg75m6AM03';
+const newsletterPay = 'https://buy.stripe.com/7sYfZh32t5pRfHkdtK6AM04';
+const foundingPay = 'https://buy.stripe.com/cNi7sLeLb4lN7aO9du6AM02';
+const inbox = 'me@maoxunxing.com';
+const listingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent Listing Boost')}`;
+const newsletterMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent Newsletter Insert')}`;
+const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent Lab Sponsorship Question')}`;
 ---
 <BaseLayout
   title="赞助 — CrossAgent Lab"
-  description="Founding 赞助：首页条 + 周报一行 · ¥2500 / $349"
+  description="CrossAgent Lab 赞助：用例推广 $49/30天，简报插页 $99/期，Founding $349/月。"
   canonicalPath="/sponsor/"
 >
   <section class="hero-simple wrap">
     <h1>赞助 CrossAgent Lab</h1>
     <p class="lead">
-      一个出现在站点上的位置，面向主动来找「跨境 Agent 怎么用」的人。
+      三条付费档位，面向主动来找「跨境 Agent 怎么用」的人：用例推广、简报插页、Founding 月赞助。
     </p>
-    <p class="en">A spot on the site, in front of people looking for real cross-border agent playbooks.</p>
+    <p class="en">Three paid options — case boost, one newsletter insert, or a Founding monthly spot.</p>
   </section>
 
   <section class="section wrap">
+    <p id="boost-context" class="panel boost-context" hidden></p>
+
+    <div class="tier-grid">
+      <article class="panel tier-card" id="listing">
+        <p class="tier-kicker">Listing</p>
+        <h3>用例推广 <span class="tier-en">Case / listing boost</span></h3>
+        <p class="price-line">$49 <span class="price-unit">/ 30 天</span></p>
+        <p class="price-sub">$49 / 30 days · case placement or boost</p>
+        <ul>
+          <li>30 天内把一条跨境 Agent 用例放到更靠前、更容易被打开的位置。</li>
+          <li>可以是站内已有用例，或你提交并通过审的公开来源用例。</li>
+          <li>展示品牌名与链接。用例正文仍是本站摘要，不改成软文，不编造数据。</li>
+          <li>从用例卡片或详情点「推广此用例」，会带上那条用例。</li>
+        </ul>
+        <div class="cta-row">
+          <a
+            id="listing-pay"
+            class="btn"
+            href={listingPay}
+            data-base-href={listingPay}
+            target="_blank"
+            rel="noopener noreferrer"
+          >购买用例推广 <span class="btn-en">$49 / 30 days</span></a>
+        </div>
+        <p class="muted-note">
+          Stripe Checkout（CrossAgent Lab）。付款后请
+          <a id="listing-mail" href={listingMail}>邮件告知</a>
+          品牌名、链接和要推广的用例 URL。
+        </p>
+      </article>
+
+      <article class="panel tier-card" id="newsletter">
+        <p class="tier-kicker">Newsletter</p>
+        <h3>简报插页 <span class="tier-en">Newsletter insert</span></h3>
+        <p class="price-line">$99 <span class="price-unit">/ 期</span></p>
+        <p class="price-sub">$99 / issue · one newsletter slot</p>
+        <ul>
+          <li>一期周报里的一个赞助插槽：品牌名、一句 pitch（约 40 字）、一个链接。</li>
+          <li>读者是主动订阅「每周跨境 Agent 精选」的人，不是信息流流量。</li>
+          <li>按购买的那一期插入。不预告、不编造打开率或订阅人数。</li>
+          <li>适合要在一封信里被看到的工具、服务或课程，而不是长期首页位。</li>
+        </ul>
+        <div class="cta-row">
+          <a
+            class="btn"
+            href={newsletterPay}
+            target="_blank"
+            rel="noopener noreferrer"
+          >购买简报插页 <span class="btn-en">$99 / issue</span></a>
+        </div>
+        <p class="muted-note">
+          Stripe Checkout（CrossAgent Lab）。付款后请
+          <a href={newsletterMail}>邮件告知</a>
+          品牌名、pitch、链接，以及希望出现的期次。
+        </p>
+      </article>
+
+      <article class="panel tier-card" id="founding">
+        <p class="tier-kicker">Founding</p>
+        <h3>Founding 月赞助 <span class="tier-en">Monthly founding spot</span></h3>
+        <p class="price-line">$349 <span class="price-unit">/ 月</span></p>
+        <p class="price-sub">$349 / month · homepage bar + newsletter line</p>
+        <ul>
+          <li>首页底部赞助条：品牌名、一句 pitch（约 40 字内）、链接。</li>
+          <li>周报内一行 Sponsored by（简报开通后，随月赞助持续）。</li>
+          <li>同一时间只展示一位首页赞助方。已有在播或排队时，你的档期从上一档结束后开始。</li>
+          <li>Founding 价名额有限；满员后涨价（新档位届时公布）。适合 ERP、广告、物流、选品合规与 Agent 产品。</li>
+        </ul>
+        <div class="cta-row">
+          <a
+            class="btn"
+            href={foundingPay}
+            target="_blank"
+            rel="noopener noreferrer"
+          >立即赞助 <span class="btn-en">$349 / month</span></a>
+          <a class="btn secondary" href={foundingMail}>人民币 ¥2,500 / 先问一句</a>
+        </div>
+        <p class="muted-note">美元走 Stripe Checkout。人民币或定制档期发邮件，我们回复排期与付款方式。</p>
+      </article>
+    </div>
+
     <div class="sponsor-grid">
       <div class="panel">
-        <h3>谁来访</h3>
+        <h3>谁会看到</h3>
         <p>
           跨境卖家、中后台与广告同学，以及做 ERP / 物流 / 广告 / Agent 产品的团队。
-          他们打开本站是因为想找可复制的 Agent 用例，不是刷信息流。
+          他们打开本站是为了找可复制的做法，不是刷信息流。
         </p>
-        <p class="muted-note">我们不编造 UV / 订阅数。有真实数据后再更新媒体资料。</p>
+        <p class="en">Cross-border operators and agent builders looking for a playbook they can copy.</p>
+        <p class="muted-note">我们不编造 UV 或订阅数。有真实数据后再更新媒体资料。</p>
       </div>
       <div class="panel">
-        <h3>赞助方得到什么</h3>
+        <h3>付款之后</h3>
         <ul>
-          <li>首页底部赞助条：品牌名、一句 pitch（约 40 字内）、链接</li>
-          <li>周报内一行「Sponsored by」（简报开通后）</li>
-          <li>若已有赞助在播或排队，你的档期从上一档结束后开始</li>
+          <li>三档美元价格都在 Stripe Checkout 完成，页面上不收集卡号。</li>
+          <li>成功后邮件 <a href={`mailto:${inbox}`}>{inbox}</a>：品牌名、链接；Listing 请附用例 URL，简报请附希望的期次。</li>
+          <li>素材需真实。我们不改写用例事实，也不把摘要换成广告稿。</li>
         </ul>
       </div>
     </div>
-
-    <div class="panel">
-      <h3>Founding 月赞助</h3>
-      <p class="price-line">$349 / month　·　或邮件询 ¥2,500 / 月</p>
-      <ul>
-        <li>Founding 价有限名额；满员后涨价（档位届时公布）</li>
-        <li>适合：跨境 ERP、广告工具、物流、选品与合规、Agent / 自动化产品</li>
-      </ul>
-      <div class="cta-row">
-        <a
-          class="btn"
-          href="https://buy.stripe.com/cNi7sLeLb4lN7aO9du6AM02"
-          target="_blank"
-          rel="noopener noreferrer"
-        >立即赞助（$349/月）</a>
-        <a class="btn secondary" href="mailto:xunxing1989@gmail.com?subject=CrossAgent%20Lab%20Sponsorship%20Question">先问一句 / ¥2500</a>
-      </div>
-      <p class="muted-note">美元订阅走 Stripe Checkout。人民币或定制档期请发邮件，我们回复排期与付款方式。</p>
-    </div>
-
-    <div class="panel">
-      <h3>排队说明</h3>
-      <p>
-        同一时间只展示一位首页赞助方。若已有赞助在播或已排队，你的展示从上一档结束后开始。
-        付款成功后请邮件告知品牌名、pitch 与链接，我们排期上条。
-      </p>
-    </div>
   </section>
 </BaseLayout>
+
+<script is:inline define:vars={{ contactInbox: inbox }}>
+  (function () {
+    var params = new URLSearchParams(location.search);
+    var slug = params.get('case') || '';
+    if (!/^[a-z0-9-]{1,80}$/.test(slug)) return;
+
+    var note = document.getElementById('boost-context');
+    if (note) {
+      note.hidden = false;
+      var link = document.createElement('a');
+      link.href = '/cases/' + slug + '/';
+      link.textContent = slug;
+      note.append('正在推广此用例 / Boost this case: ');
+      note.append(link);
+      note.append('。下面的「用例推广」结账会带上这条用例标识。');
+    }
+
+    var pay = document.getElementById('listing-pay');
+    if (pay) {
+      var base = pay.getAttribute('data-base-href') || pay.href;
+      var url = new URL(base);
+      url.searchParams.set('client_reference_id', slug);
+      pay.href = url.toString();
+    }
+
+    var mail = document.getElementById('listing-mail');
+    if (mail) {
+      var body = '用例 slug: ' + slug + '\n用例链接: ' + location.origin + '/cases/' + slug + '/\n\n品牌名:\n链接:\n';
+      mail.href = 'mailto:' + contactInbox + '?subject=' + encodeURIComponent('CrossAgent Listing Boost: ' + slug) + '&body=' + encodeURIComponent(body);
+    }
+  })();
+</script>

@@ -52,4 +52,4 @@ Push 到 `main`（或手动 `workflow_dispatch`）触发 `.github/workflows/depl
 
 ## 联系
 
-毛训星 / Momo · xunxing1989@gmail.com
+毛训星 / Momo · me@maoxunxing.com
