@@ -47,6 +47,31 @@ const freshWhen = `${weekdays[latest.getUTCDay()]}, ${months[latest.getUTCMonth(
 const path = Astro.url.pathname;
 const activeCategory = categories.find((id) => path.startsWith(`/categories/${id}`)) ?? null;
 const subscribeHref = path === '/' ? '/#subscribe' : '/newsletter/#subscribe';
+const jsonLd = canonicalPath === '/'
+  ? {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Organization',
+          name: 'CrossAgent Lab',
+          url: site,
+          description,
+          email: 'xunxing1989@gmail.com',
+        },
+        {
+          '@type': 'WebSite',
+          name: 'CrossAgent Lab',
+          url: site,
+          description,
+          publisher: {
+            '@type': 'Organization',
+            name: 'CrossAgent Lab',
+            url: site,
+          },
+        },
+      ],
+    }
+  : null;
 ---
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -70,6 +95,7 @@ const subscribeHref = path === '/' ? '/#subscribe' : '/newsletter/#subscribe';
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="theme-color" content="#ffffff" />
     {noindex && <meta name="robots" content="noindex" />}
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@500;600&family=Funnel+Sans:wght@400;500;600&family=Geist+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />

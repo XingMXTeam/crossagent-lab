@@ -1,0 +1,28 @@
+# CrossAgent Lab
+
+> 别人正在用的跨境 Agent 做法。偷一个灵感。
+> Real things sellers do with AI agents. Steal an idea.
+
+CrossAgent Lab (https://crossagent.maoxunxing.com) is a public directory of cross-border AI-agent workflows: listing, ads, support, ops, and logistics for sellers on Amazon, Shopify, and similar channels. Each case is summarized in our own words from a public source, links to that source, and includes a reusable prompt. Audience: cross-border operators and people building agents for them.
+
+## Key URLs
+
+- Home: https://crossagent.maoxunxing.com/
+- Sponsor / pricing: https://crossagent.maoxunxing.com/sponsor/
+- Submit a use case: https://crossagent.maoxunxing.com/submit/
+- Cases: https://crossagent.maoxunxing.com/cases/{slug}/
+- Newsletter: https://crossagent.maoxunxing.com/newsletter/
+- About: https://crossagent.maoxunxing.com/about/
+- RSS: https://crossagent.maoxunxing.com/rss.xml
+
+## Sponsor tiers
+
+- Case / listing boost: $49 / 30 days — https://crossagent.maoxunxing.com/sponsor/#listing
+- Newsletter insert: $99 / issue — https://crossagent.maoxunxing.com/sponsor/#newsletter
+- Founding: $349 / month — https://crossagent.maoxunxing.com/sponsor/#founding
+
+Checkout is Stripe (CrossAgent Lab). After payment, email the brand name, link, and (for a boost) the case URL.
+
+## Contact
+
+xunxing1989@gmail.com

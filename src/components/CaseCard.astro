@@ -48,6 +48,9 @@ const search = `${title} ${summary} ${agents.join(' ')} ${source}`.toLowerCase()
       <div class="case-actions">
         {showPromptLink && <a class="chip-btn" href={promptHref}>查看 Prompt</a>}
         <button type="button" class="chip-btn" data-share-title={title} data-share-url={href}>分享</button>
+        {caseSlug && (
+          <a class="chip-btn" href={`/sponsor/?case=${encodeURIComponent(caseSlug)}#listing`} title="Boost this case">推广此用例</a>
+        )}
       </div>
     </div>
     {caseSlug && <VoteButton id={caseSlug} />}
