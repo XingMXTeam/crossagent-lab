@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import VoteButton from '../../components/VoteButton.astro';
+import SaveButton from '../../components/SaveButton.astro';
 import { categoryMeta } from '../../content/config';
 import { agentCode, agentColor, formatDateNice, isNew, primaryAgent } from '../../lib/agents';
 
@@ -62,6 +63,7 @@ const catCount = all.filter((c) => c.data.category === d.category).length;
         </a>
       )}
       <VoteButton id={entry.slug} variant="button" />
+      <SaveButton id={entry.slug} title={d.title} url={`/cases/${entry.slug}/`} variant="button" />
       <a class="btn secondary" href={`/sponsor/?case=${encodeURIComponent(entry.slug)}#listing`}>
         推广此用例
         <span class="btn-en">Boost this case</span>

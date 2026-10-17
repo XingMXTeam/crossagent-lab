@@ -1115,3 +1115,158 @@ a.btn, a.btn.secondary { text-decoration: none; }
   flex-shrink: 0;
 }
 .sponsor-line a:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+/* —— Save list prompt (agentusecases-style card) —— */
+.save-icon { display: block; flex-shrink: 0; }
+.save-en {
+  color: var(--faint);
+  font-weight: 400;
+}
+.chip-btn.save-btn.is-on,
+.btn.secondary.save-btn.is-on,
+button.btn.secondary.save-btn.is-on {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+.chip-btn.save-btn.is-on:hover,
+.btn.secondary.save-btn.is-on:hover {
+  border-color: var(--text);
+  color: var(--bg);
+  opacity: 1;
+}
+.save-btn.is-on .save-en,
+.save-btn.is-on .btn-en { color: inherit; opacity: 0.8; }
+.save-btn.is-on .save-icon path { fill: currentColor; }
+
+.save-prompt-anchor {
+  position: fixed;
+  z-index: 40;
+  top: max(0.75rem, env(safe-area-inset-top));
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 0 0.75rem;
+  pointer-events: none;
+}
+@media (min-width: 1024px) {
+  body:has(.shell) .save-prompt-anchor { left: var(--sidebar); }
+}
+.save-prompt {
+  pointer-events: auto;
+  width: min(42rem, 100%);
+  padding: 0.7rem 0.75rem 0.45rem;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.12),
+    0 2px 6px rgba(0, 0, 0, 0.06);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .save-prompt { animation: save-prompt-in 160ms ease-out; }
+}
+@keyframes save-prompt-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.save-prompt-main {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.save-prompt-copy {
+  flex: 1 1 14rem;
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+}
+.save-prompt-email {
+  flex: 1 1 9.5rem;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 0.85rem;
+  border: 0;
+  border-radius: 12px;
+  background: #efefef;
+  color: var(--text);
+  font-size: 16px;
+}
+.save-prompt-email::placeholder { color: #9a9a9a; }
+.save-prompt-email:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+.save-prompt-send {
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0 1rem;
+  border: 0;
+  border-radius: 12px;
+  background: #000;
+  color: #fff;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+}
+.save-prompt-send:hover { opacity: 0.9; }
+.save-prompt-send:disabled { opacity: 0.55; cursor: default; }
+.save-prompt-close {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  margin-left: auto;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #6b6b6b;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.save-prompt-close:hover { background: var(--wash); color: var(--text); }
+.save-prompt-news {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 44px;
+  margin: 0.1rem 0 0;
+  color: #3a3a3a;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.save-prompt-news input {
+  width: 1.05rem;
+  height: 1.05rem;
+  margin: 0;
+  accent-color: #111;
+}
+.save-prompt-status {
+  margin: 0 0 0.35rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--ok);
+}
+.save-prompt-status.is-err { color: var(--danger); }
+@media (max-width: 639px) {
+  .save-prompt { position: relative; padding-top: 0.55rem; }
+  .save-prompt-copy {
+    flex-basis: 100%;
+    padding-right: 2.25rem;
+  }
+  .save-prompt-close {
+    position: absolute;
+    top: 0.2rem;
+    right: 0.2rem;
+    margin-left: 0;
+  }
+  .save-prompt-email { flex: 1 1 auto; }
+}
+
