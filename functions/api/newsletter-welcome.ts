@@ -89,7 +89,7 @@ function buildText(name?: string): string {
     ...CASES.flatMap((c, i) => [`${i + 1}. ${c.title}`, `   ${c.url}`, ""]),
     `Browse more: ${SITE}/`,
     "",
-    "You are still on the mxteam list (Mailchimp). Unsubscribe anytime from weekly mail.",
+    "You're subscribed to the weekly email. Unsubscribe anytime.",
     "",
     "— CrossAgent Lab",
   ];
@@ -118,7 +118,7 @@ function buildHtml(name?: string): string {
           <p style="margin:0 0 20px;">
             <a href="${SITE}/" style="display:inline-block;background:#0b5fff;color:#fff;text-decoration:none;padding:12px 18px;border-radius:8px;font-weight:600;font-size:15px;">Browse CrossAgent Lab</a>
           </p>
-          <p style="margin:0;font-size:13px;line-height:1.5;color:#667085;">List stays on Mailchimp (mxteam · tag CrossAgent Lab). Unsubscribe anytime from weekly mail. Welcome sample sent via Resend.</p>
+          <p style="margin:0;font-size:13px;line-height:1.5;color:#667085;">You're subscribed to the weekly email. Unsubscribe anytime.</p>
         </td></tr>
       </table>
     </td></tr>
