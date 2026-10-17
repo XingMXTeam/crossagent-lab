@@ -2,6 +2,9 @@
 /**
  * Mailchimp embed → mxteam Audience + tag "CrossAgent Lab".
  * u/id from us5; tags=4555940 applies CrossAgent Lab.
+ * On submit, also POSTs email to /api/newsletter-welcome (Resend sample)
+ * then continues the normal Mailchimp form POST. Welcome failures never
+ * block list signup.
  */
 interface Props {
   variant?: 'full' | 'compact';
@@ -18,6 +21,7 @@ const action =
   name="mc-embedded-subscribe-form"
   class={variant === 'compact' ? 'mc-form mc-form-compact' : 'mc-form form-stack'}
   accept-charset="UTF-8"
+  data-welcome-api="/api/newsletter-welcome"
 >
   {variant === 'full' ? (
     <>
@@ -79,3 +83,46 @@ const action =
     </div>
   )}
 </form>
+
+<script is:inline define:vars={{ formId }}>
+  (function () {
+    var form = document.getElementById(formId);
+    if (!form || form.dataset.welcomeBound) return;
+    form.dataset.welcomeBound = '1';
+    form.addEventListener('submit', function (ev) {
+      if (form.dataset.welcomeDone === '1') return;
+      var api = form.getAttribute('data-welcome-api');
+      if (!api) return;
+      var emailEl = form.querySelector('input[name="EMAIL"]');
+      var nameEl = form.querySelector('input[name="FNAME"]');
+      var email = emailEl && emailEl.value ? String(emailEl.value).trim() : '';
+      if (!email) return;
+      ev.preventDefault();
+      var payload = { email: email };
+      if (nameEl && nameEl.value) payload.name = String(nameEl.value).trim();
+      var finish = function () {
+        form.dataset.welcomeDone = '1';
+        if (typeof form.requestSubmit === 'function') form.requestSubmit();
+        else form.submit();
+      };
+      var ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      var timer = setTimeout(function () {
+        if (ctrl) ctrl.abort();
+        finish();
+      }, 2500);
+      fetch(api, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify(payload),
+        credentials: 'same-origin',
+        signal: ctrl ? ctrl.signal : undefined,
+        keepalive: true,
+      })
+        .catch(function () {})
+        .then(function () {
+          clearTimeout(timer);
+          finish();
+        });
+    });
+  })();
+</script>

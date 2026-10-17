@@ -14,3 +14,8 @@
 # Counts are one JSON object stored at key "counts".
 name = "crossagent-lab"
 compatibility_date = "2026-10-14"
+
+# Welcome sample (Resend) — functions/api/newsletter-welcome.ts
+# Pages → Settings → Variables and Secrets (Production + Preview):
+#   RESEND_API_KEY = <Resend API key for maoxunxing.com>
+# Optional: RESEND_FROM = CrossAgent Lab <me@maoxunxing.com>
