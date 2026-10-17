@@ -26,6 +26,7 @@ export const sourceLabels = [
   '博客',
   'Reddit',
   'X',
+  'Hacker News',
   'GitHub',
   'n8n',
   '官网',
