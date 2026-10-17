@@ -27,9 +27,10 @@
 - Audience：mxteam（`u=c3b0164459768548b7bef380c` / `id=1103acd526`）
 - Tag：CrossAgent Lab（`tags=4555940`）
 - 表单：`/newsletter/#subscribe` 完整表单；首页 compact 表单（仍 POST 到 Mailchimp）
-- 欢迎样刊：`POST /api/newsletter-welcome` → Resend（`from` 默认 `CrossAgent Lab <me@maoxunxing.com>`）
+- 欢迎样刊：`POST /api/newsletter-welcome` → Resend（`from` 默认 `CrossAgent Lab <me@maoxunxing.com>`）。发送成功后把订阅者 upsert 进 Resend segment（`POST /contacts`，`segments: [{ id }]`，`unsubscribed: false`）。联系人写入失败不影响 `{ ok: true, id }`，响应带 `contactOk`
 - Smoke：`GET /api/newsletter-welcome` → `{ ok, configured, from }`
 - Pages 密钥：**`RESEND_API_KEY`**（Production + Preview）；可选 `RESEND_FROM`
+- 可选 **`RESEND_SEGMENT_ID`**（Production + Preview）。未设置时代码默认 `b5d0de18-840a-4741-a6e1-40a3375dfe91`（CrossAgent Lab）。合并后可写入该值以便轮换；不写也能用默认值
 - Mailchimp Journey 保持 Draft；**不升级付费**
 
 ## UI（对齐 agentusecases.ai）

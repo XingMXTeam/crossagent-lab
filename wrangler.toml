@@ -19,3 +19,6 @@ compatibility_date = "2026-10-14"
 # Pages → Settings → Variables and Secrets (Production + Preview):
 #   RESEND_API_KEY = <Resend API key for maoxunxing.com>
 # Optional: RESEND_FROM = CrossAgent Lab <me@maoxunxing.com>
+# Optional: RESEND_SEGMENT_ID = b5d0de18-840a-4741-a6e1-40a3375dfe91
+#   CrossAgent Lab segment. Set on Pages (Production + Preview) to rotate
+#   without a code change. Unset uses that id as the baked default.
