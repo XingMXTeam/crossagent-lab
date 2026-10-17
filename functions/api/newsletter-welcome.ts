@@ -21,6 +21,10 @@
  * Contact in that segment (unsubscribed: false). Contact failures are logged
  * and returned as contactOk: false; they do not fail the welcome response.
  * Mailchimp list collection stays on the embed form. Same-origin POST only.
+ *
+ * deliverNewsletterWelcome() is the shared dual-write (welcome email +
+ * segment upsert). POST /api/send-saved-list calls it when the reader checks
+ * 「同时订阅周刊」— no second Mailchimp path.
  */
 
 interface WelcomeEnv {
@@ -247,6 +251,92 @@ async function upsertResendContact(opts: {
   }
 }
 
+export type NewsletterWelcomeResult =
+  | { ok: true; id: string | null; contactOk: boolean }
+  | { ok: false; error: "resend_unconfigured" | "resend_unavailable"; httpStatus: 503 }
+  | {
+      ok: false;
+      error: "resend_failed";
+      httpStatus: 502;
+      resendStatus: number;
+      detail: string;
+    };
+
+/** Welcome email + Resend segment upsert. Does not check Origin or parse a body. */
+export async function deliverNewsletterWelcome(opts: {
+  env: WelcomeEnv;
+  email: string;
+  name?: string;
+  waitUntil?: (promise: Promise<unknown>) => void;
+}): Promise<NewsletterWelcomeResult> {
+  const apiKey = opts.env.RESEND_API_KEY;
+  if (!apiKey) return { ok: false, error: "resend_unconfigured", httpStatus: 503 };
+
+  const from = (opts.env.RESEND_FROM || DEFAULT_FROM).trim();
+  const text = buildText(opts.name);
+  const html = buildHtml(opts.name);
+
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${apiKey}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        from,
+        to: [opts.email],
+        subject: SUBJECT,
+        text,
+        html,
+        tags: [
+          { name: "type", value: "welcome-sample" },
+          { name: "site", value: "crossagent-lab" },
+        ],
+      }),
+    });
+    const payload = (await res.json().catch(() => ({}))) as {
+      id?: string;
+      message?: string;
+      name?: string;
+    };
+    if (!res.ok) {
+      return {
+        ok: false,
+        error: "resend_failed",
+        httpStatus: 502,
+        resendStatus: res.status,
+        detail: payload.message || payload.name || "send_failed",
+      };
+    }
+
+    const emailId = payload.id || null;
+    // Contact write must not change the welcome status. waitUntil keeps the
+    // upsert alive if the Mailchimp form aborts this request after its timeout.
+    let contactOk = false;
+    try {
+      const contactTask = upsertResendContact({
+        apiKey,
+        email: opts.email,
+        firstName: opts.name,
+        segmentId: segmentIdFrom(opts.env),
+      });
+      if (typeof opts.waitUntil === "function") {
+        opts.waitUntil(contactTask);
+      }
+      contactOk = await contactTask;
+    } catch (err) {
+      console.error(
+        "resend_contact_unavailable",
+        err instanceof Error ? err.message : "fetch_failed",
+      );
+    }
+    return { ok: true, id: emailId, contactOk };
+  } catch {
+    return { ok: false, error: "resend_unavailable", httpStatus: 503 };
+  }
+}
+
 export const onRequestGet = async (context: WelcomeContext): Promise<Response> => {
   const from = (context.env.RESEND_FROM || DEFAULT_FROM).trim();
   return json({
@@ -295,68 +385,24 @@ export const onRequestPost = async (context: WelcomeContext): Promise<Response> 
     if (n) name = n;
   }
 
-  const from = (context.env.RESEND_FROM || DEFAULT_FROM).trim();
-  const text = buildText(name);
-  const html = buildHtml(name);
-
-  try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        authorization: `Bearer ${apiKey}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        from,
-        to: [email],
-        subject: SUBJECT,
-        text,
-        html,
-        tags: [
-          { name: "type", value: "welcome-sample" },
-          { name: "site", value: "crossagent-lab" },
-        ],
-      }),
-    });
-    const payload = (await res.json().catch(() => ({}))) as {
-      id?: string;
-      message?: string;
-      name?: string;
-    };
-    if (!res.ok) {
+  const result = await deliverNewsletterWelcome({
+    env: context.env,
+    email,
+    name,
+    waitUntil: context.waitUntil,
+  });
+  if (!result.ok) {
+    if (result.error === "resend_failed") {
       return json(
         {
           error: "resend_failed",
-          status: res.status,
-          detail: payload.message || payload.name || "send_failed",
+          status: result.resendStatus,
+          detail: result.detail,
         },
         502,
       );
     }
-
-    const emailId = payload.id || null;
-    // Contact write must not change the welcome status. waitUntil keeps the
-    // upsert alive if the Mailchimp form aborts this request after its timeout.
-    let contactOk = false;
-    try {
-      const contactTask = upsertResendContact({
-        apiKey,
-        email,
-        firstName: name,
-        segmentId: segmentIdFrom(context.env),
-      });
-      if (typeof context.waitUntil === "function") {
-        context.waitUntil(contactTask);
-      }
-      contactOk = await contactTask;
-    } catch (err) {
-      console.error(
-        "resend_contact_unavailable",
-        err instanceof Error ? err.message : "fetch_failed",
-      );
-    }
-    return json({ ok: true, id: emailId, contactOk });
-  } catch {
-    return json({ error: "resend_unavailable" }, 503);
+    return json({ error: result.error }, result.httpStatus);
   }
+  return json({ ok: true, id: result.id, contactOk: result.contactOk });
 };

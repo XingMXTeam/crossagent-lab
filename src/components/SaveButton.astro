@@ -1,0 +1,29 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  url: string;
+  variant?: 'chip' | 'button';
+}
+const { id, title, url, variant = 'chip' } = Astro.props;
+const cls = variant === 'button' ? 'btn secondary save-btn' : 'chip-btn save-btn';
+---
+<button
+  type="button"
+  class={cls}
+  data-save={id}
+  data-save-title={title}
+  data-save-url={url}
+  aria-pressed="false"
+  aria-label={`收藏：${title}`}
+>
+  <svg class="save-icon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+    <path d="M3.75 2.75h8.5a.5.5 0 0 1 .5.5v10.4L8.4 11.1a.8.8 0 0 0-.8 0L3.25 13.65V3.25a.5.5 0 0 1 .5-.5Z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"></path>
+  </svg>
+  <span data-save-label>收藏</span>
+  {variant === 'button' ? (
+    <span class="btn-en" data-save-en>Save</span>
+  ) : (
+    <span class="save-en" data-save-en>Save</span>
+  )}
+</button>
