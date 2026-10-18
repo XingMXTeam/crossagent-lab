@@ -87,9 +87,15 @@ jobs:
               url = f"{origin}/{slug}/"
               if not has(url):
                   missing.append(url)
-          guide = f"{origin}/guides/amazon-seller-mcp-cross-border/"
-          if not has(guide):
-              missing.append(guide)
+          for guide in (
+              f"{origin}/guides/amazon-seller-mcp-cross-border/",
+              f"{origin}/guides/shopify-chatgpt-cn-self-check-10/",
+          ):
+              if not has(guide):
+                  missing.append(guide)
+          case = f"{origin}/cases/shop-mcp-visibility-tools/"
+          if not has(case):
+              missing.append(case)
           banned = [u for u in locs if "/want/" in u or "/api/" in u or u.endswith("/rss.xml")]
           if missing or banned:
               raise SystemExit(f"sitemap check failed missing={missing} banned={banned}")
