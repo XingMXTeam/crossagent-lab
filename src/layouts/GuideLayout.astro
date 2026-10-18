@@ -1,18 +1,28 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 
-interface Props {
-  title: string;
+interface Frontmatter {
+  title?: string;
   description?: string;
   canonicalPath?: string;
   lang?: string;
 }
-const {
-  title,
-  description,
-  canonicalPath = '/guides/amazon-seller-mcp-cross-border/',
-  lang = 'en',
-} = Astro.props;
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalPath?: string;
+  lang?: string;
+  frontmatter?: Frontmatter;
+}
+
+// Markdown pages pass fields on `frontmatter`, not as top-level props.
+const fm = Astro.props.frontmatter ?? {};
+const title = Astro.props.title ?? fm.title ?? 'Guide';
+const description = Astro.props.description ?? fm.description;
+const canonicalPath =
+  Astro.props.canonicalPath ?? fm.canonicalPath ?? '/guides/amazon-seller-mcp-cross-border/';
+const lang = Astro.props.lang ?? fm.lang ?? 'en';
 ---
 <BaseLayout title={title} description={description} canonicalPath={canonicalPath} lang={lang}>
   <article class="section wrap prose guide">
