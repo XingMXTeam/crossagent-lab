@@ -36,6 +36,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       本站没有账号登录；为统计基础访问量接入了 Cloudflare Web Analytics（仅页面浏览等聚合指标），未接入广告追踪脚本。
       周报订阅经 Mailchimp 处理邮箱。
       卡片和详情上的「我想要这个」只切换喜欢并显示公开计数，不收集邮箱。
+      「收藏」只存在这台浏览器里。点「发送清单」时，才把你填写的邮箱和当前收藏的标题、链接用 Resend 发给你自己；勾选「同时订阅周刊」会走与简报页相同的欢迎信和 Resend 联系人分段，不另提交 Mailchimp。
       直接打开 <a href="/want/">/want/</a> 仍会看到旧的站内表单（经
       <a href="https://formsubmit.co/" target="_blank" rel="noopener noreferrer">FormSubmit</a>
       发往 <a href="mailto:me@maoxunxing.com">me@maoxunxing.com</a>）；卡片和详情不再进入该页。

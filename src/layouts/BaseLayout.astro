@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { getCollection } from 'astro:content';
 import SponsorBar from '../components/SponsorBar.astro';
+import SaveListPrompt from '../components/SaveListPrompt.astro';
 import AgentChips from '../components/AgentChips.astro';
 import { categories, categoryMeta } from '../content/config';
 import { formatDateNice, isNew } from '../lib/agents';
@@ -224,6 +225,7 @@ const jsonLd = canonicalPath === '/'
       </div>
     )}
     <SponsorBar />
+    <SaveListPrompt />
     <script is:inline>
       document.querySelectorAll('[data-share-title]').forEach((btn) => {
         btn.addEventListener('click', async () => {
