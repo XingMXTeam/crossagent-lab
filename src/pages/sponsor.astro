@@ -11,7 +11,7 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
 ---
 <BaseLayout
   title="赞助 — CrossAgent Lab"
-  description="CrossAgent Lab 赞助：用例推广 $49/30天，简报插页 $99/期，Founding $349/月。"
+  description="CrossAgent Lab 赞助：用例推广 $49/30天，简报插页 $99/期，Founding $349/月。流量未稳不报虚数；用例排序不出售。"
   canonicalPath="/sponsor/"
 >
   <section class="hero-simple wrap">
@@ -20,6 +20,10 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
       三条付费档位，面向主动来找「跨境 Agent 怎么用」的人：用例推广、简报插页、Founding 月赞助。
     </p>
     <p class="en">Three paid options — case boost, one newsletter insert, or a Founding monthly spot.</p>
+    <p class="honest-strip panel">
+      <strong>诚实页。</strong>流量尚未稳定，我们<strong>不</strong>公布虚荣 UV／打开率。用例自然排序与编辑位<strong>不出售</strong>——付费只买标注为赞助的位置。
+      <span class="en">Honest page: traffic is not stable yet, so we do not publish vanity numbers. Organic case ranking and editorial placement are not for sale — paid slots are labeled as sponsored.</span>
+    </p>
   </section>
 
   <section class="section wrap">
@@ -27,15 +31,15 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
 
     <div class="tier-grid">
       <article class="panel tier-card" id="listing">
-        <p class="tier-kicker">Listing</p>
+        <p class="tier-kicker">Boost · $49</p>
         <h3>用例推广 <span class="tier-en">Case / listing boost</span></h3>
         <p class="price-line">$49 <span class="price-unit">/ 30 天</span></p>
-        <p class="price-sub">$49 / 30 days · case placement or boost</p>
+        <p class="price-sub">$49 / 30 days · labeled boost on one case</p>
         <ul>
-          <li>30 天内把一条跨境 Agent 用例放到更靠前、更容易被打开的位置。</li>
+          <li>30 天内把一条跨境 Agent 用例放到更靠前、更容易被打开的<strong>赞助位</strong>。</li>
           <li>可以是站内已有用例，或你提交并通过审的公开来源用例。</li>
           <li>展示品牌名与链接。用例正文仍是本站摘要，不改成软文，不编造数据。</li>
-          <li>从用例卡片或详情点「推广此用例」，会带上那条用例。</li>
+          <li>从用例卡片或详情点「推广此用例」，结账会带上那条用例。</li>
         </ul>
         <div class="cta-row">
           <a
@@ -44,7 +48,7 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
             href={listingPay}
             data-base-href={listingPay}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener noreferrer sponsored"
           >购买用例推广 <span class="btn-en">$49 / 30 days</span></a>
         </div>
         <p class="muted-note">
@@ -55,14 +59,14 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
       </article>
 
       <article class="panel tier-card" id="newsletter">
-        <p class="tier-kicker">Newsletter</p>
+        <p class="tier-kicker">Newsletter · $99</p>
         <h3>简报插页 <span class="tier-en">Newsletter insert</span></h3>
         <p class="price-line">$99 <span class="price-unit">/ 期</span></p>
-        <p class="price-sub">$99 / issue · one newsletter slot</p>
+        <p class="price-sub">$99 / issue · one labeled newsletter slot</p>
         <ul>
           <li>一期周报里的一个赞助插槽：品牌名、一句 pitch（约 40 字）、一个链接。</li>
           <li>读者是主动订阅「每周跨境 Agent 精选」的人，不是信息流流量。</li>
-          <li>按购买的那一期插入。不预告、不编造打开率或订阅人数。</li>
+          <li>按购买的那一期插入。<strong>不</strong>预告、不编造打开率或订阅人数。</li>
           <li>适合要在一封信里被看到的工具、服务或课程，而不是长期首页位。</li>
         </ul>
         <div class="cta-row">
@@ -70,7 +74,7 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
             class="btn"
             href={newsletterPay}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener noreferrer sponsored"
           >购买简报插页 <span class="btn-en">$99 / issue</span></a>
         </div>
         <p class="muted-note">
@@ -81,7 +85,7 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
       </article>
 
       <article class="panel tier-card" id="founding">
-        <p class="tier-kicker">Founding</p>
+        <p class="tier-kicker">Founding · $349</p>
         <h3>Founding 月赞助 <span class="tier-en">Monthly founding spot</span></h3>
         <p class="price-line">$349 <span class="price-unit">/ 月</span></p>
         <p class="price-sub">$349 / month · homepage bar + newsletter line</p>
@@ -89,14 +93,14 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
           <li>首页底部赞助条：品牌名、一句 pitch（约 40 字内）、链接。</li>
           <li>周报内一行 Sponsored by（简报开通后，随月赞助持续）。</li>
           <li>同一时间只展示一位首页赞助方。已有在播或排队时，你的档期从上一档结束后开始。</li>
-          <li>Founding 价名额有限；满员后涨价（新档位届时公布）。适合 ERP、广告、物流、选品合规与 Agent 产品。</li>
+          <li>早期赞助启动价；名额有限，满员后涨价（新档位届时公布）。适合 ERP、广告、物流、选品合规与 Agent 产品。</li>
         </ul>
         <div class="cta-row">
           <a
             class="btn"
             href={foundingPay}
             target="_blank"
-            rel="noopener noreferrer"
+            rel="noopener noreferrer sponsored"
           >立即赞助 <span class="btn-en">$349 / month</span></a>
           <a class="btn secondary" href={foundingMail}>人民币 ¥2,500 / 先问一句</a>
         </div>
@@ -106,16 +110,22 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
 
     <div class="sponsor-grid">
       <div class="panel">
-        <h3>谁会看到</h3>
+        <h3>钱买不到什么 <span class="tier-en">What money cannot buy</span></h3>
+        <ul>
+          <li><strong>用例自然排序不出售。</strong>编辑位、对比文、指南正文的先后顺序不因付款改变。</li>
+          <li><strong>不卖「已验证」徽章，不卖自然排名。</strong>付费位一律标 Sponsored／推广。</li>
+          <li><strong>流量未稳，不报虚数。</strong>有稳定、可复核数据后再更新媒体资料；现在问我们，只给真实后台数字（若有）。</li>
+        </ul>
+        <p class="en muted-note">Organic case order, comparisons, and guides are never sold. Paid slots are labeled. We do not invent UV or open rates.</p>
+      </div>
+      <div class="panel">
+        <h3>谁会看到 <span class="tier-en">Who sees it</span></h3>
         <p>
           跨境卖家、中后台与广告同学，以及做 ERP / 物流 / 广告 / Agent 产品的团队。
           他们打开本站是为了找可复制的做法，不是刷信息流。
         </p>
         <p class="en">Cross-border operators and agent builders looking for a playbook they can copy.</p>
-        <p class="muted-note">我们不编造 UV 或订阅数。有真实数据后再更新媒体资料。</p>
-      </div>
-      <div class="panel">
-        <h3>付款之后</h3>
+        <h3 style="margin-top:1.25rem">付款之后 <span class="tier-en">After you pay</span></h3>
         <ul>
           <li>三档美元价格都在 Stripe Checkout 完成，页面上不收集卡号。</li>
           <li>成功后邮件 <a href={`mailto:${inbox}`}>{inbox}</a>：品牌名、链接；Listing 请附用例 URL，简报请附希望的期次。</li>

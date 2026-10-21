@@ -998,6 +998,17 @@ a.btn.secondary, button.btn.secondary { color: var(--muted); }
 }
 .tier-card .cta-row .btn { width: 100%; }
 .boost-context { margin-top: 0; }
+.honest-strip {
+  margin-top: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+.honest-strip .en {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--faint);
+  font-size: 0.85rem;
+}
 .sponsor-grid { display: grid; gap: 1rem; }
 @media (min-width: 640px) { .sponsor-grid { grid-template-columns: 1fr 1fr; } }
 @media (min-width: 900px) {
