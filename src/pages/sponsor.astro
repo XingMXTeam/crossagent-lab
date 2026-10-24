@@ -14,169 +14,116 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
   description="CrossAgent Lab 赞助：用例推广 $49/30天，简报插页 $99/期，Founding $349/月。流量未稳不报虚数；用例排序不出售。"
   canonicalPath="/sponsor/"
 >
-  <section class="hero-simple wrap">
+  <section class="hero-simple sponsor-hero wrap">
     <h1>赞助 CrossAgent Lab</h1>
-    <p class="lead">
-      三条付费档位，面向主动来找「跨境 Agent 怎么用」的人：用例推广、简报插页、Founding 月赞助。
-    </p>
-    <p class="en">Three paid options — case boost, one newsletter insert, or a Founding monthly spot.</p>
     <p class="honest-strip panel">
-      <strong>诚实页。</strong>流量尚未稳定，我们<strong>不</strong>公布虚荣 UV／打开率。用例自然排序与编辑位<strong>不出售</strong>——付费只买标注为赞助的位置。
-      <span class="en">Honest page: traffic is not stable yet, so we do not publish vanity numbers. Organic case ranking and editorial placement are not for sale — paid slots are labeled as sponsored.</span>
+      <strong>诚实页。</strong>流量尚未稳定，不公布 UV 或打开率。自然排序与编辑位不出售。
+      <span class="en">No vanity UV or open rate. Organic rank and editorial slots are not for sale.</span>
     </p>
   </section>
 
-  <section class="section wrap">
+  <section class="section sponsor-main wrap">
     <p id="boost-context" class="panel boost-context" hidden></p>
 
-    <!-- 买点对照：10 秒看清 $49 / $99 / $349 各买到什么 -->
-    <div class="panel" style="margin-bottom:1.5rem">
-      <h2 style="margin-top:0">一眼看懂：付钱买到什么 <span class="tier-en">What you get</span></h2>
-      <div style="overflow-x:auto">
-        <table class="buy-points-table" style="width:100%;border-collapse:collapse;font-size:0.95rem">
+    <article class="panel tier-card sponsor-primary" id="listing">
+      <h3>Boost · 用例推广</h3>
+      <p class="price-line">$49 <span class="price-unit">/ 30 天</span></p>
+      <div class="cta-row">
+        <a
+          id="listing-pay"
+          class="btn"
+          href={listingPay}
+          data-base-href={listingPay}
+          target="_blank"
+          rel="noopener noreferrer sponsored"
+        >购买用例推广</a>
+      </div>
+      <p class="muted-note">从用例页「推广此用例」进入，结账带上该条。</p>
+    </article>
+
+    <div class="panel buy-points">
+      <h2 id="buy-points-heading">买到 / 买不到 / 付完</h2>
+      <div class="buy-points-scroll" tabindex="0" aria-labelledby="buy-points-heading">
+        <table class="buy-points-table">
+          <caption class="sr-only">Boost、简报、Founding：买到、买不到、付完</caption>
           <thead>
             <tr>
-              <th style="text-align:left;padding:0.5rem;border-bottom:1px solid var(--border, #ddd)"></th>
-              <th style="text-align:left;padding:0.5rem;border-bottom:1px solid var(--border, #ddd)">Boost $49 / 30d</th>
-              <th style="text-align:left;padding:0.5rem;border-bottom:1px solid var(--border, #ddd)">Newsletter $99 / 期</th>
-              <th style="text-align:left;padding:0.5rem;border-bottom:1px solid var(--border, #ddd)">Founding $349 / 月</th>
+              <th scope="col"><span class="sr-only">项目</span></th>
+              <th scope="col">Boost <span class="buy-unit">$49 / 30 天</span></th>
+              <th scope="col">简报 <span class="buy-unit">$99 / 期</span></th>
+              <th scope="col">Founding <span class="buy-unit">$349 / 月</span></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style="padding:0.5rem;border-bottom:1px solid var(--border, #eee)"><strong>买到</strong> <span class="en">You get</span></td>
-              <td style="padding:0.5rem;border-bottom:1px solid var(--border, #eee)">一条用例的<strong>赞助推广位</strong>（30 天）；卡片／详情标 Sponsored；展示品牌名 + 链接</td>
-              <td style="padding:0.5rem;border-bottom:1px solid var(--border, #eee)">一期周报里<strong>一个赞助插槽</strong>：品牌名 + 约 40 字 pitch + 一个链接</td>
-              <td style="padding:0.5rem;border-bottom:1px solid var(--border, #eee)">首页底部<strong>赞助条</strong>（品牌名 + 约 40 字 pitch + 链接）+ 周报内一行 Sponsored by（简报开通后，随月持续）</td>
+              <th scope="row">买到</th>
+              <td>一条用例的赞助位，30 天（已有用例，或审过的公开来源）。标 Sponsored，展示品牌名和链接。</td>
+              <td>一期周报一个赞助插槽：品牌名、约 40 字 pitch、一个链接。</td>
+              <td>首页底部赞助条（品牌名、约 40 字 pitch、链接），以及周报一行 Sponsored by（简报开通后，按月持续）。</td>
             </tr>
             <tr>
-              <td style="padding:0.5rem;border-bottom:1px solid var(--border, #eee)"><strong>买不到</strong> <span class="en">Not included</span></td>
-              <td style="padding:0.5rem;border-bottom:1px solid var(--border, #eee)">自然排序、编辑位、「已验证」徽章、保证曝光量／UV</td>
-              <td style="padding:0.5rem;border-bottom:1px solid var(--border, #eee)">打开率／订阅人数承诺、长期首页位、多期打包（一期一买）</td>
-              <td style="padding:0.5rem;border-bottom:1px solid var(--border, #eee)">同时多位首页赞助（同档只一位）、自然排序、虚荣流量数字</td>
+              <th scope="row">买不到</th>
+              <td>自然排序、编辑位、「已验证」徽章、曝光或 UV。</td>
+              <td>打开率、订阅人数、首页位、多期打包。</td>
+              <td>同时多位首页赞助、自然排序、流量数字。</td>
             </tr>
             <tr>
-              <td style="padding:0.5rem"><strong>付完怎么交付</strong> <span class="en">After pay</span></td>
-              <td style="padding:0.5rem">邮件 {inbox}：品牌名、链接、用例 URL → 我们排期上线并标 Sponsored</td>
-              <td style="padding:0.5rem">邮件 {inbox}：品牌名、pitch、链接、希望期次 → 排入该期周报</td>
-              <td style="padding:0.5rem">邮件 {inbox}：品牌名、pitch、链接 → 确认档期后上首页条；有人在播则从上一档结束后开始</td>
+              <th scope="row">付完</th>
+              <td>邮件 {inbox}：品牌名、链接、用例 URL。排期上线并标 Sponsored。</td>
+              <td>邮件 {inbox}：品牌名、pitch、链接、希望期次。排入该期。</td>
+              <td>邮件 {inbox}：品牌名、pitch、链接。确认档期后上首页；有人在播则从上一档结束后开始。</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <p class="en muted-note" style="margin-bottom:0">
-        Stripe Checkout for USD. After payment, email assets to {inbox}. We schedule the labeled slot — we do not rewrite case facts into ad copy, and we do not invent traffic numbers.
-      </p>
     </div>
 
-    <div class="tier-grid">
-      <article class="panel tier-card" id="listing">
-        <p class="tier-kicker">Boost · $49</p>
-        <h3>用例推广 <span class="tier-en">Case / listing boost</span></h3>
-        <p class="price-line">$49 <span class="price-unit">/ 30 天</span></p>
-        <p class="price-sub">$49 / 30 days · labeled boost on one case</p>
-        <p class="buy-got"><strong>你付钱买到：</strong>30 天赞助推广位（一条用例）+ 品牌名／链接展示 + Sponsored 标注。</p>
-        <p class="buy-not en muted-note">Not included: organic rank, editorial placement, verified badge, guaranteed UV.</p>
-        <ul>
-          <li>30 天内把一条跨境 Agent 用例放到更靠前、更容易被打开的<strong>赞助位</strong>。</li>
-          <li>可以是站内已有用例，或你提交并通过审的公开来源用例。</li>
-          <li>展示品牌名与链接。用例正文仍是本站摘要，不改成软文，不编造数据。</li>
-          <li>从用例卡片或详情点「推广此用例」，结账会带上那条用例。</li>
-        </ul>
-        <div class="cta-row">
-          <a
-            id="listing-pay"
-            class="btn"
-            href={listingPay}
-            data-base-href={listingPay}
-            target="_blank"
-            rel="noopener noreferrer sponsored"
-          >购买用例推广 <span class="btn-en">$49 / 30 days</span></a>
-        </div>
-        <p class="muted-note">
-          Stripe Checkout（CrossAgent Lab）。付款后请
-          <a id="listing-mail" href={listingMail}>邮件告知</a>
-          品牌名、链接和要推广的用例 URL → 我们排期上线并标 Sponsored。
-        </p>
-      </article>
-
+    <div class="sponsor-grid">
       <article class="panel tier-card" id="newsletter">
-        <p class="tier-kicker">Newsletter · $99</p>
-        <h3>简报插页 <span class="tier-en">Newsletter insert</span></h3>
+        <h3>简报插页</h3>
         <p class="price-line">$99 <span class="price-unit">/ 期</span></p>
-        <p class="price-sub">$99 / issue · one labeled newsletter slot</p>
-        <p class="buy-got"><strong>你付钱买到：</strong>一期周报里的一个赞助插槽（品牌名 + 约 40 字 pitch + 一个链接）。</p>
-        <p class="buy-not en muted-note">Not included: open-rate / list-size promises, homepage bar, multi-issue bundle.</p>
-        <ul>
-          <li>一期周报里的一个赞助插槽：品牌名、一句 pitch（约 40 字）、一个链接。</li>
-          <li>读者是主动订阅「每周跨境 Agent 精选」的人，不是信息流流量。</li>
-          <li>按购买的那一期插入。<strong>不</strong>预告、不编造打开率或订阅人数。</li>
-          <li>适合要在一封信里被看到的工具、服务或课程，而不是长期首页位。</li>
-        </ul>
         <div class="cta-row">
           <a
             class="btn"
             href={newsletterPay}
             target="_blank"
             rel="noopener noreferrer sponsored"
-          >购买简报插页 <span class="btn-en">$99 / issue</span></a>
+          >购买简报插页</a>
         </div>
-        <p class="muted-note">
-          Stripe Checkout（CrossAgent Lab）。付款后请
-          <a href={newsletterMail}>邮件告知</a>
-          品牌名、pitch、链接，以及希望出现的期次 → 我们排入该期。
-        </p>
       </article>
 
       <article class="panel tier-card" id="founding">
-        <p class="tier-kicker">Founding · $349</p>
-        <h3>Founding 月赞助 <span class="tier-en">Monthly founding spot</span></h3>
+        <h3>Founding 月赞助</h3>
         <p class="price-line">$349 <span class="price-unit">/ 月</span></p>
-        <p class="price-sub">$349 / month · homepage bar + newsletter line</p>
-        <p class="buy-got"><strong>你付钱买到：</strong>首页底部赞助条 + 周报内一行 Sponsored by（简报开通后，随月持续）。同档同时只展示一位。</p>
-        <p class="buy-not en muted-note">Not included: shared homepage slot with another founder, organic rank, vanity UV.</p>
-        <ul>
-          <li>首页底部赞助条：品牌名、一句 pitch（约 40 字内）、链接。</li>
-          <li>周报内一行 Sponsored by（简报开通后，随月赞助持续）。</li>
-          <li>同一时间只展示一位首页赞助方。已有在播或排队时，你的档期从上一档结束后开始。</li>
-          <li>早期赞助启动价；名额有限，满员后涨价（新档位届时公布）。适合 ERP、广告、物流、选品合规与 Agent 产品。</li>
-        </ul>
         <div class="cta-row">
           <a
             class="btn"
             href={foundingPay}
             target="_blank"
             rel="noopener noreferrer sponsored"
-          >立即赞助 <span class="btn-en">$349 / month</span></a>
-          <a class="btn secondary" href={foundingMail}>人民币 ¥2,500 / 先问一句</a>
+          >立即赞助</a>
+          <a class="btn secondary" href={foundingMail}>邮件询 ¥2,500</a>
         </div>
-        <p class="muted-note">美元走 Stripe Checkout。人民币或定制档期发邮件，我们回复排期与付款方式。付完后邮件素材 → 确认档期 → 上首页条并标 Sponsored。</p>
+        <p class="muted-note">早期启动价，满员后涨价。</p>
       </article>
     </div>
 
     <div class="sponsor-grid">
       <div class="panel">
-        <h3>钱买不到什么 <span class="tier-en">What money cannot buy</span></h3>
-        <ul>
-          <li><strong>用例自然排序不出售。</strong>编辑位、对比文、指南正文的先后顺序不因付款改变。</li>
-          <li><strong>不卖「已验证」徽章，不卖自然排名。</strong>付费位一律标 Sponsored／推广。</li>
-          <li><strong>流量未稳，不报虚数。</strong>有稳定、可复核数据后再更新媒体资料；现在问我们，只给真实后台数字（若有）。</li>
-        </ul>
-        <p class="en muted-note">Organic case order, comparisons, and guides are never sold. Paid slots are labeled. We do not invent UV or open rates.</p>
+        <h3>买不到</h3>
+        <p>「已验证」徽章不出售。付费位标 Sponsored。</p>
       </div>
       <div class="panel">
-        <h3>谁会看到 <span class="tier-en">Who sees it</span></h3>
-        <p>
-          跨境卖家、中后台与广告同学，以及做 ERP / 物流 / 广告 / Agent 产品的团队。
-          他们打开本站是为了找可复制的做法，不是刷信息流。
-        </p>
-        <p class="en">Cross-border operators and agent builders looking for a playbook they can copy.</p>
-        <h3 style="margin-top:1.25rem">付款之后 <span class="tier-en">After you pay</span></h3>
-        <ol>
-          <li><strong>付：</strong>三档美元价格都在 Stripe Checkout 完成，页面上不收集卡号。</li>
-          <li><strong>交素材：</strong>成功后邮件 <a href={`mailto:${inbox}`}>{inbox}</a>：品牌名、链接；Listing 请附用例 URL，简报请附希望的期次；Founding 请附 pitch。</li>
-          <li><strong>排期上线：</strong>我们确认素材真实后排期，付费位一律标 Sponsored／推广。</li>
-          <li>素材需真实。我们不改写用例事实，也不把摘要换成广告稿。</li>
+        <h3>付完</h3>
+        <ol class="sponsor-steps">
+          <li>在 Stripe 付美元。本页不收集卡号。</li>
+          <li>
+            按上表发到 {inbox}：
+            <a id="listing-mail" href={listingMail}>Boost</a>、
+            <a href={newsletterMail}>简报</a>、
+            <a href={foundingMail}>Founding</a>。
+          </li>
+          <li>核对后按档期上线，标 Sponsored。不改写用例事实。</li>
         </ol>
       </div>
     </div>
