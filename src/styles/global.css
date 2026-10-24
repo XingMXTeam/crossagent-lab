@@ -1281,6 +1281,86 @@ button.btn.secondary.save-btn.is-on {
   color: var(--ok);
 }
 .save-prompt-status.is-err { color: var(--danger); }
+/* Sponsor page */
+.sponsor-hero { padding-top: 0.85rem; padding-bottom: 0; }
+.sponsor-hero .honest-strip {
+  margin: 0.55rem 0 0;
+  padding: 0.7rem 0.85rem;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+.sponsor-main { padding-top: 0.35rem; }
+.sponsor-main > .boost-context { margin-bottom: 0.35rem; }
+.sponsor-primary { margin-top: 0; }
+.sponsor-primary .price-line { margin: 0.15rem 0 0; }
+.sponsor-primary .cta-row { margin-top: 0.55rem; }
+
+.buy-points h2 {
+  margin: 0 0 0.65rem;
+  font-family: var(--display);
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+.buy-points-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  container-type: inline-size;
+}
+@media (max-width: 720px) {
+  .buy-points-scroll {
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 4.25rem;
+  }
+  .buy-points-table th:nth-child(n+2),
+  .buy-points-table td:nth-child(n+2) {
+    min-width: calc(100cqi - 4.25rem);
+    scroll-snap-align: start;
+  }
+}
+.buy-points-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+.buy-points-table th,
+.buy-points-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.45rem 0.6rem;
+  border-bottom: 1px solid var(--line);
+}
+.buy-points-table thead th {
+  color: var(--text);
+  font-weight: 500;
+}
+.buy-points-table td { color: var(--muted); }
+.buy-points-table th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 4.25rem;
+  background: var(--panel);
+  color: var(--text);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.buy-points-table tbody tr:last-child th,
+.buy-points-table tbody tr:last-child td { border-bottom: 0; }
+.buy-unit {
+  display: block;
+  margin-top: 0.12rem;
+  color: var(--muted);
+  font-weight: 400;
+  font-size: 0.8rem;
+}
+.sponsor-steps {
+  margin: 0.2rem 0 0;
+  padding-left: 1.15rem;
+}
+.sponsor-steps li + li { margin-top: 0.35rem; }
+
 @media (max-width: 639px) {
   .save-prompt { position: relative; padding-top: 0.55rem; }
   .save-prompt-copy {
