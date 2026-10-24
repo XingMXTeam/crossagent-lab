@@ -50,6 +50,21 @@ code {
   padding: 0.1em 0.35em;
   border-radius: 4px;
 }
+/* Fenced Shiki blocks: the inline code pill must not paint pre > code. */
+pre code,
+pre.astro-code code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+  color: inherit;
+}
+.prose pre.astro-code {
+  margin: 0.85rem 0 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+}
 h1, h2, h3 { font-weight: 500; }
 
 .wrap, .wrap-wide { max-width: none; margin: 0; padding: 0; }
