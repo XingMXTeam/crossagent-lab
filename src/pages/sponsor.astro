@@ -7,128 +7,382 @@ const foundingPay = 'https://buy.stripe.com/cNi7sLeLb4lN7aO9du6AM02';
 const inbox = 'me@maoxunxing.com';
 const listingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent Listing Boost')}`;
 const newsletterMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent Newsletter Insert')}`;
+const newsletterFoundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent Newsletter Founding $49')}&body=${encodeURIComponent('我想确认 founding Newsletter $49 名额。\n\n品牌名:\nPitch（约40字）:\n链接:\n希望期次:\n')}`;
 const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent Lab Sponsorship Question')}`;
 ---
 <BaseLayout
   title="赞助 — CrossAgent Lab"
-  description="CrossAgent Lab 赞助：用例推广 $49/30天，简报插页 $99/期，Founding $349/月。流量未稳不报虚数；用例排序不出售。"
+  description="赞助 CrossAgent Lab：一个标了 Sponsored 的位置，出现在主动来找跨境 Agent 怎么用的人面前。Boost $49/30天 · 简报 $99/期（前1–2家 founding $49）· Founding $349/月。流量未稳不报虚数。"
   canonicalPath="/sponsor/"
 >
-  <section class="hero-simple sponsor-hero wrap">
+  <!-- AUC rhythm: Hero → Who visits → How it looks → What you get (tiers) → honesty / after pay -->
+  <section class="hero-simple wrap">
     <h1>赞助 CrossAgent Lab</h1>
-    <p class="honest-strip panel">
-      <strong>诚实页。</strong>流量尚未稳定，不公布 UV 或打开率。自然排序与编辑位不出售。
-      <span class="en">No vanity UV or open rate. Organic rank and editorial slots are not for sale.</span>
+    <p class="lead">
+      一个标了 Sponsored 的位置，出现在主动来找跨境 Agent 怎么用的人面前。
     </p>
+    <p class="en">A labeled spot on the site, in front of people who open it to learn how cross-border agents actually work.</p>
   </section>
 
-  <section class="section sponsor-main wrap">
+  <section class="section wrap sponsor-auc">
     <p id="boost-context" class="panel boost-context" hidden></p>
 
-    <article class="panel tier-card sponsor-primary" id="listing">
-      <h3>Boost · 用例推广</h3>
-      <p class="price-line">$49 <span class="price-unit">/ 30 天</span></p>
-      <div class="cta-row">
-        <a
-          id="listing-pay"
-          class="btn"
-          href={listingPay}
-          data-base-href={listingPay}
-          target="_blank"
-          rel="noopener noreferrer sponsored"
-        >购买用例推广</a>
-      </div>
-      <p class="muted-note">从用例页「推广此用例」进入，结账带上该条。</p>
-    </article>
+    <h2 class="auc-h2">谁会看到 <span class="tier-en">Who visits</span></h2>
+    <p class="auc-body">
+      来找跨境卖家／物流／合规／Agent MCP 可复制做法的人——运营、中后台、广告同学，以及做 ERP、物流、选品与 Agent 产品的团队。多数从手机打开。流量尚未稳定，我们<strong>不</strong>公布虚荣 UV／打开率；有可复核的后台数字后再更新。
+    </p>
+    <p class="en muted-note">
+      Builders and operators looking for cross-border / seller / logistics Agent MCP playbooks. Mostly on phones. Traffic is not stable yet — we do not invent visit counts.
+    </p>
 
-    <div class="panel buy-points">
-      <h2 id="buy-points-heading">买到 / 买不到 / 付完</h2>
-      <div class="buy-points-scroll" tabindex="0" aria-labelledby="buy-points-heading">
-        <table class="buy-points-table">
-          <caption class="sr-only">Boost、简报、Founding：买到、买不到、付完</caption>
-          <thead>
-            <tr>
-              <th scope="col"><span class="sr-only">项目</span></th>
-              <th scope="col">Boost <span class="buy-unit">$49 / 30 天</span></th>
-              <th scope="col">简报 <span class="buy-unit">$99 / 期</span></th>
-              <th scope="col">Founding <span class="buy-unit">$349 / 月</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">买到</th>
-              <td>一条用例的赞助位，30 天（已有用例，或审过的公开来源）。标 Sponsored，展示品牌名和链接。</td>
-              <td>一期周报一个赞助插槽：品牌名、约 40 字 pitch、一个链接。</td>
-              <td>首页底部赞助条（品牌名、约 40 字 pitch、链接），以及周报一行 Sponsored by（简报开通后，按月持续）。</td>
-            </tr>
-            <tr>
-              <th scope="row">买不到</th>
-              <td>自然排序、编辑位、「已验证」徽章、曝光或 UV。</td>
-              <td>打开率、订阅人数、首页位、多期打包。</td>
-              <td>同时多位首页赞助、自然排序、流量数字。</td>
-            </tr>
-            <tr>
-              <th scope="row">付完</th>
-              <td>邮件 {inbox}：品牌名、链接、用例 URL。排期上线并标 Sponsored。</td>
-              <td>邮件 {inbox}：品牌名、pitch、链接、希望期次。排入该期。</td>
-              <td>邮件 {inbox}：品牌名、pitch、链接。确认档期后上首页；有人在播则从上一档结束后开始。</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <h2 class="auc-h2">长什么样 <span class="tier-en">How it looks</span></h2>
+    <div class="auc-previews" data-sponsor-preview="true">
+      <figure class="auc-preview">
+        <figcaption>首页底部赞助条 · Homepage sponsor bar</figcaption>
+        <div class="mock-bar" aria-hidden="true">
+          <span class="mock-bar-kicker">赞助</span>
+          <span class="mock-bar-body">
+            <span class="mock-mark">YB</span>
+            <span class="mock-bar-text">
+              <span class="mock-brand">Your brand</span><span class="mock-pitch">: your pitch, about 40 characters</span>
+            </span>
+          </span>
+        </div>
+      </figure>
+
+      <figure class="auc-preview">
+        <figcaption>周报里的 Sponsored by · Newsletter line</figcaption>
+        <div class="mock-mail" aria-hidden="true">
+          <p class="mock-mail-label">Sponsored by</p>
+          <p class="mock-mail-line"><span class="mock-mail-brand">Your brand</span>: your pitch, about 40 characters</p>
+        </div>
+      </figure>
+
+      <figure class="auc-preview">
+        <figcaption>用例卡片上的 Sponsored 推广标 · Case boost badge</figcaption>
+        <div class="mock-card" aria-hidden="true">
+          <span class="mock-badge">Sponsored</span>
+          <p class="mock-card-title">Your case title — Agent MCP playbook</p>
+          <p class="mock-card-meta">物流 · 公开可核验 · 推广位 30 天</p>
+        </div>
+      </figure>
     </div>
 
-    <div class="sponsor-grid">
-      <article class="panel tier-card" id="newsletter">
-        <h3>简报插页</h3>
-        <p class="price-line">$99 <span class="price-unit">/ 期</span></p>
+    <h2 class="auc-h2">你可以买到什么 <span class="tier-en">What you can buy</span></h2>
+    <p class="auc-body">
+      三条付费档位。付费位一律标 Sponsored／推广。用例自然排序、编辑位、「已验证」徽章<strong>不出售</strong>。
+    </p>
+    <p class="en muted-note">Three paid options. Paid slots are labeled. Organic rank, editorial placement, and the verified badge are not for sale.</p>
+
+    <div class="tier-grid">
+      <article class="panel tier-card" id="listing">
+        <p class="tier-kicker">Boost · $49</p>
+        <h3>用例推广 <span class="tier-en">Case / listing boost</span></h3>
+        <p class="price-line">$49 <span class="price-unit">/ 30 天</span></p>
+        <p class="price-sub">$49 / 30 days · labeled boost on one case</p>
+        <p class="buy-got"><strong>买到：</strong>一条用例 30 天赞助推广位；卡片／详情标 Sponsored；展示品牌名 + 链接。</p>
+        <p class="buy-not muted-note">买不到：自然排序、编辑位、「已验证」徽章、保证曝光量／UV。</p>
+        <ul>
+          <li>站内已有用例，或你提交并通过审的公开来源用例。</li>
+          <li>正文仍是本站摘要，不改成软文，不编造数据。</li>
+          <li>从用例卡／详情点「推广此用例」，结账会带上那条用例（<code>?case=</code>）。</li>
+        </ul>
         <div class="cta-row">
+          <a
+            id="listing-pay"
+            class="btn"
+            href={listingPay}
+            data-base-href={listingPay}
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+          >购买用例推广 <span class="btn-en">$49 / 30 days</span></a>
+        </div>
+        <p class="muted-note">
+          Stripe Checkout。付完请
+          <a id="listing-mail" href={listingMail}>邮件</a>
+          {inbox}：品牌名、链接、用例 URL → 我们排期上线并标 Sponsored。
+        </p>
+      </article>
+
+      <article class="panel tier-card" id="newsletter">
+        <p class="tier-kicker">Newsletter · $99 <span class="tier-en">(founding $49)</span></p>
+        <h3>简报插页 <span class="tier-en">Newsletter insert</span></h3>
+        <p class="price-line">$99 <span class="price-unit">/ 期</span></p>
+        <p class="price-sub">$99 / issue · one labeled newsletter slot</p>
+        <p class="founding-note panel">
+          <strong>Founding 启动价：</strong>前 <strong>1–2</strong> 家按 <strong>$49／期</strong>，之后恢复 <strong>$99</strong>。
+          页面 Stripe 仍是 <strong>$99</strong> 默认链接；要 founding $49 请先
+          <a href={newsletterFoundingMail}>发邮件确认名额</a>，我们再人工开票／收款（尚无单独 $49 Payment Link）。
+          <span class="en">Founding: first 1–2 sponsors pay $49/issue via email + manual invoice; Checkout stays $99 until a $49 link exists.</span>
+        </p>
+        <p class="buy-got"><strong>买到：</strong>一期周报里一个赞助插槽——品牌名 + 约 40 字 pitch + 一个链接。</p>
+        <p class="buy-not muted-note">买不到：打开率／订阅人数承诺、长期首页位、多期打包；founding $49 不含自动 Stripe 结账。</p>
+        <ul>
+          <li>读者是主动订阅「每周跨境 Agent 精选」的人，不是信息流流量。</li>
+          <li>按购买的那一期插入。<strong>不</strong>预告、不编造打开率或订阅人数。</li>
+          <li>Founding $49 仅前 1–2 家；名额满后只卖 $99。</li>
+        </ul>
+        <div class="cta-row">
+          <a class="btn secondary" href={newsletterFoundingMail}>申请 founding $49 <span class="btn-en">email first</span></a>
           <a
             class="btn"
             href={newsletterPay}
             target="_blank"
             rel="noopener noreferrer sponsored"
-          >购买简报插页</a>
+          >购买简报插页 <span class="btn-en">$99 / issue</span></a>
         </div>
+        <p class="muted-note">
+          默认 Stripe 为 <strong>$99／期</strong>。付完邮件品牌名、pitch、链接、希望期次。若走 founding，先邮件、勿误付 $99（除非你自愿标价）。
+        </p>
       </article>
 
       <article class="panel tier-card" id="founding">
-        <h3>Founding 月赞助</h3>
+        <p class="tier-kicker">Founding · $349</p>
+        <h3>Founding 月赞助 <span class="tier-en">Monthly founding spot</span></h3>
         <p class="price-line">$349 <span class="price-unit">/ 月</span></p>
+        <p class="price-sub">$349 / month · homepage bar + newsletter line</p>
+        <p class="buy-got"><strong>买到：</strong>首页底部赞助条（品牌名 + 约 40 字 pitch + 链接）+ 周报内一行 Sponsored by（简报开通后，随月持续）。同档同时只一位。</p>
+        <p class="buy-not muted-note">买不到：与另一位同档共享首页条、自然排序、虚荣流量数字。</p>
+        <ul>
+          <li>档期从赞助获批起算；若已有在播或排队，从上一档结束后开始。</li>
+          <li>早期启动价；名额有限，满员后涨价（新档位届时公布）。</li>
+          <li>适合 ERP、广告、物流、选品合规与 Agent 产品。</li>
+          <li>赞助条点击可带 <code>utm_source=crossagent</code>（你自带 UTM 则原样使用）。</li>
+        </ul>
         <div class="cta-row">
           <a
             class="btn"
             href={foundingPay}
             target="_blank"
             rel="noopener noreferrer sponsored"
-          >立即赞助</a>
-          <a class="btn secondary" href={foundingMail}>邮件询 ¥2,500</a>
+          >立即赞助 <span class="btn-en">$349 / month</span></a>
+          <a class="btn secondary" href={foundingMail}>人民币 ¥2,500 / 先问一句</a>
         </div>
-        <p class="muted-note">早期启动价，满员后涨价。</p>
+        <p class="muted-note">美元走 Stripe。人民币或定制档期发邮件。付完交素材 → 确认档期 → 上首页条并标 Sponsored。</p>
       </article>
     </div>
 
-    <div class="sponsor-grid">
+    <details class="panel auc-compare">
+      <summary>一眼对照三档（次要） <span class="en">Compact comparison</span></summary>
+      <div style="overflow-x:auto;margin-top:0.75rem">
+        <table class="buy-points-table" style="width:100%;border-collapse:collapse;font-size:0.95rem">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:0.5rem;border-bottom:1px solid var(--line)"></th>
+              <th style="text-align:left;padding:0.5rem;border-bottom:1px solid var(--line)">Boost $49 / 30d</th>
+              <th style="text-align:left;padding:0.5rem;border-bottom:1px solid var(--line)">Newsletter $99 / 期</th>
+              <th style="text-align:left;padding:0.5rem;border-bottom:1px solid var(--line)">Founding $349 / 月</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:0.5rem;border-bottom:1px solid var(--line)"><strong>买到</strong></td>
+              <td style="padding:0.5rem;border-bottom:1px solid var(--line)">一条用例赞助推广位 30 天；标 Sponsored</td>
+              <td style="padding:0.5rem;border-bottom:1px solid var(--line)">一期插槽；前 1–2 家可 founding $49（邮件人工）</td>
+              <td style="padding:0.5rem;border-bottom:1px solid var(--line)">首页赞助条 + 周报 Sponsored by</td>
+            </tr>
+            <tr>
+              <td style="padding:0.5rem;border-bottom:1px solid var(--line)"><strong>买不到</strong></td>
+              <td style="padding:0.5rem;border-bottom:1px solid var(--line)">自然排序／verified／保证 UV</td>
+              <td style="padding:0.5rem;border-bottom:1px solid var(--line)">打开率承诺／首页条／$49 自动 Checkout</td>
+              <td style="padding:0.5rem;border-bottom:1px solid var(--line)">同档多位共享／虚荣 UV</td>
+            </tr>
+            <tr>
+              <td style="padding:0.5rem"><strong>付完</strong></td>
+              <td style="padding:0.5rem">邮件素材 + 用例 URL → 排期</td>
+              <td style="padding:0.5rem">邮件 pitch + 期次 → 排入该期</td>
+              <td style="padding:0.5rem">邮件 pitch → 确认档期上条</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
+
+    <div class="sponsor-grid" style="margin-top:1.5rem">
       <div class="panel">
-        <h3>买不到</h3>
-        <p>「已验证」徽章不出售。付费位标 Sponsored。</p>
+        <h3>钱买不到什么 <span class="tier-en">What money cannot buy</span></h3>
+        <ul>
+          <li><strong>用例自然排序不出售。</strong>编辑位、对比文、指南正文的先后顺序不因付款改变。</li>
+          <li><strong>不卖「已验证」徽章，不卖自然排名。</strong>付费位一律标 Sponsored／推广。</li>
+          <li><strong>流量未稳，不报虚数。</strong>有稳定、可复核数据后再更新媒体资料。</li>
+        </ul>
+        <p class="en muted-note">Organic case order and verified badges are never sold. We do not invent UV or open rates.</p>
       </div>
       <div class="panel">
-        <h3>付完</h3>
-        <ol class="sponsor-steps">
-          <li>在 Stripe 付美元。本页不收集卡号。</li>
-          <li>
-            按上表发到 {inbox}：
-            <a id="listing-mail" href={listingMail}>Boost</a>、
-            <a href={newsletterMail}>简报</a>、
-            <a href={foundingMail}>Founding</a>。
-          </li>
-          <li>核对后按档期上线，标 Sponsored。不改写用例事实。</li>
+        <h3>付款之后 <span class="tier-en">After you pay</span></h3>
+        <ol>
+          <li><strong>付：</strong>美元走 Stripe Checkout（Boost / $99 Newsletter / Founding $349）；founding Newsletter $49 仅邮件人工收款。</li>
+          <li><strong>交素材：</strong>邮件 <a href={`mailto:${inbox}`}>{inbox}</a>——品牌名、链接；Boost 附用例 URL；简报附期次；Founding 附 pitch。</li>
+          <li><strong>排期上线：</strong>确认素材真实后排期，付费位一律标 Sponsored／推广。</li>
+          <li>我们不改写用例事实，也不把摘要换成广告稿。</li>
         </ol>
       </div>
     </div>
   </section>
 </BaseLayout>
+
+<style is:global>
+  .sponsor-auc .auc-h2 {
+    margin: 1.75rem 0 0.5rem;
+    font-family: var(--display);
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+  }
+  .sponsor-auc .auc-body {
+    margin: 0 0 0.35rem;
+    color: var(--muted);
+    font-size: 0.98rem;
+    line-height: 1.55;
+    max-width: 40rem;
+  }
+  .sponsor-auc .auc-previews {
+    display: grid;
+    gap: 1.1rem;
+    margin: 0.75rem 0 0.5rem;
+  }
+  @media (min-width: 720px) {
+    .sponsor-auc .auc-previews {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .sponsor-auc .auc-preview {
+    margin: 0;
+  }
+  .sponsor-auc .auc-preview figcaption {
+    margin-bottom: 0.4rem;
+    color: var(--faint);
+    font-size: 0.75rem;
+  }
+  .sponsor-auc .mock-bar {
+    display: flex;
+    align-items: stretch;
+    height: 3.25rem;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--panel);
+  }
+  .sponsor-auc .mock-bar-kicker {
+    display: none;
+    align-items: center;
+    padding: 0 0.75rem;
+    border-right: 1px solid var(--line);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  @media (min-width: 480px) {
+    .sponsor-auc .mock-bar-kicker { display: flex; }
+  }
+  .sponsor-auc .mock-bar-body {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    padding: 0 0.85rem;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .sponsor-auc .mock-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    background: var(--bg);
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .sponsor-auc .mock-brand { color: var(--signal); font-weight: 500; }
+  .sponsor-auc .mock-pitch { color: var(--muted); font-weight: 400; }
+  .sponsor-auc .mock-bar-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sponsor-auc .mock-mail {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: #fff;
+    padding: 1rem 1.15rem;
+    color: #111;
+  }
+  .sponsor-auc .mock-mail-label {
+    margin: 0;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    color: #8a8a8a;
+  }
+  .sponsor-auc .mock-mail-line {
+    margin: 0.4rem 0 0;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  .sponsor-auc .mock-mail-brand {
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .sponsor-auc .mock-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--bg);
+    padding: 0.9rem 1rem;
+  }
+  .sponsor-auc .mock-badge {
+    display: inline-block;
+    padding: 0.12rem 0.45rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-family: var(--mono);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .sponsor-auc .mock-card-title {
+    margin: 0.45rem 0 0.25rem;
+    font-family: var(--display);
+    font-size: 0.95rem;
+    letter-spacing: -0.02em;
+  }
+  .sponsor-auc .mock-card-meta {
+    margin: 0;
+    color: var(--faint);
+    font-size: 0.8rem;
+  }
+  .sponsor-auc .founding-note {
+    margin: 0.75rem 0;
+    padding: 0.75rem 1rem;
+    font-size: 0.92rem;
+  }
+  .sponsor-auc .buy-got {
+    margin: 0 0 0.35rem;
+    font-size: 0.95rem;
+  }
+  .sponsor-auc .buy-not {
+    margin: 0 0 0.65rem;
+  }
+  .sponsor-auc .auc-compare {
+    margin-top: 1.25rem;
+  }
+  .sponsor-auc .auc-compare summary {
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .sponsor-auc .tier-card .cta-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+</style>
 
 <script is:inline define:vars={{ contactInbox: inbox }}>
   (function () {
