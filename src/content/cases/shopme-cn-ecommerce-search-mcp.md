@@ -35,6 +35,26 @@ prompt: |
   notes from get_connection_info, (d) ACTIONS REQUIRING HUMAN APPROVAL before any spend.
 ---
 
+## Lab 探针成品（先看结果）
+
+**方法：** 匿名 Guest · 未把 token 贴进对话 · 2026-10-24（Asia/Shanghai）  
+**端点：** 托管 MCP（主链接见「来源与核验状态」）；`get_shopme_service_info` 的 updatedAt 为 2026-10-18
+
+| 探针 | 结果 |
+|------|------|
+| `initialize` | 成功 · `serverInfo.name` = `shopme` · version `0.1.0` |
+| `get_connection_info` | `connection_mode=anonymous`；text／image／joint／readOnlyDetail 均为 **false**；`usage.access=available`；`resetAt` 对应 UTC 2026-10-25 00:00（Asia/Shanghai 2026-10-25 08:00） |
+| `search_products`（「不锈钢保温杯」） | `status=error` · `code=unavailable`（原文要求勿自动重试） |
+| `get_shopme_service_info` | Guest access available；购物摘要称可覆盖淘宝与小红书等发现场景（updatedAt 2026-10-18） |
+| npm `@shopmeagent/cn-ecommerce-search-mcp` | **404** |
+| npm `@shopmeagent/logistics-tracking-mcp` | `@1.0.0` 存在 |
+| 本地构建 `parse_product_link` | 对淘宝 URL 可解析 platform／productId（本地、无网络） |
+| 对 `https://api.shopmeagent.com` 搜品 | HTTP **401**（未宣称本站已打通生产搜品） |
+
+**本站未跑：** 已登录 Shopme 账号后的成功 live 搜品；下单、支付、改账号。中文关键词 live 搜品**未成功**。公开页示例勿写成 Lab 实测成功。
+
+> 人审提醒：搜品结果须到 Shopme 商品页人工核对。闸门见「人审闸门」。
+
 ## 解决什么问题
 
 跨境选品／货源侧常要在淘宝、天猫、小红书等站来回搜同款与工厂向 listing，再手工拷到运营表。Shopme 把中国站商品检索接到 MCP 后，可在 ChatGPT／Cursor 等客户端里用自然语言做**只读搜品与候选清单**，减少在浏览器与聊天之间切换。
@@ -98,6 +118,8 @@ Guest／账号日额度以 `get_connection_info` 返回为准；查连接与额�
 ## 来源与核验状态
 
 **公开可核验**
+
+探针表见文首「Lab 探针成品」；此处保留主链接与采编说明。
 
 - 主文：[Shopme MCP](https://shopmeagent.com/mcp)
 - 仓库：[github.com/shopmeskills/mcp](https://github.com/shopmeskills/mcp)（含 `packages/cn-ecommerce-search-mcp` 与 logistics 包）

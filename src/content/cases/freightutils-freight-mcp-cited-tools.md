@@ -51,6 +51,26 @@ prompt: |
   Pro subscribe / API key purchase, any filing or booking).
 ---
 
+## Lab 探针成品（先看结果）
+
+**方法：** 匿名 · 无 API key · 无登录 · 2026-10-26（Asia/Shanghai）  
+**端点：** `POST/GET https://www.freightutils.com/api/mcp`（及 `/health`）
+
+| 探针 | 结果 |
+|------|------|
+| `initialize` | HTTP **200** · `serverInfo.name=freightutils-mcp` · `version=**2.22.5**` |
+| `tools/list` | HTTP **200** · **25** tools |
+| `GET …/health` | HTTP **200** · `status=ok` · `tools_registered=25` · `mcp_version=2.22.5` |
+| `hs_code_lookup("cotton t-shirt")` | HTTP **200** · HS **610910**（medium confidence + `FUZZY_BEST_MATCH` 警告） |
+| `cbm_calculator` 10×120×80×100 cm | HTTP **200** · **9.6 m³** |
+| `get_subscribe_link` | HTTP **200** · Pro **£19**/mo · **50,000**/mo · 定价 URL（工具注明 Agents must not checkout） |
+
+同日匿名 `GET /api/hs?q=cotton%20t-shirt` 亦返回 `610910`（与 MCP 一致）。公开首页 CBM 示例与上表 9.6 m³ 一致——上表为 **Lab tools/call**，非仅抄营销页。
+
+**本站未跑：** 完整 25 工具扫遍；`uk_duty_calculator`／`adr_lookup` 的 live 断言；Pro 订阅／粘贴 API key；订舱、申报、报关裁定、危险品放行。公开页上的 ADR／UK duty **示例勿与上表实测混淆**。
+
+> 人审提醒：HS 为 WCO 6 位参考层；带 FUZZY 警告时不得直接写入报关单或客户报价。闸门见下一节后的「人审闸门」。
+
 ## 解决什么问题
 
 跨境／货代／TMS 与 Agent 工作流常卡在同一类「参考层」问题：这票货 CBM／计费重／欧洲路运 LDM 怎么算？UN 号走 ADR 什么分类、能否小量豁免？商品大概落在哪个 6 位 HS？进英国大概多少 duty／VAT？港口／机场 UN/LOCODE 是什么？模型训练数据容易胡猜，且**说不清出处**。
@@ -154,6 +174,8 @@ FreightUtils 把自己定位为**中立货运参考层**（官网：No freight t
 
 **公开可核验**
 
+探针表见文首「Lab 探针成品」；此处保留主链接与采编说明。
+
 - 主链接：[The freight MCP server](https://www.freightutils.com/mcp)（URL、25 tools、只读边界、Limits、envelope、contact@freightutils.com）
 - 首页：[The neutral freight reference layer](https://www.freightutils.com/)（数据集表、构建时 live 示例、npm v2.22.5 叙述）
 - 定价：[API Pricing](https://www.freightutils.com/pricing)（Anonymous／Free key／Pro £19／月／50k；contact@freightutils.com）
@@ -180,7 +202,7 @@ POST …/api/mcp  tools/call cbm_calculator {120×80×100cm ×10}
 → HTTP 200  totalCbm=9.6
 ```
 
-- 采编：2026-10-26（Asia/Shanghai）。公开文档 + 匿名 initialize／list／health／3 次只读 tools/call；**未**订阅 Pro、**未**做报关或 ADR 合规裁定。与 Avalara／Gateway／border.bot／EximAgent／Easyship 的区别见首节。
+- 采编：2026-10-26（Asia/Shanghai）。公开文档 + 匿名 initialize／list／health／3 次只读 tools/call；**未**订阅 Pro、**未**做报关或 ADR 合规裁定。与 Avalara／Gateway／border.bot／EximAgent／Easyship 的区别见「解决什么问题」。
 
 ## 据公开帖摘要
 

@@ -50,6 +50,19 @@ prompt: |
   OFAC interpretation, outbound email, credit spend).
 ---
 
+## Lab 探针成品（先看结果）
+
+**方法：** 匿名 · 无 Google OAuth · 2026-10-24（Asia/Shanghai）  
+**端点：** `https://mcp.eximagent.ai/mcp`
+
+| 探针 | 结果 |
+|------|------|
+| 匿名探活 | **HTTP 401** + OAuth protected-resource 元数据 |
+
+**本站未跑：** Google OAuth；HS／关税／OFAC／找进口商等工具调用。**没有**真实工具返回。本页不写具体税率、进口商名单或 OFAC 命中。Compliance 页示例**不是**本站实测。
+
+> 人审提醒：401 只说明需要登录，不能声称工具已测通。闸门见「人审闸门」。
+
 ## 解决什么问题
 
 出口／进口团队在报价与拓客前常要同时回答四件事：这个产品大概是哪个 HS？某条走廊今天的关税／trade remedies 大概多少？对方公司名在不在 OFAC SDN？德国／美国等市场谁在进口这类货、证据是什么？
@@ -136,13 +149,15 @@ prompt: |
 
 **公开可核验**
 
+探针表见文首「Lab 探针成品」；此处保留主链接与采编说明。
+
 - 主链接：[EximAgent Docs — MCP server](https://eximagent.ai/docs/integrations/mcp)（URL、Streamable HTTP、OAuth 2.1 + Google、无 per-user key）
 - Connectors：[Trade intelligence in your AI assistant](https://eximagent.ai/connectors)（各宿主配置、FAQ：无 API key、credits）
 - Agents 指南：[EximAgent for AI agents](https://eximagent.ai/docs/agents)（Outbound／Analyst／Compliance；CLI 命令与安全规则；support@eximagent.ai）
 - Compliance 产品页：[AI teammate for HS codes, tariffs & sanctions](https://eximagent.ai/agents/compliance)（OFAC SDN only；advisory；非 binding ruling）
 - 定价：[Pricing](https://eximagent.ai/pricing)（Free 100 credits／月等公开档位）
 - 端点探活：`https://mcp.eximagent.ai/mcp` — 2026-10-24 匿名 → HTTP 401 + OAuth protected-resource 元数据
-- 采编：2026-10-24（Asia/Shanghai）。本站仅采编公开材料，**未完成 OAuth，未实测工具调用**。与 Avalara／Gateway 用例的区别见首节。
+- 采编：2026-10-24（Asia/Shanghai）。本站仅采编公开材料，**未完成 OAuth，未实测工具调用**。与 Avalara／Gateway 用例的区别见「解决什么问题」。
 
 ## 据公开帖摘要
 
