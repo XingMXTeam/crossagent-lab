@@ -58,7 +58,7 @@ prompt: |
 
 | 探针 | 结果 |
 |------|------|
-| `initialize` | HTTP **200** · `serverInfo.name=freightutils-mcp` · `version=**2.22.5**` |
+| `initialize` | HTTP **200** · `serverInfo.name=freightutils-mcp` · version **2.22.5** |
 | `tools/list` | HTTP **200** · **25** tools |
 | `GET …/health` | HTTP **200** · `status=ok` · `tools_registered=25` · `mcp_version=2.22.5` |
 | `hs_code_lookup("cotton t-shirt")` | HTTP **200** · HS **610910**（medium confidence + `FUZZY_BEST_MATCH` 警告） |
@@ -66,6 +66,29 @@ prompt: |
 | `get_subscribe_link` | HTTP **200** · Pro **£19**/mo · **50,000**/mo · 定价 URL（工具注明 Agents must not checkout） |
 
 同日匿名 `GET /api/hs?q=cotton%20t-shirt` 亦返回 `610910`（与 MCP 一致）。公开首页 CBM 示例与上表 9.6 m³ 一致——上表为 **Lab tools/call**，非仅抄营销页。
+
+![FreightUtils anonymous Lab probe — health, tools/list, HS 610910](/demos/freightutils-probe-demo.gif)
+
+*静音循环 · 本站 2026-10-26 Asia/Shanghai 匿名探针关键返回 · 非厂商广告片*
+
+### 公开声称 vs 本站探针
+
+| 公开页声称 | 本站探针 | 差注 |
+|------------|----------|------|
+| MCP 页：「25 freight tools」；health 文案期望 `tools_registered":25`（[freightutils.com/mcp](https://www.freightutils.com/mcp)） | `tools/list` → HTTP **200** · tools.length=**25**；`GET …/health` → tools_registered=**25** | 一致 |
+| MCP 页：「Free tier, no login」「No account, no sign-in, no API key」 | 无 key／无登录：`initialize`／`tools/list`／health／`hs_code_lookup`／`cbm_calculator`／`get_subscribe_link` 均 HTTP **200** | 一致 |
+| 首页／MCP：freightutils-mcp **v2.22.5**（npm 叙述） | `initialize` → `serverInfo.name=freightutils-mcp` · version=**2.22.5**；health mcp_version=**2.22.5** | 一致 |
+| Health：`status":"ok"` 且工具已注册（MCP 页 Health check） | `GET https://www.freightutils.com/api/mcp/health` → HTTP **200** · `status=ok` | 一致 |
+| 首页 build-time 示例：CBM **10 × 120×80×100 cm → 9.6 m³**（`GET /api/cbm?…`） | MCP `cbm_calculator` 同参 → HTTP **200** · totalCbm=**9.6**（`cbmPerPiece=0.96`） | 一致 |
+| MCP 工具：`hs_code_lookup` 搜 WCO HS 2022 六位码（页写 Search 6,940…；首页数据集表写 6,937 — **公开页两数并存，勿合并**） | `hs_code_lookup({"query":"cotton t-shirt"})` → HTTP **200** · HS **610910** · description「T-shirts… of cotton…」· confidence **medium** · warning **`FUZZY_BEST_MATCH`**；同日 REST `GET /api/hs?q=cotton%20t-shirt` 亦 **610910** | 一致（结果码）；差注：公开首页示例用 “coffee”，非本 query；FUZZY 警告以 Lab 返回为准 |
+| MCP-only `get_subscribe_link`：Pro **50,000**/month 与价格（定价页／工具） | `get_subscribe_link` → HTTP **200** · monthly_price=**£19** · monthly_limit=**50000** · `url=https://www.freightutils.com/pricing` · note：Agents must not complete checkout | 一致 |
+| 定价页：Anonymous **£0** · **25 requests/day** · No signup | （本日未打满限额压测） | 仅公开（本站未测） |
+| 定价页 Free 文案「All **24** endpoints」vs MCP **25** tools（含 `get_subscribe_link`） | Lab 只核验 MCP tools.length=**25**；未逐一对照 24 REST endpoints | 口径不同（见注）：引用时 REST／MCP 分开说 |
+| MCP 页公开示例：UN 1203 ADR／exemption 等 | 本日未调用 `adr_lookup`／`adr_exemption_calculator`／`uk_duty_calculator` | 仅公开（本站未测） |
+
+**本站未跑（对照表外重申）：** 完整 25 工具扫遍；UK duty／ADR live；Pro 订阅／粘贴 API key；订舱、申报、报关裁定。
+
+> 人审：HS 为 WCO 6 位参考层；带 `FUZZY_BEST_MATCH` 时不得直接写入报关单或客户报价。
 
 **本站未跑：** 完整 25 工具扫遍；`uk_duty_calculator`／`adr_lookup` 的 live 断言；Pro 订阅／粘贴 API key；订舱、申报、报关裁定、危险品放行。公开页上的 ADR／UK duty **示例勿与上表实测混淆**。
 
