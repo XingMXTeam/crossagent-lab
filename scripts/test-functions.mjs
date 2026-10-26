@@ -7,15 +7,20 @@ import { join } from 'node:path';
 const require = createRequire(import.meta.url);
 const esbuild = require('esbuild');
 const dir = mkdtempSync(join(tmpdir(), 'crossagent-test-'));
-const outfile = join(dir, 'saved-list.test.mjs');
+const entries = ['test/saved-list.test.ts', 'test/activation.test.ts'];
+const outfiles = [];
 
-await esbuild.build({
-  entryPoints: ['test/saved-list.test.ts'],
-  bundle: true,
-  platform: 'node',
-  format: 'esm',
-  outfile,
-});
+for (const entry of entries) {
+  const outfile = join(dir, `${entry.replaceAll('/', '-')}.mjs`);
+  await esbuild.build({
+    entryPoints: [entry],
+    bundle: true,
+    platform: 'node',
+    format: 'esm',
+    outfile,
+  });
+  outfiles.push(outfile);
+}
 
-const result = spawnSync(process.execPath, ['--test', outfile], { stdio: 'inherit' });
+const result = spawnSync(process.execPath, ['--test', ...outfiles], { stdio: 'inherit' });
 process.exit(result.status ?? 1);

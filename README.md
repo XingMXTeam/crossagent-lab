@@ -46,6 +46,31 @@ Push 到 `main`（或手动 `workflow_dispatch`）触发 `.github/workflows/depl
 
 未采用：主站子路径 `/crossagent-lab/`（若改用需把 `astro.config.mjs` 的 `base` 改为 `'/crossagent-lab/'`）。
 
+## 激活事件
+
+Cloudflare Web Analytics 只有页面浏览，不能发自定义事件（官方 FAQ：Not yet）。两个激活事件走本站 `POST /api/activation`，写入 Workers Analytics Engine，不经过广告脚本：
+
+| 事件 | 何时 |
+|---|---|
+| `case_detail_open` | 打开 `/cases/<slug>/` |
+| `prompt_copy` | 详情页「复制 Prompt」：剪贴板成功为 `via=clipboard`，失败后选中文本为 `via=select` |
+
+属性只有公开 slug、页面语言（`zh-CN`）、`via`。没有邮箱、没有 Prompt 正文。
+
+部署后要在仪表盘里看到数，须先按 `wrangler.toml` 注释绑上 Analytics Engine（变量名 `ACTIVATION`，数据集 `crossagent_activation`）并再部署一次。然后：
+
+1. `GET /api/activation` 应返回 `{ "ok": true, "configured": true }`。`configured: false` 表示绑定还没生效，此时 POST 为 503，不会有计数。
+2. 打开一条用例，再点「复制 Prompt」。
+3. 用 Account Analytics Read 令牌查询（不要把令牌写进仓库）：
+
+```bash
+curl "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/analytics_engine/sql" \
+  --header "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+  --data "SELECT blob1 AS event, blob2 AS slug, blob3 AS locale, blob4 AS via, SUM(_sample_interval * double1) AS events FROM crossagent_activation WHERE timestamp > NOW() - INTERVAL '14' DAY GROUP BY event, slug, locale, via ORDER BY events DESC"
+```
+
+同一条用例详情在 Cloudflare Web Analytics 里仍是页面路径 `/cases/<slug>/`，那是浏览量，不是命名事件。本仓库不记录、也不编造访问数字。
+
 ## 新增用例
 
 在 `src/content/cases/` 加 Markdown；`category` 枚举见 `src/content/config.ts`。

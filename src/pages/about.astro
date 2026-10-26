@@ -33,7 +33,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <p>目前站点部署在 <code>https://crossagent.maoxunxing.com</code>（maoxunxing.com 子域），先验证内容与赞助转化，再考虑独立域名。</p>
     <h2 id="privacy">隐私</h2>
     <p>
-      本站没有账号登录；为统计基础访问量接入了 Cloudflare Web Analytics（仅页面浏览等聚合指标），未接入广告追踪脚本。
+      本站没有账号登录，也没有广告追踪脚本。基础访问量由 Cloudflare Web Analytics 统计（仅页面浏览等聚合指标）。该产品目前不能记录自定义事件，用例详情的浏览仍对应路径 /cases/用例-slug/。页面另加载 Google Analytics 4（衡量编号 G-VZGZ21RLH8）做访问测量，不用于广告投放。打开用例详情，以及在详情页点「复制 Prompt」（剪贴板成功，或失败后改为选中文本）时，浏览器用一次同源请求把命名事件 case_detail_open 或 prompt_copy 发到本站 /api/activation。请求只包含公开的用例 slug、页面语言，以及方式标记（打开详情为 page，复制为 clipboard 或 select），不含邮箱、Prompt 正文或其他个人资料，也不为此写 Cookie。事件记入 Cloudflare Analytics Engine，用来看激活，不用于广告。
       周报订阅经 Mailchimp 处理邮箱。
       卡片和详情上的「我想要这个」只切换喜欢并显示公开计数，不收集邮箱。
       「收藏」只存在这台浏览器里。点「发送清单」时，才把你填写的邮箱和当前收藏的标题、链接用 Resend 发给你自己；勾选「同时订阅周刊」会走与简报页相同的欢迎信和 Resend 联系人分段，不另提交 Mailchimp。
