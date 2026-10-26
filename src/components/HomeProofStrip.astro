@@ -1,0 +1,135 @@
+---
+/**
+ * Homepage「本站怎么核验」proof strip.
+ * Chips are published Lab labeling facts, not user praise.
+ * External quotes stay an empty slot until a verified public link is pasted in.
+ */
+---
+
+<section class="proof-strip panel" id="how-we-verify" aria-labelledby="proof-strip-title">
+  <div class="proof-strip-head">
+    <h2 id="proof-strip-title" class="proof-strip-h2">本站怎么核验</h2>
+    <p class="feed-sub proof-strip-sub">
+      先看我们怎么标，再刷用例。How we label — before you skim the feed.
+    </p>
+  </div>
+
+  <ul class="proof-chips" role="list">
+    <li><span class="proof-chip">匿名探针</span><span class="proof-chip-hint">能连就标 HTTP／version／tools；连不上就写未实测</span></li>
+    <li><span class="proof-chip">出处可点</span><span class="proof-chip-hint">数字跟公开页或 Lab 探针记录走</span></li>
+    <li><span class="proof-chip">不编 UV</span><span class="proof-chip-hint">流量未稳不报虚荣访问量</span></li>
+    <li><span class="proof-chip">Sponsored 另标</span><span class="proof-chip-hint">付费推广位与自然排序分开</span></li>
+  </ul>
+
+  <p class="muted-note proof-strip-example">
+    例：FreightUtils 用例 —
+    <a href="/cases/freightutils-freight-mcp-cited-tools/">匿名 initialize／tools/list HTTP 200 · v2.22.5 · 25 tools</a>
+    （2026-10-26 Asia/Shanghai）。这是产品探针芯片，不是用户好评。
+  </p>
+
+  <!--
+    外部引用：默认空槽。仅在核验「公开原文 + 可点链接」后，
+    把注释示例改成真实 <li><a href="…">…</a></li>。
+    禁止编造推文墙。若仍为空，保留「待填」标题。
+  -->
+  <div class="proof-ext">
+    <h3 class="proof-ext-title">待填：外部引用 <span class="en">External quotes (verified only)</span></h3>
+    <p class="muted-note">
+      只贴已核验的公开评价／引用，并带原文链接。没有就留空——宁缺毋假。
+      Paste verified public quotes with source links only. Empty is fine.
+    </p>
+    <ul class="proof-ext-list" role="list"><!-- SLOT 1: <li><a href="https://x.com/…" target="_blank" rel="noopener noreferrer">@handle — 一句原话或忠实转述</a></li> --><!-- SLOT 2: <li><a href="https://…" target="_blank" rel="noopener noreferrer">来源标题 — 一句</a></li> --><!-- SLOT 3: optional third --></ul>
+  </div>
+</section>
+
+<style>
+  .proof-strip {
+    margin: 1rem 1rem 1rem;
+    padding: 1rem 1rem 0.85rem;
+    border: 1px solid var(--line, #d4d4d4);
+    border-radius: var(--radius-lg, 0.5rem);
+    background: var(--signal-panel, #eef4fb);
+  }
+  @media (min-width: 640px) {
+    .proof-strip { margin-inline: 1.5rem; padding: 1.15rem 1.25rem 1rem; }
+  }
+  .proof-strip-h2 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--text, #000);
+  }
+  .proof-strip-sub { margin: 0.2rem 0 0; }
+  .proof-chips {
+    list-style: none;
+    margin: 0.85rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .proof-chips > li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex: 1 1 calc(50% - 0.5rem);
+    min-width: 9.5rem;
+    padding: 0.55rem 0.65rem;
+    background: var(--bg, #fff);
+    border: 1px solid var(--line, #d4d4d4);
+    border-radius: var(--radius-md, 0.375rem);
+  }
+  @media (min-width: 768px) {
+    .proof-chips > li { flex: 1 1 calc(25% - 0.5rem); }
+  }
+  .proof-chip {
+    font-family: var(--mono, ui-monospace, monospace);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text, #000);
+  }
+  .proof-chip-hint {
+    font-size: 0.78rem;
+    line-height: 1.4;
+    color: var(--muted, #525252);
+  }
+  .proof-strip-example { margin-top: 0.75rem; }
+  .proof-ext {
+    margin-top: 0.9rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--line, #d4d4d4);
+  }
+  .proof-ext-title {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text, #000);
+  }
+  .proof-ext-title .en {
+    display: inline;
+    margin-left: 0.35rem;
+    color: var(--faint, #6b6b6b);
+    font-weight: 400;
+    font-size: 0.8rem;
+  }
+  .proof-ext-list {
+    list-style: none;
+    margin: 0.4rem 0 0;
+    padding: 0;
+    min-height: 0.25rem;
+  }
+  .proof-ext-list:empty::after {
+    content: "（暂无已核验外部引用 — 槽位空着）";
+    display: block;
+    color: var(--faint, #6b6b6b);
+    font-size: 0.8rem;
+  }
+  .proof-ext-list li {
+    margin: 0.35rem 0 0;
+    font-size: 0.875rem;
+    color: var(--muted, #525252);
+  }
+  .proof-ext-list a { text-decoration: underline; text-underline-offset: 2px; }
+</style>

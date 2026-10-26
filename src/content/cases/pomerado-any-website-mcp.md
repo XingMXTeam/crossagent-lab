@@ -29,6 +29,20 @@ prompt: |
   before any write, login save, or booking.
 ---
 
+## Lab 探针成品（先看结果）
+
+**方法：** keyless · 无登录 · 2026-10-24（Asia/Shanghai）  
+**端点：** `https://mcp.pomerado.ai/mcp/keyless`
+
+| 探针 | 结果 |
+|------|------|
+| `initialize` 后 `tools/list` | 可见 `find_website_tool`、`run_read_only_website_tool`、`get_job` 等 |
+| keyless 只读 Best Buy「USB-C hub」，zip `94105`，limit 2 | job `job_03cb9e74b667e72386ce73c5eb0d4263` · `status=succeeded` · `total_results=543` · 样例商品名含 Belkin 5-Port Hub · `price_minor=2499`（USD cents）· 带 `product_url`（以该次工具输出为准） |
+
+**本站未跑：** 登录态；写操作（下单、预约、提交表单、改账户）；承运商轨迹页专项。官网／YC「7x faster」「100x cheaper」**不是**本站基准测试。
+
+> 人审提醒：价格与库存以该次工具输出和来源页为准，不得直接写入客户报价。闸门见「人审闸门」。
+
 ## 解决什么问题
 
 跨境运营里大量承运商后台、卖家门户、消费站**没有官方 MCP／稳定公开 API**，Agent 只能靠浏览器点选，慢且易碎。Pomerado 宣称把任意网站做成**托管、可复用的 deterministic 工具**，经 MCP 给 Claude／Cursor／Codex 等调用，适合「无官方 API 怎么接 Agent」的对照用例。
@@ -79,6 +93,8 @@ prompt: |
 ## 来源与核验状态
 
 **公开可核验**
+
+探针表见文首「Lab 探针成品」；此处保留主链接与采编说明。
 
 - 产品：[pomerado.ai](https://pomerado.ai/)（定价 Free／Premium／Business；keyless setup prompt）
 - YC：[ycombinator.com/companies/pomerado](https://www.ycombinator.com/companies/pomerado)（Batch **Fall 2026**，Active）

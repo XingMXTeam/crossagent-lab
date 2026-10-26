@@ -40,6 +40,19 @@ prompt: |
   (e) ACTIONS REQUIRING HUMAN APPROVAL (filing, pricing, customer quotes).
 ---
 
+## Lab 探针成品（先看结果）
+
+**方法：** 匿名 · 无 Avalara 账号 · 无 OAuth · 2026-10-20（Asia/Shanghai）  
+**端点：** `https://mcp.avalara.com/cross-border`
+
+| 探针 | 结果 |
+|------|------|
+| 匿名请求端点 | HTTP **401**；响应头指向 OAuth 元数据（授权服务器 `identity.avalara.com`） |
+
+**本站未跑：** 账号登录后的 `get_trade_tariff_content_library_by_date`／`get_trade_tariff_content_library_for_current_date`。401 **不是**工具调用测试。本页不写任何具体税率。
+
+> 人审提醒：最终 HS 与客户报价须人工确认。闸门见「人审闸门」。
+
 ## 解决什么问题
 
 跨境卖家发货前要回答两个问题：这个 HS 编码进目的国要交多少关税？有没有额外的惩罚性关税、PGA（美国政府部门监管）要求或进口限制？
@@ -109,10 +122,12 @@ prompt: |
 
 **公开可核验**
 
+探针表见文首「Lab 探针成品」；此处保留主链接与采编说明。
+
 - 主链接：[Avalara Developer — Cross-Border Trade Services MCP server](https://developer.avalara.com/mcp-servers/cross-border/)（含配置 JSON、工具表与 sample prompt）
 - 总览与授权步骤：[Avalara Developer — MCP servers](https://developer.avalara.com/mcp-servers/)
 - 新闻稿：[Avalara Extends AI Leadership with Avi Everywhere, MCP Servers…](https://newsroom.avalara.com/2025-10-06-Avalara-Extends-AI-Leadership-with-Avi-Everywhere,-MCP-Servers,-and-Global-Compliance-Innovations)（Oct 6, 2025）
-- 采编：2026-10-20（Asia/Shanghai）。本站仅采编公开材料，**未用账号实测**。与 Easyship MCP、Tariff Code Compliance 用例的区别见首节。
+- 采编：2026-10-20（Asia/Shanghai）。本站仅采编公开材料，**未用账号实测**。与 Easyship MCP、Tariff Code Compliance 用例的区别见「解决什么问题」。
 
 ## 据公开帖摘要
 

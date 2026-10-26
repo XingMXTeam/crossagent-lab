@@ -42,6 +42,19 @@ prompt: |
   (classification, customer quotes, booking freight).
 ---
 
+## Lab 探针成品（先看结果）
+
+**方法：** 匿名 HEAD · 无邮箱 · 无货运账号 · 2026-10-21（Asia/Shanghai）  
+**端点：** `https://mcp.gatewaylines.com`
+
+| 探针 | 结果 |
+|------|------|
+| 匿名 HEAD | HTTP **200**；响应头含 `access-control-allow-headers` 等 MCP 相关字段（端点可达） |
+
+**本站未跑：** `landed_cost`／`classify_hts`／`policy_changes_since`。HEAD 200 **不是**工具调用测试。未用邮箱或货运账号。
+
+> 人审提醒：HTS 与客户报价须人工确认。闸门见「人审闸门」。
+
 ## 解决什么问题
 
 跨境卖家／进口商发货前要问：这个 HTS 编码从某国进美国，今天要交多少关税？有没有 Section 301／232／338 或 AD/CVD 叠加？下周政策会不会变？
@@ -101,11 +114,13 @@ prompt: |
 
 **公开可核验**
 
+探针表见文首「Lab 探针成品」；此处保留主链接与采编说明。
+
 - 主链接：[Gateway Tariff Calculator MCP](https://tariff.gatewaylines.com/mcp)（工具说明、连接步骤、额度、免责声明）
 - 端点：`https://mcp.gatewaylines.com`（2026-10-21 匿名 HEAD → HTTP 200）
 - schema：产品页 JSON-LD 含 `dateModified":"2026-10-19"`（WebSite／WebApplication）
 - 组织联系：同站 Organization schema 列出 `sales@gatewaylines.com`、`support@gatewaylines.com`
-- 采编：2026-10-21（Asia/Shanghai）。本站仅采编公开材料，**未实测**工具调用。与 Avalara／Easyship 用例的区别见首节。
+- 采编：2026-10-21（Asia/Shanghai）。本站仅采编公开材料，**未实测**工具调用。与 Avalara／Easyship 用例的区别见「解决什么问题」。
 
 ## 据公开帖摘要
 

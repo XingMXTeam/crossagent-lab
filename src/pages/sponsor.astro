@@ -30,9 +30,11 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
     <h2 class="auc-h2">谁会看到 <span class="tier-en">Who visits</span></h2>
     <p class="auc-body">
       来找跨境卖家／物流／合规／Agent MCP 可复制做法的人——运营、中后台、广告同学，以及做 ERP、物流、选品与 Agent 产品的团队。多数从手机打开。流量尚未稳定，我们<strong>不</strong>公布虚荣 UV／打开率；有可复核的后台数字后再更新。
+      用例目录持续收录可核验 MCP 做法；赞助档位是早期 founding 价，目录长大后新签约价上调（见下方三档说明）。
     </p>
     <p class="en muted-note">
       Builders and operators looking for cross-border / seller / logistics Agent MCP playbooks. Mostly on phones. Traffic is not stable yet — we do not invent visit counts.
+      The catalog keeps adding verifiable MCP write-ups. These are early founding rates; new contracts rise as the catalog grows (see the tiers below).
     </p>
 
     <h2 class="auc-h2">长什么样 <span class="tier-en">How it looks</span></h2>
@@ -110,17 +112,18 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
         <p class="price-line">$99 <span class="price-unit">/ 期</span></p>
         <p class="price-sub">$99 / issue · one labeled newsletter slot</p>
         <p class="founding-note panel">
-          <strong>Founding 启动价：</strong>前 <strong>1–2</strong> 家按 <strong>$49／期</strong>，之后恢复 <strong>$99</strong>。
+          <strong>Founding 启动价：</strong>前 <strong>1–2</strong> 家按 <strong>$49／期</strong>；名额满后只卖 <strong>$99</strong>。
+          用例库与周报期次往前走时，启动价<strong>不再</strong>延长——这是早期名额，不是永久折扣。
           页面 Stripe 仍是 <strong>$99</strong> 默认链接；要 founding $49 请先
-          <a href={newsletterFoundingMail}>发邮件确认名额</a>，我们再人工开票／收款（尚无单独 $49 Payment Link）。
-          <span class="en">Founding: first 1–2 sponsors pay $49/issue via email + manual invoice; Checkout stays $99 until a $49 link exists.</span>
+          <a href={newsletterFoundingMail}>发邮件确认名额</a>，再人工开票／收款（尚无单独 $49 Payment Link）。
+          <span class="en">Founding: first 1–2 sponsors at $49/issue via email + manual invoice while the catalog is early. Checkout stays $99. Price does not stay founding forever as the case library grows.</span>
         </p>
         <p class="buy-got"><strong>买到：</strong>一期周报里一个赞助插槽——品牌名 + 约 40 字 pitch + 一个链接。</p>
         <p class="buy-not muted-note">买不到：打开率／订阅人数承诺、长期首页位、多期打包；founding $49 不含自动 Stripe 结账。</p>
         <ul>
           <li>读者是主动订阅「每周跨境 Agent 精选」的人，不是信息流流量。</li>
           <li>按购买的那一期插入。<strong>不</strong>预告、不编造打开率或订阅人数。</li>
-          <li>Founding $49 仅前 1–2 家；名额满后只卖 $99。</li>
+          <li>早期名额有限；库长大、周报稳定后 founding 结束，只保留 $99。不公布「已售几家」。</li>
         </ul>
         <div class="cta-row">
           <a class="btn secondary" href={newsletterFoundingMail}>申请 founding $49 <span class="btn-en">email first</span></a>
@@ -140,14 +143,16 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
         <p class="tier-kicker">Founding · $349</p>
         <h3>Founding 月赞助 <span class="tier-en">Monthly founding spot</span></h3>
         <p class="price-line">$349 <span class="price-unit">/ 月</span></p>
-        <p class="price-sub">$349 / month · homepage bar + newsletter line</p>
+        <p class="price-sub">$349 / month · homepage bar + newsletter · founding rate while catalog is early</p>
         <p class="buy-got"><strong>买到：</strong>首页底部赞助条（品牌名 + 约 40 字 pitch + 链接）+ 周报内一行 Sponsored by（简报开通后，随月持续）。同档同时只一位。</p>
         <p class="buy-not muted-note">买不到：与另一位同档共享首页条、自然排序、虚荣流量数字。</p>
         <ul>
-          <li>档期从赞助获批起算；若已有在播或排队，从上一档结束后开始。</li>
-          <li>早期启动价；名额有限，满员后涨价（新档位届时公布）。</li>
-          <li>适合 ERP、广告、物流、选品合规与 Agent 产品。</li>
-          <li>赞助条点击可带 <code>utm_source=crossagent</code>（你自带 UTM 则原样使用）。</li>
+          <li><strong>Founding 价：</strong>$349／月为站点早期档。同档同时只一位首页条；排队从上一档结束后起算。</li>
+          <li><strong>会涨：</strong>用例目录与周报读者基数长大后，新签约不再沿用本 founding 价（新档位届时在本页公布）。现在锁的是<strong>当前</strong>月价，不是「永不涨」承诺。</li>
+          <li><strong>买到：</strong>首页底部赞助条（品牌 + 约 40 字 pitch + 链接）+ 周报 Sponsored by（简报开通后随月持续）。一律标 Sponsored。</li>
+          <li><strong>买不到：</strong>与另一位共享同档首页条、自然排序、「已验证」徽章、虚荣 UV／打开率。</li>
+          <li>适合 ERP、广告、物流、选品合规与 Agent／MCP 产品。</li>
+          <li>赞助条点击可带 <code>utm_source=crossagent</code>（你自带 UTM 则原样）。</li>
         </ul>
         <div class="cta-row">
           <a
@@ -178,8 +183,8 @@ const foundingMail = `mailto:${inbox}?subject=${encodeURIComponent('CrossAgent L
             <tr>
               <td style="padding:0.5rem;border-bottom:1px solid var(--line)"><strong>买到</strong></td>
               <td style="padding:0.5rem;border-bottom:1px solid var(--line)">一条用例赞助推广位 30 天；标 Sponsored</td>
-              <td style="padding:0.5rem;border-bottom:1px solid var(--line)">一期插槽；前 1–2 家可 founding $49（邮件人工）</td>
-              <td style="padding:0.5rem;border-bottom:1px solid var(--line)">首页赞助条 + 周报 Sponsored by</td>
+              <td style="padding:0.5rem;border-bottom:1px solid var(--line)">一期插槽；前 1–2 家可 founding $49（邮件人工）；满后 $99；启动价不随库长大无限延期</td>
+              <td style="padding:0.5rem;border-bottom:1px solid var(--line)">首页条 + 周报 Sponsored by；早期月价，目录长大后新签约涨价（届时公布）</td>
             </tr>
             <tr>
               <td style="padding:0.5rem;border-bottom:1px solid var(--line)"><strong>买不到</strong></td>

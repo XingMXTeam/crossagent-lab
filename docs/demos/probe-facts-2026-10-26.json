@@ -1,0 +1,76 @@
+{
+  "probed_at": "2026-10-26 ~10:58–10:59 Asia/Shanghai (box CST)",
+  "initialize": {
+    "http": 200,
+    "name": "freightutils-mcp",
+    "version": "2.22.5"
+  },
+  "tools_list": {
+    "http": 200,
+    "count": 25
+  },
+  "health": {
+    "status": "ok",
+    "mcp_version": "2.22.5",
+    "tools_registered": 25,
+    "transports": {
+      "remote_http": {
+        "available": true,
+        "url": "https://www.freightutils.com/api/mcp/mcp",
+        "alias_url": "https://www.freightutils.com/api/mcp"
+      },
+      "stdio_npx": {
+        "available": true,
+        "npm_package": "freightutils-mcp",
+        "latest_version": "2.22.5",
+        "install_command": "npx freightutils-mcp"
+      }
+    },
+    "data_freshness": {
+      "last_updated": "August 2026",
+      "as_of": "2026-08-27T00:00:00Z",
+      "adr_edition": "UNECE ADR 2025",
+      "hs_edition": "WCO HS 2022"
+    },
+    "note": "Static shape report only — wire-level liveness is exercised daily by an internal customer-experience smoke covering both transports.",
+    "docs_url": "https://www.freightutils.com/api-docs#mcp-setup",
+    "timestamp": "2026-10-26T02:58:46.959Z"
+  },
+  "hs": {
+    "query": "cotton t-shirt",
+    "hscode": "610910",
+    "description": "T-shirts, singlets and other vests; of cotton, knitted or crocheted",
+    "confidence": {
+      "level": "medium",
+      "basis": "match_quality",
+      "score": 0.6
+    },
+    "warnings": [
+      {
+        "code": "FUZZY_BEST_MATCH",
+        "message": "No WCO HS description contains \"cotton t-shirt\"; the UK Trade Tariff search references (HMRC) map it to 6109100010 (\"cotton t-shirts, knitted or crocheted\"), which is HS 610910 — T-shirts, singlets and other vests; of cotton, knitted or crocheted. Confirm the code against the goods.",
+        "details": {
+          "candidates": 1,
+          "matched_field": "tariff_search_reference",
+          "match_type": "reference",
+          "source": "UK Trade Tariff search references (HMRC)",
+          "url": "https://www.trade-tariff.service.gov.uk/search?q=cotton%20t-shirt"
+        }
+      }
+    ],
+    "citation_text": "610910 — T-shirts, singlets and other vests; of cotton, knitted or crocheted (WCO HS 2022)."
+  },
+  "cbm": {
+    "totalCbm": 9.6,
+    "pieces": 10,
+    "dims": "120×80×100 cm"
+  },
+  "subscribe": {
+    "url": "https://www.freightutils.com/pricing",
+    "tier": "pro",
+    "monthly_limit": 50000,
+    "monthly_price": "£19",
+    "currency": "GBP",
+    "note": "Open the URL in a browser to subscribe. Agents must not attempt to complete checkout themselves."
+  }
+}

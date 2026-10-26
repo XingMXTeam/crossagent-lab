@@ -49,6 +49,20 @@ prompt: |
   duty/landed-cost figure, credit spend, checkout/DDP promise).
 ---
 
+## Lab 探针成品（先看结果）
+
+**方法：** 匿名 · 无 OAuth · 无 Bearer · 2026-10-25（Asia/Shanghai）
+
+| 探针 | 结果 |
+|------|------|
+| `https://mcp.border.bot/mcp` 匿名 HEAD／GET | **HTTP 401** + OAuth protected-resource 元数据 |
+| 匿名 `POST /v1/classify` | **HTTP 401**（需 Bearer） |
+| `GET https://api.border.bot/v1/pricing` | **HTTP 200**（packs／actions／`signupBonusCredits=10`；与 classify 无关） |
+
+**本站未跑：** OAuth 与 workspace 登录；`classify`／landed-cost 等工具调用。**没有**真实工具返回的税则或金额。首页示例表**不是**本站实测。
+
+> 人审提醒：匿名 401 不能当成 classify 已测通。闸门见「人审闸门」。
+
 ## 解决什么问题
 
 跨境包裹／独立站卖家在结账或报关前常要同时回答：这个 SKU 进美国／英国／欧盟／加拿大该报哪个税则编码？duty、进口税、海关费加起来 landed cost 是多少？能不能在 checkout 先收妥，避免到付？
@@ -138,6 +152,8 @@ prompt: |
 
 **公开可核验**
 
+探针表见文首「Lab 探针成品」；此处保留主链接与采编说明。
+
 - 主链接：[Connect border.bot to your AI tools](https://border.bot/mcp)（URL、Streamable HTTP、OAuth 2.1、34 客户端指南）
 - 首页：[HS codes and landed cost for cross-border parcels](https://border.bot/)（产品流程、REST 示例、credit packs 摘要；Last updated 2026-10-19）
 - 定价：[Pricing](https://border.bot/pricing)／[pricing.md](https://border.bot/pricing.md)（packs 与 action credits；Prices as of 2026-10-25）
@@ -145,7 +161,7 @@ prompt: |
 - Agent 发现：[llms.txt](https://border.bot/llms.txt)（MCP 工具名摘要；免费 `GET /v1/pricing` 等）
 - 端点探活：`https://mcp.border.bot/mcp` — 2026-10-25 匿名 HEAD／GET → **HTTP 401** + OAuth protected-resource 元数据
 - 公开价目：`GET https://api.border.bot/v1/pricing` — 2026-10-25 匿名 → **HTTP 200**（packs／actions／signupBonusCredits=10）
-- 采编：2026-10-25（Asia/Shanghai）。本站仅采编公开材料并做匿名探活；**未完成 OAuth，未实测 classify／landed-cost 工具调用**。与 Avalara／Gateway／EximAgent 的区别见首节。
+- 采编：2026-10-25（Asia/Shanghai）。本站仅采编公开材料并做匿名探活；**未完成 OAuth，未实测 classify／landed-cost 工具调用**。与 Avalara／Gateway／EximAgent 的区别见「解决什么问题」。
 
 ## 据公开帖摘要
 
