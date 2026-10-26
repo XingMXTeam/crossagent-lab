@@ -26,3 +26,16 @@ compatibility_date = "2026-10-14"
 # Saved list — functions/api/send-saved-list.ts
 # Same RESEND_API_KEY / RESEND_FROM / RESEND_SEGMENT_ID. No new secrets.
 # Newsletter checkbox calls deliverNewsletterWelcome (welcome + segment).
+#
+# Activation events — functions/api/activation.ts
+# Cloudflare Web Analytics cannot emit custom events. Do not add the binding
+# here: this file stays local-only until pages_build_output_dir is adopted,
+# and a production wrangler config would overwrite dashboard bindings (VOTES).
+# Before the 2-week read is trustworthy (events 503 until this exists):
+#   1. Pages project crossagent-lab → Settings → Bindings → Add → Analytics engine
+#   2. Variable name: ACTIVATION
+#   3. Dataset: crossagent_activation
+#   4. Attach it to Production, and to Preview if preview deployments are used
+#   5. Redeploy. Binding changes apply on the next deploy.
+# GET /api/activation → { ok, configured } and no counts.
+# Data point: index1=activation, blob1=event, blob2=slug, blob3=locale, blob4=via, double1=1.

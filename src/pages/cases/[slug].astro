@@ -23,7 +23,7 @@ const agentCount = all.filter((c) => c.data.agents.includes(agent)).length;
 const catCount = all.filter((c) => c.data.category === d.category).length;
 ---
 <BaseLayout title={`${d.title} — CrossAgent Lab`} description={d.summary} canonicalPath={`/cases/${entry.slug}/`}>
-  <article>
+  <article data-case-slug={entry.slug}>
     <header class="article-head">
       <p class="kicker"><a href={`/categories/${d.category}/`}>{cat.zh}</a></p>
       <h1>{d.title}</h1>
@@ -89,35 +89,53 @@ const catCount = all.filter((c) => c.data.category === d.category).length;
     </nav>
   </article>
   <script is:inline>
-    document.querySelector('[data-copy]')?.addEventListener('click', async (e) => {
-      const btn = e.currentTarget;
-      const text = document.getElementById('prompt-text')?.textContent || '';
-      const box = document.querySelector('[data-prompt-box]');
-      const done = () => {
-        btn.classList.add('is-copied');
-        box?.classList.add('is-copied');
-        btn.textContent = '已复制';
-        setTimeout(() => {
-          btn.classList.remove('is-copied');
-          box?.classList.remove('is-copied');
-          btn.textContent = '复制 Prompt';
-        }, 2000);
-      };
-      try {
-        await navigator.clipboard.writeText(text);
-        done();
-      } catch {
-        const pre = document.getElementById('prompt-text');
-        if (pre) {
-          const range = document.createRange();
-          range.selectNodeContents(pre);
-          const sel = getSelection();
-          sel?.removeAllRanges();
-          sel?.addRange(range);
-        }
-        btn.textContent = '已选中，请手动复制';
-        setTimeout(() => { btn.textContent = '复制 Prompt'; }, 2000);
+    (function () {
+      var slugEl = document.querySelector('[data-case-slug]');
+      var slug = slugEl ? slugEl.getAttribute('data-case-slug') || '' : '';
+      function track(event, via) {
+        if (!slug) return;
+        var locale = document.documentElement.lang || '';
+        fetch('/api/activation', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', accept: 'application/json' },
+          body: JSON.stringify({ event: event, slug: slug, locale: locale, via: via }),
+          keepalive: true,
+          credentials: 'same-origin',
+        }).catch(function () {});
       }
-    });
+      track('case_detail_open', 'page');
+      document.querySelector('[data-copy]')?.addEventListener('click', async (e) => {
+        const btn = e.currentTarget;
+        const text = document.getElementById('prompt-text')?.textContent || '';
+        const box = document.querySelector('[data-prompt-box]');
+        const done = () => {
+          btn.classList.add('is-copied');
+          box?.classList.add('is-copied');
+          btn.textContent = '已复制';
+          setTimeout(() => {
+            btn.classList.remove('is-copied');
+            box?.classList.remove('is-copied');
+            btn.textContent = '复制 Prompt';
+          }, 2000);
+        };
+        try {
+          await navigator.clipboard.writeText(text);
+          done();
+          track('prompt_copy', 'clipboard');
+        } catch {
+          const pre = document.getElementById('prompt-text');
+          if (pre) {
+            const range = document.createRange();
+            range.selectNodeContents(pre);
+            const sel = getSelection();
+            sel?.removeAllRanges();
+            sel?.addRange(range);
+          }
+          btn.textContent = '已选中，请手动复制';
+          setTimeout(() => { btn.textContent = '复制 Prompt'; }, 2000);
+          track('prompt_copy', 'select');
+        }
+      });
+    })();
   </script>
 </BaseLayout>
