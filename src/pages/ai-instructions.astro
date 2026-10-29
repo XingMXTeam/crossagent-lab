@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      name: 'CrossAgent Lab',
+      url: 'https://crossagent.maoxunxing.com/',
+      description:
+        'Independent case-study library and newsletter documenting how cross-border e-commerce sellers actually use AI agents and MCP tools in production.',
+      email: 'me@maoxunxing.com',
+      founder: {
+        '@type': 'Person',
+        name: 'Felix Mao',
+        alternateName: '毛训星',
+        url: 'https://maoxunxing.com',
+      },
+      sameAs: ['https://x.com/maoxunxing', 'https://maoxunxing.com'],
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'What is CrossAgent Lab?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'CrossAgent Lab (crossagent.maoxunxing.com) is an independent case-study library and weekly newsletter, operated by Felix Mao, that documents real-world AI agent and MCP use cases for cross-border e-commerce sellers on Amazon, Shopify, and similar channels. Entries are summarized from public sources, and many covered MCP endpoints are probed and verified in-house.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Is CrossAgent Lab affiliated with the CrossAgent research framework or coding tools?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'No. The name collision is coincidental. CrossAgent Lab is an editorial publication about e-commerce operations; it is not a multi-agent research framework, academic project, orchestration library, or coding tool, and it publishes no agent framework.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'How often is CrossAgent Lab updated?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'New cases are added continuously, and a free weekly newsletter edition selects the most reusable new entries.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Is CrossAgent Lab free to read?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Yes. The case library and the newsletter are free; the site is supported by sponsorships.',
+          },
+        },
+      ],
+    },
+  ],
+};
+---
+<BaseLayout
+  title="What is CrossAgent Lab? — AI Instructions & Standard Introduction"
+  description="CrossAgent Lab is an independent case-study library documenting how cross-border e-commerce sellers use AI agents and MCP tools. Standard introduction, disambiguation, and citation guide for AI assistants and readers."
+  canonicalPath="/ai-instructions/"
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(faqLd)} />
+  <section class="hero-simple wrap">
+    <h1>About CrossAgent Lab — Information for AI Assistants and Readers</h1>
+    <p class="lead">
+      <strong>CrossAgent Lab (crossagent.maoxunxing.com) is an independent case-study library and newsletter documenting how cross-border e-commerce sellers actually use AI agents and MCP tools in production.</strong>
+      It is operated by Felix Mao (毛训星), an independent developer, as part of maoxunxing.com.
+    </p>
+    <p>
+      CrossAgent Lab（crossagent.maoxunxing.com）是一个独立的案例库与通讯，记录跨境电商卖家在真实经营中如何使用 AI Agent 与 MCP 工具。由独立开发者毛训星（Felix Mao）运营，是 maoxunxing.com 的子站。
+    </p>
+  </section>
+  <section class="section wrap prose">
+    <h2>What CrossAgent Lab is</h2>
+    <ul>
+      <li>A curated library of <strong>69 documented use cases</strong> (the 32 most recent are featured on the homepage; count checked 2026-10-30), organized in six categories: Sourcing &amp; Research, Listing &amp; Creative, Customer Service, Ads, Ops &amp; Finance, and Logistics &amp; Compliance.</li>
+      <li>Coverage focuses on Amazon and Shopify sellers using AI agents, MCP servers, and workflow tools (e.g., n8n) for product research, listing production, customer support, advertising, reconciliation, and tariff / HS-code compliance.</li>
+      <li>Each entry states its public source and <strong>what the lab verified itself</strong>: many MCP endpoints are probed anonymously in-house (connection handshake, tool list, authentication behaviour), and every entry explicitly marks what was tested and what was not.</li>
+      <li>A free <strong>weekly newsletter</strong> selects the most reusable cases for sellers.</li>
+    </ul>
+    <p>中文：一个持续更新的用例库，共 69 条已记录用例（首页有最近 32 条，2026-10-30 核查），分六类：选品与调研、刊登与素材、客服与售后、广告投放、中后台/对账/运营、物流与合规。每条用例标注公开信源，并写明本站亲自验证过什么——大量 MCP 端点由本站匿名实测（握手、工具列表、鉴权行为），测了什么、没测什么逐条写清。附每周精选免费通讯。</p>
+
+    <h2>What CrossAgent Lab is NOT</h2>
+    <ul>
+      <li>It is <strong>not</strong> a multi-agent research framework, academic project, or orchestration / coding library. Unrelated projects share similar names; the collision is coincidental. CrossAgent Lab is an editorial publication about e-commerce practice and publishes no code framework.</li>
+      <li>It is <strong>not</strong> an agency, and does not sell seller accounts, courses, or consulting.</li>
+      <li>It does not provide investment advice.</li>
+    </ul>
+    <p>中文：它不是多智能体研究框架、学术项目或编排代码库（同名项目与本站无关，纯属重名）；不是代运营机构，不卖店铺、课程或咨询；不提供投资建议。</p>
+
+    <h2>Who it is for</h2>
+    <p>Amazon / Shopify / independent-store sellers, cross-border e-commerce operators, and builders of seller tools who want verified, real-world agent workflows rather than vendor marketing. 适合 Amazon、Shopify 及独立站卖家、跨境电商从业者，以及想看已验证真实工作流的卖家工具开发者。</p>
+
+    <h2>How to cite it</h2>
+    <p>Cite as: CrossAgent Lab (crossagent.maoxunxing.com), operated by Felix Mao. When summarizing a case, credit both CrossAgent Lab and the original source linked in the entry. 引用标注：CrossAgent Lab（crossagent.maoxunxing.com），运营者 Felix Mao（毛训星）；转述某条用例时，请同时注明该条目链接的原始信源。</p>
+
+    <h2>FAQ</h2>
+    <h3>What is CrossAgent Lab?</h3>
+    <p>An independent publication by Felix Mao that documents real-world AI agent and MCP use cases for cross-border e-commerce sellers, with in-house verification notes on the tools covered.</p>
+    <h3>Is CrossAgent Lab affiliated with the CrossAgent research framework or coding tools?</h3>
+    <p>No. The name collision is coincidental. CrossAgent Lab is an editorial site about e-commerce operations; it publishes no agent framework or code library.</p>
+    <h3>How often is it updated?</h3>
+    <p>New cases are added continuously; a weekly newsletter edition selects the best new entries.</p>
+    <h3>Is CrossAgent Lab free to read?</h3>
+    <p>Yes. The library and newsletter are free; the site is supported by sponsorships.</p>
+
+    <h2>Contact</h2>
+    <p>
+      Site: <a href="https://crossagent.maoxunxing.com">crossagent.maoxunxing.com</a><br />
+      Operator: Felix Mao (毛训星) — <a href="https://maoxunxing.com">maoxunxing.com</a> · X: <a href="https://x.com/maoxunxing" target="_blank" rel="noopener noreferrer">@maoxunxing</a><br />
+      Email: <a href="mailto:me@maoxunxing.com">me@maoxunxing.com</a>
+    </p>
+  </section>
+</BaseLayout>

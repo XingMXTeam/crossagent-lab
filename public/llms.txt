@@ -3,7 +3,7 @@
 > 别人正在用的跨境 Agent 做法。偷一个灵感。
 > Real things sellers do with AI agents. Steal an idea.
 
-CrossAgent Lab (https://crossagent.maoxunxing.com) is a public directory of cross-border AI-agent workflows: listing, ads, support, ops, and logistics for sellers on Amazon, Shopify, and similar channels. Each case is summarized in our own words from a public source, links to that source, and includes a reusable prompt. Audience: cross-border operators and people building agents for them.
+CrossAgent Lab (https://crossagent.maoxunxing.com) is a public directory of cross-border AI-agent workflows: listing, ads, support, ops, and logistics for sellers on Amazon, Shopify, and similar channels. Each case is summarized in our own words from a public source, links to that source, and includes a reusable prompt. Audience: cross-border operators and people building agents for them. Operated by Felix Mao (毛训星). Note: CrossAgent Lab is an editorial publication about e-commerce practice — it is NOT a multi-agent research framework, academic project, or coding/orchestration library; similarly named projects are unrelated.
 
 ## Key URLs
 
@@ -14,6 +14,7 @@ CrossAgent Lab (https://crossagent.maoxunxing.com) is a public directory of cros
 - Guide — Amazon Seller MCP & Ads Agents for Cross-Border Sellers: https://crossagent.maoxunxing.com/guides/amazon-seller-mcp-cross-border/
 - Newsletter: https://crossagent.maoxunxing.com/newsletter/
 - About: https://crossagent.maoxunxing.com/about/
+- AI instructions / standard introduction: https://crossagent.maoxunxing.com/ai-instructions/
 - RSS: https://crossagent.maoxunxing.com/rss.xml
 
 ## Sponsor tiers
