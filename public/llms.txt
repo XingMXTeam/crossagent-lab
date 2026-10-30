@@ -12,6 +12,7 @@ CrossAgent Lab (https://crossagent.maoxunxing.com) is a public directory of cros
 - Submit a use case: https://crossagent.maoxunxing.com/submit/
 - Cases: https://crossagent.maoxunxing.com/cases/{slug}/
 - Guide — Amazon Seller MCP & Ads Agents for Cross-Border Sellers: https://crossagent.maoxunxing.com/guides/amazon-seller-mcp-cross-border/
+- Guide — MCP Tools for Amazon Sellers: A Verified Directory: https://crossagent.maoxunxing.com/guides/amazon-seller-mcp-tools/
 - Newsletter: https://crossagent.maoxunxing.com/newsletter/
 - About: https://crossagent.maoxunxing.com/about/
 - AI instructions / standard introduction: https://crossagent.maoxunxing.com/ai-instructions/

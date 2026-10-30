@@ -16,6 +16,8 @@ This piece maps three layers — research MCP, account/ops MCP, and Ads MCP — 
 
 **Last verified:** 2026-10-17 (Asia/Shanghai).
 
+**Companion directory:** for the tool-by-tool list — every seller MCP we have documented, with access requirements and what the Lab verified itself — see [MCP Tools for Amazon Sellers: A Verified Directory](https://crossagent.maoxunxing.com/guides/amazon-seller-mcp-tools/).
+
 ---
 
 ## Three layers of “seller AI”
