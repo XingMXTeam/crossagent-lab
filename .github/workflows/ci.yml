@@ -46,6 +46,10 @@ jobs:
               "ai-train:",
               "ARTICLE 4 OF THE EUROPEAN UNION DIRECTIVE 2019/790",
               "User-agent: OAI-SearchBot\nAllow: /",
+              "User-agent: GPTBot\nAllow: /",
+              "User-agent: ChatGPT-User\nAllow: /",
+              "User-agent: ClaudeBot\nAllow: /",
+              "User-agent: PerplexityBot\nAllow: /",
               "User-agent: *\nAllow: /",
               "Sitemap: https://crossagent.maoxunxing.com/sitemap.xml",
           ]
@@ -54,8 +58,6 @@ jobs:
                   raise SystemExit(f"robots.txt missing: {snippet!r}")
           if "Disallow" in robots:
               raise SystemExit("robots.txt must not add Disallow")
-          if "GPTBot" in robots:
-              raise SystemExit("robots.txt must not add a GPTBot group")
 
           xml = Path("dist/sitemap.xml").read_text(encoding="utf-8")
           locs = re.findall(r"<loc>([^<]+)</loc>", xml)
