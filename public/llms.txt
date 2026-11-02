@@ -7,22 +7,22 @@ CrossAgent Lab (https://crossagent.maoxunxing.com) is a public directory of cros
 
 ## Key URLs
 
-- Home: https://crossagent.maoxunxing.com/
-- Sponsor / pricing: https://crossagent.maoxunxing.com/sponsor/
-- Submit a use case: https://crossagent.maoxunxing.com/submit/
-- Cases: https://crossagent.maoxunxing.com/cases/{slug}/
-- Guide — Amazon Seller MCP & Ads Agents for Cross-Border Sellers: https://crossagent.maoxunxing.com/guides/amazon-seller-mcp-cross-border/
-- Guide — MCP Tools for Amazon Sellers: A Verified Directory: https://crossagent.maoxunxing.com/guides/amazon-seller-mcp-tools/
-- Newsletter: https://crossagent.maoxunxing.com/newsletter/
-- About: https://crossagent.maoxunxing.com/about/
-- AI instructions / standard introduction: https://crossagent.maoxunxing.com/ai-instructions/
-- RSS: https://crossagent.maoxunxing.com/rss.xml
+- [CrossAgent Lab — 别人正在用的跨境 Agent 做法](https://crossagent.maoxunxing.com/)
+- [赞助 — CrossAgent Lab](https://crossagent.maoxunxing.com/sponsor/)
+- [提交用例 — CrossAgent Lab](https://crossagent.maoxunxing.com/submit/)
+- [Cases](https://crossagent.maoxunxing.com/cases/{slug}/)
+- [Amazon Seller MCP & Ads Agents for Cross-Border Sellers: What Works, What’s US-Only, HITL Patterns](https://crossagent.maoxunxing.com/guides/amazon-seller-mcp-cross-border/)
+- [MCP Tools for Amazon Sellers: A Verified Directory (October 2026)](https://crossagent.maoxunxing.com/guides/amazon-seller-mcp-tools/)
+- [简报订阅 — CrossAgent Lab](https://crossagent.maoxunxing.com/newsletter/)
+- [关于 CrossAgent Lab — 别人正在用的跨境 Agent 做法](https://crossagent.maoxunxing.com/about/)
+- [What is CrossAgent Lab? — AI Instructions & Standard Introduction](https://crossagent.maoxunxing.com/ai-instructions/)
+- [CrossAgent Lab](https://crossagent.maoxunxing.com/rss.xml)
 
 ## Sponsor tiers
 
-- Case / listing boost: $49 / 30 days — https://crossagent.maoxunxing.com/sponsor/#listing
-- Newsletter insert: $99 / issue — https://crossagent.maoxunxing.com/sponsor/#newsletter
-- Founding: $349 / month — https://crossagent.maoxunxing.com/sponsor/#founding
+- Case / listing boost: $49 / 30 days — [Case / listing boost](https://crossagent.maoxunxing.com/sponsor/#listing)
+- Newsletter insert: $99 / issue — [Newsletter insert](https://crossagent.maoxunxing.com/sponsor/#newsletter)
+- Founding: $349 / month — [Founding](https://crossagent.maoxunxing.com/sponsor/#founding)
 
 Checkout is Stripe (CrossAgent Lab). After payment, email the brand name, link, and (for a boost) the case URL.
 

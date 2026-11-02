@@ -26,6 +26,11 @@ const site = 'https://crossagent.maoxunxing.com';
 const canonical = new URL(canonicalPath, site).href;
 const ogImage = new URL('/og.png', site).href;
 const feed = layout === 'feed';
+// GEO H-002: the homepage is the one feed page without its own <h1>;
+// render its sidebar tagline as the page's single <h1> there (same
+// class/copy, so no visual change). Other feed pages keep <p> — they
+// already carry their own <h1>.
+const TaglineTag = feed && canonicalPath === '/' ? 'h1' : 'p';
 
 const allCases = feed ? await getCollection('cases') : [];
 const totalCases = allCases.length;
@@ -119,10 +124,10 @@ const jsonLd = canonicalPath === '/'
             <img class="brand-mark" src="/logo.svg" width="36" height="36" alt="" />
             <span class="brand-name">crossagent<span class="brand-tld">.lab</span></span>
           </a>
-          <p class="brand-tagline">
+          <TaglineTag class="brand-tagline">
             <span class="zh">别人正在用的跨境 Agent 做法。偷一个灵感。</span>
             <span class="en">Real things sellers do with AI agents. Steal an idea.</span>
-          </p>
+          </TaglineTag>
           <div class="side-ctas">
             <a class="btn" href={subscribeHref}>订阅每周精选</a>
             <a class="btn secondary" href="/submit/">提交用例</a>
