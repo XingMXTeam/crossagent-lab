@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { getCollection } from 'astro:content';
 import SponsorBar from '../components/SponsorBar.astro';
+import ContactBlock from '../components/ContactBlock.astro';
 import SaveListPrompt from '../components/SaveListPrompt.astro';
 import AgentChips from '../components/AgentChips.astro';
 import { categories, categoryMeta } from '../content/config';
@@ -177,6 +178,7 @@ const jsonLd = canonicalPath === '/'
             · <a href="/sponsor/">赞助</a>
             · <a href="/about/#privacy">隐私</a>
           </p>
+          <ContactBlock />
         </aside>
         <div class="feed-col">
           <div class="feed-toolbar">
@@ -215,6 +217,7 @@ const jsonLd = canonicalPath === '/'
             <a href="/rss.xml">RSS</a>
             <a href="/sponsor/">赞助</a>
             <a href="/about/#privacy">隐私</a>
+            <ContactBlock />
           </footer>
         </div>
       </div>
@@ -244,6 +247,7 @@ const jsonLd = canonicalPath === '/'
           <a href="/rss.xml">RSS</a>
           <a href="/sponsor/">赞助</a>
           <a href="/about/#privacy">隐私</a>
+          <ContactBlock />
         </footer>
       </div>
     )}
