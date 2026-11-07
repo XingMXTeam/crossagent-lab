@@ -167,6 +167,7 @@ const jsonLd = canonicalPath === '/'
             Updated {updatedLabel}<br />
             Sources: 公开网页与社群<br />
             <a href="/">用例</a>
+            · <a href="/skills/">技能包</a>
             · <a href="/submit/">提交</a>
             · <a href="/newsletter/">简报</a>
             · <a href="/about/">关于</a>
@@ -205,6 +206,7 @@ const jsonLd = canonicalPath === '/'
           </main>
           <footer class="feed-foot">
             <a href="/">用例</a>
+            <a href="/skills/">技能包</a>
             <a href="/submit/">提交</a>
             <a href="/newsletter/">简报</a>
             <a href="/about/">关于</a>
@@ -223,13 +225,17 @@ const jsonLd = canonicalPath === '/'
             <img class="brand-mark" src="/logo.svg" width="24" height="24" alt="" />
             <span class="brand-name">crossagent<span class="brand-tld">.lab</span></span>
           </a>
-          <a class="article-all" href="/">全部用例</a>
+          <nav class="article-nav" aria-label="站点">
+            <a class="article-all" href="/">全部用例</a>
+            <a class="article-all" href="/skills/">技能包</a>
+          </nav>
         </header>
         <main>
           <slot />
         </main>
         <footer class="article-foot">
           <a href="/">用例</a>
+          <a href="/skills/">技能包</a>
           <a href="/submit/">提交</a>
           <a href="/newsletter/">简报</a>
           <a href="/about/">关于</a>
