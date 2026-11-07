@@ -101,6 +101,15 @@ jobs:
           case = f"{origin}/cases/shop-mcp-visibility-tools/"
           if not has(case):
               missing.append(case)
+          for path in (
+              "/skills/",
+              "/skills/logistics-hs-landed-cost-probe/",
+              "/skills/shopify-storefront-agent-ready/",
+              "/skills/shopify-returns-email-hitl-gate/",
+          ):
+              url = f"{origin}{path}"
+              if not has(url):
+                  missing.append(url)
           banned = [u for u in locs if "/want/" in u or "/api/" in u or u.endswith("/rss.xml")]
           if missing or banned:
               raise SystemExit(f"sitemap check failed missing={missing} banned={banned}")

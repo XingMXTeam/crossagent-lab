@@ -1,0 +1,150 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { skillCategoryMeta, verificationMeta } from '../../content/config';
+import { assertSkillBindings, caseSlugFromUrl, skillMailto } from '../../lib/skills';
+
+export async function getStaticPaths() {
+  const cases = await getCollection('cases');
+  const skills = await getCollection('skills');
+  assertSkillBindings(skills, cases);
+  return skills
+    .filter((entry) => entry.data.status !== 'retired')
+    .map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const d = entry.data;
+const cases = await getCollection('cases');
+const caseTitle = new Map(cases.map((item) => [item.slug, item.data.title]));
+const others = (await getCollection('skills')).filter(
+  (item) => item.slug !== entry.slug && item.data.status !== 'retired',
+);
+const level = verificationMeta[d.verification_level];
+const statusLabel = d.status === 'draft' ? '草稿' : d.status === 'listed' ? '在列' : '已撤';
+const mailto = skillMailto(d.title);
+
+function linksFor(urls: string[]) {
+  return urls.map((url) => {
+    const slug = caseSlugFromUrl(url);
+    return { url, slug, title: slug ? caseTitle.get(slug) : undefined };
+  });
+}
+const bound = linksFor(d.bound_case_urls);
+const seeAlso = linksFor(d.see_also_case_urls);
+---
+<BaseLayout
+  title={`${d.title} — 技能包 — CrossAgent Lab`}
+  description={d.summary}
+  canonicalPath={`/skills/${entry.slug}/`}
+>
+  <article class="skill-detail">
+    <header class="article-head">
+      <p class="kicker">
+        <a href="/skills/">技能包</a>
+        · {skillCategoryMeta[d.category].zh}
+        · {statusLabel}
+      </p>
+      <h1>{d.title}</h1>
+      <p class="lead">{d.summary}</p>
+      <p class="price-line">${d.price_usd} <span class="price-unit">试价 · 邮件询购</span></p>
+      <p class="price-sub">{d.price_note}</p>
+      <div class="with-agents">
+        <span class="tag">{level.zh}</span>
+        {d.clients.map((name) => <span class="tag">{name}</span>)}
+      </div>
+    </header>
+
+    <div class="prose">
+      <h2>绑定用例</h2>
+      <p>这些用例页继续免费。技能包不改用例正文，也不挡住阅读。</p>
+      <ul>
+        {bound.map((item) => (
+          <li>
+            <a href={`/cases/${item.slug}/`}>{item.title}</a>
+            <span> · /cases/{item.slug}/</span>
+          </li>
+        ))}
+      </ul>
+
+      <h2>你得到什么</h2>
+      <p>这一版是骨架说明，页上没有 zip。买到的是清单和闸门，不是密钥，也不是曝光位。</p>
+      <ol>
+        {d.deliverables.map((item) => <li>{item}</li>)}
+      </ol>
+
+      <h2>适用客户端</h2>
+      <ul>
+        {d.clients.map((item) => <li>{item}</li>)}
+      </ul>
+
+      <h2>自备密钥／账号</h2>
+      <p>密钥、店铺 token、OAuth 都由买家自己申请和保管。本站不代持、不转售、不代充。</p>
+      <ul>
+        {d.requires_own_keys.map((item) => <li>{item}</li>)}
+      </ul>
+
+      <h2>本站核验到哪</h2>
+      <p><strong>{level.zh}。</strong>{level.hint}</p>
+      <ul>
+        {d.verification_facts.map((item) => <li>{item}</li>)}
+      </ul>
+
+      <h2>人审闸门</h2>
+      <p>下面每条都要留下人。不能为了少步骤拿掉。</p>
+      <ol>
+        {d.human_gates.map((item) => <li>{item}</li>)}
+      </ol>
+
+      <h2>安装轮廓</h2>
+      <p>步骤里的密钥位置只用占位符。不要替换成真实 secret 再贴回对话或仓库。</p>
+      <ol>
+        {d.install_steps.map((item) => <li>{item}</li>)}
+      </ol>
+
+      <h2>更新记录</h2>
+      <ul>
+        {d.changelog.map((item) => (
+          <li><time datetime={item.date}>{item.date}</time> · {item.note}</li>
+        ))}
+      </ul>
+
+      {seeAlso.length > 0 && (
+        <>
+          <h2>对照阅读</h2>
+          <p>这些用例不在本包必绑列表里，避免和主路径混成一件事。</p>
+          <ul>
+            {seeAlso.map((item) => (
+              <li>
+                <a href={`/cases/${item.slug}/`}>{item.title}</a>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+
+    <section class="panel" id="pricing">
+      <h2>询购</h2>
+      <p class="price-line">${d.price_usd} <span class="price-unit">草稿试价</span></p>
+      <p>付款链接为空，本页不收款。留下邮件即可询这一包怎么交付。</p>
+      <div class="cta-row">
+        <a class="btn" href={mailto}>邮件询购</a>
+        <a class="btn secondary" href="/skills/#pricing">看试价对照</a>
+      </div>
+      <p class="muted-note">
+        用例仍然免费。绑定用例若要买曝光位，去 <a href="/sponsor/">赞助</a>，和技能包分开。
+        库月订未开售{d.library_included ? '。' : '，这一包也还没计入库。'}
+      </p>
+    </section>
+
+    {others.length > 0 && (
+      <nav class="keep-browsing" aria-label="其他技能包">
+        <h2>其他草稿包</h2>
+        {others.map((item) => (
+          <a href={`/skills/${item.slug}/`}>{item.data.title} · ${item.data.price_usd}</a>
+        ))}
+      </nav>
+    )}
+  </article>
+</BaseLayout>

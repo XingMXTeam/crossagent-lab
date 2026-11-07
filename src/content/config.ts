@@ -54,4 +54,80 @@ const cases = defineCollection({
   }),
 });
 
-export const collections = { cases };
+/** Skill shelf categories. Not a cross-industry directory. */
+export const skillCategories = ['logistics', 'storefront', 'after-sales'] as const;
+
+export const skillCategoryMeta: Record<(typeof skillCategories)[number], { zh: string }> = {
+  logistics: { zh: '物流合规' },
+  storefront: { zh: 'Shopify 店面' },
+  'after-sales': { zh: '售后闸门' },
+};
+
+export const verificationLevels = ['lab_probed', 'docs_cited', 'hybrid'] as const;
+
+export const verificationMeta: Record<
+  (typeof verificationLevels)[number],
+  { zh: string; hint: string }
+> = {
+  lab_probed: {
+    zh: '本站探针',
+    hint: '本站对端点做过 initialize／tools 级探针并写进用例',
+  },
+  docs_cited: {
+    zh: '文档采编',
+    hint: '仅采编公开文档／模板，未 live 工具调用',
+  },
+  hybrid: {
+    zh: '探针 + 文档',
+    hint: '主路径有探针，辅路径仅文档',
+  },
+};
+
+export const skillStatuses = ['draft', 'listed', 'retired'] as const;
+
+const casePageUrl = z.string().url().refine((value) => {
+  try {
+    return /\/cases\/[^/]+\/?$/.test(new URL(value).pathname);
+  } catch {
+    return false;
+  }
+}, 'must be an absolute /cases/… URL');
+
+const skills = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    // URL slug is the markdown filename. Astro reserves the `slug` field, so it is not part of this schema.
+    summary: z.string(),
+    bound_case_urls: z.array(casePageUrl).min(1),
+    clients: z.array(z.string()).min(1),
+    requires_own_keys: z.array(z.string()).min(1),
+    verification_level: z.enum(verificationLevels),
+    price_usd: z.number().positive(),
+    price_note: z.string(),
+    library_included: z.boolean(),
+    deliverables: z.array(z.string()).min(1),
+    human_gates: z.array(z.string()).min(1),
+    changelog: z
+      .array(
+        z.object({
+          date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+          note: z.string(),
+        }),
+      )
+      .min(1),
+    status: z.enum(skillStatuses),
+    // Stay null until a later explicit go-ahead to add a payment link.
+    stripe_payment_link: z
+      .string()
+      .url()
+      .nullable()
+      .refine((value) => value === null, 'stripe_payment_link must stay null'),
+    category: z.enum(skillCategories),
+    verification_facts: z.array(z.string()).min(1).max(3),
+    install_steps: z.array(z.string()).min(3).max(7),
+    see_also_case_urls: z.array(casePageUrl).default([]),
+  }),
+});
+
+export const collections = { cases, skills };

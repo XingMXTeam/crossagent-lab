@@ -1,0 +1,174 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { skillCategories, skillCategoryMeta, verificationMeta } from '../../content/config';
+import { assertSkillBindings, caseSlugFromUrl, skillMailto } from '../../lib/skills';
+
+const cases = await getCollection('cases');
+const skills = (await getCollection('skills'))
+  .filter((entry) => entry.data.status !== 'retired')
+  .sort((a, b) => skillCategories.indexOf(a.data.category) - skillCategories.indexOf(b.data.category));
+assertSkillBindings(skills, cases);
+
+const caseTitle = new Map(cases.map((entry) => [entry.slug, entry.data.title]));
+const inbox = 'me@maoxunxing.com';
+const bundleMailto = skillMailto('三包一次（物流探针 + 店面就绪 + 售后闸门）');
+---
+<BaseLayout
+  title="技能包 — CrossAgent Lab"
+  description="可装进 Claude、Cursor、n8n 的跨境垂直安装包。用例免费，包是草稿试价，密钥由买家自备。本站不代持密钥。"
+  canonicalPath="/skills/"
+>
+  <section class="hero-simple">
+    <p class="kicker">技能包 · 草稿</p>
+    <h1>可装进客户端的跨境流程包</h1>
+    <p class="lead">
+      用例免费讲清别人正在用、本站核验到哪一步。技能包卖的是可装进 Claude、Cursor、n8n 的跨境安装骨架：流程、配置轮廓、人审闸门。密钥自备。
+    </p>
+    <ul class="skill-chips" aria-label="口径">
+      <li>用例免费</li>
+      <li>包为试价，邮件询购</li>
+      <li>密钥自备，本站不代持</li>
+    </ul>
+  </section>
+
+  <div class="pill-row skill-filters" role="group" aria-label="类目">
+    <button type="button" class="pill is-on" data-skill-filter="all" aria-pressed="true">全部 {skills.length}</button>
+    {skillCategories.map((id) => (
+      <button type="button" class="pill" data-skill-filter={id} aria-pressed="false">
+        {skillCategoryMeta[id].zh}
+      </button>
+    ))}
+  </div>
+
+  <div class="skill-grid">
+    {skills.map((skill) => {
+      const d = skill.data;
+      const level = verificationMeta[d.verification_level];
+      return (
+        <article class="panel skill-card" data-skill-card data-cat={d.category}>
+          <p class="tier-kicker">{skillCategoryMeta[d.category].zh} · 草稿 · {level.zh}</p>
+          <h2><a href={`/skills/${skill.slug}/`}>{d.title}</a></h2>
+          <p>{d.summary}</p>
+          <p class="price-line">${d.price_usd} <span class="price-unit">试价</span></p>
+          <p class="skill-meta-label">绑定用例</p>
+          <ul class="skill-links">
+            {d.bound_case_urls.map((url) => {
+              const slug = caseSlugFromUrl(url);
+              return (
+                <li>
+                  <a href={`/cases/${slug}/`} title={slug ? caseTitle.get(slug) : undefined}>/cases/{slug}/</a>
+                </li>
+              );
+            })}
+          </ul>
+          <p class="muted-note">适用：{d.clients.join(' · ')}</p>
+          <div class="cta-row">
+            <a class="btn secondary" href={`/skills/${skill.slug}/`}>看骨架</a>
+            <a class="btn" href={skillMailto(d.title)}>邮件询购</a>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+  <p class="empty-note" data-skill-empty hidden>这个类目还没有包。</p>
+
+  <section class="section prose" id="pricing">
+    <h2>标价说明</h2>
+    <p>
+      下面是试价对照，用来和曝光位分开。本页不收款，也不创建付款链接。三包与库月订都走邮件
+      <a href={`mailto:${inbox}`}>{inbox}</a>。
+      曝光位在 <a href="/sponsor/">赞助</a>。
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>买什么</th>
+          <th>价格</th>
+          <th>买到</th>
+          <th>买不到</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>一条用例的曝光位</td>
+          <td>$49／30 天，见赞助页</td>
+          <td>标了曝光的版位</td>
+          <td>技能文件、自然排序</td>
+        </tr>
+        <tr>
+          <td>一期简报插槽</td>
+          <td>$99／期，见赞助页</td>
+          <td>一期简报里的品牌与链接</td>
+          <td>安装包</td>
+        </tr>
+        <tr>
+          <td>首页条 + 周报</td>
+          <td>$349／月，见赞助页</td>
+          <td>首页条与周报行</td>
+          <td>技能库、自然排序</td>
+        </tr>
+        <tr>
+          <td>技能单包</td>
+          <td>$29／$39／$49 试价</td>
+          <td>骨架、闸门、绑定用例对照</td>
+          <td>曝光位</td>
+        </tr>
+        <tr>
+          <td>三包一次</td>
+          <td>$99 试价，可选，只接受邮件</td>
+          <td>三份骨架一起询</td>
+          <td>库的按月更新、曝光位</td>
+        </tr>
+        <tr>
+          <td>Skills Library</td>
+          <td>$99／月，尚未开售</td>
+          <td>日后 listed 包与更新。现在没有可下载库</td>
+          <td>曝光位、代开第三方账号。不保证每月新增包数</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      简报 $99／期和 Library $99／月是同价不同货：简报是一期曝光插槽，Library 是安装包更新。现在 Library 未开售，三包的 <code>library_included</code> 都是 false。
+      Founding 不默认捆绑 Library。
+    </p>
+    <p>
+      用例自然排序和「已验证」不出售。试价落在 $19–$49／包。改价另批。
+    </p>
+    <div class="cta-row">
+      <a class="btn" href={bundleMailto}>邮件询三包</a>
+      <a class="btn secondary" href="/sponsor/">去看曝光位</a>
+      <a class="btn secondary" href="/">回用例</a>
+    </div>
+  </section>
+
+  <p class="muted-note">
+    这里不是全网技能目录，也不是没有出处的 prompt 墙。每包至少绑一条本站用例。密钥由买家自备，本站不代持、不转售、不代充。
+  </p>
+
+  <script is:inline>
+    (function () {
+      var buttons = document.querySelectorAll('[data-skill-filter]');
+      var cards = document.querySelectorAll('[data-skill-card]');
+      var empty = document.querySelector('[data-skill-empty]');
+      if (!buttons.length) return;
+      buttons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var cat = btn.getAttribute('data-skill-filter');
+          buttons.forEach(function (other) {
+            var on = other === btn;
+            other.classList.toggle('is-on', on);
+            other.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+          var visible = 0;
+          cards.forEach(function (card) {
+            var show = cat === 'all' || card.getAttribute('data-cat') === cat;
+            card.hidden = !show;
+            if (show) visible += 1;
+          });
+          if (empty) empty.hidden = visible !== 0;
+        });
+      });
+    })();
+  </script>
+</BaseLayout>
