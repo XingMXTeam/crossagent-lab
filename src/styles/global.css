@@ -1417,6 +1417,27 @@ button.btn.secondary.save-btn.is-on {
 .skill-links a { word-break: break-all; }
 .skill-install { margin-top: 1rem; }
 .skill-install p { margin: 0; color: var(--text); font-size: 0.875rem; line-height: 1.6; }
+.skill-hero { margin: 1.1rem 0 0; }
+.skill-hero-media {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+}
+.skill-hero figcaption {
+  margin: 0.45rem 0 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--faint);
+}
+.skill-result { margin-top: 1rem; }
+.skill-result .lead { margin-top: 0; max-width: 40rem; color: var(--text); }
+.skill-buy { margin-top: 1.1rem; }
+.skill-buy .muted-note { margin-top: 0.45rem; }
+.skill-reqs { margin-top: 0.35rem; }
 .skill-detail .panel h2 {
   margin: 0 0 0.45rem;
   font-family: var(--display);

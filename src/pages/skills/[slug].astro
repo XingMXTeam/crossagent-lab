@@ -2,12 +2,13 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { skillCategoryMeta, verificationMeta } from '../../content/config';
-import { assertSkillBindings, caseSlugFromUrl, skillMailto } from '../../lib/skills';
+import { assertSkillAssets, assertSkillBindings, caseSlugFromUrl, formatUsd, skillMailto } from '../../lib/skills';
 
 export async function getStaticPaths() {
   const cases = await getCollection('cases');
   const skills = await getCollection('skills');
   assertSkillBindings(skills, cases);
+  assertSkillAssets(skills);
   return skills
     .filter((entry) => entry.data.status !== 'retired')
     .map((entry) => ({ params: { slug: entry.slug }, props: { entry } }));
@@ -23,6 +24,7 @@ const others = (await getCollection('skills')).filter(
 const level = verificationMeta[d.verification_level];
 const statusLabel = d.status === 'draft' ? '草稿' : d.status === 'listed' ? '在列' : '已撤';
 const mailto = skillMailto(d.title);
+const priceLabel = formatUsd(d.price_usd);
 
 function linksFor(urls: string[]) {
   return urls.map((url) => {
@@ -32,119 +34,231 @@ function linksFor(urls: string[]) {
 }
 const bound = linksFor(d.bound_case_urls);
 const seeAlso = linksFor(d.see_also_case_urls);
+const zipName = d.zip?.split('/').pop() ?? '';
 ---
 <BaseLayout
   title={`${d.title} — 技能包 — CrossAgent Lab`}
   description={d.summary}
   canonicalPath={`/skills/${entry.slug}/`}
 >
-  <article class="skill-detail">
-    <header class="article-head">
-      <p class="kicker">
-        <a href="/skills/">技能包</a>
-        · {skillCategoryMeta[d.category].zh}
-        · {statusLabel}
-      </p>
-      <h1>{d.title}</h1>
-      <p class="lead">{d.summary}</p>
-      <p class="price-line">${d.price_usd} <span class="price-unit">试价 · 邮件询购</span></p>
-      <p class="price-sub">{d.price_note}</p>
-      <div class="with-agents">
-        <span class="tag">{level.zh}</span>
-        {d.clients.map((name) => <span class="tag">{name}</span>)}
+  {d.cta === 'buy' ? (
+    <article class="skill-detail">
+      <header class="article-head">
+        <p class="kicker">
+          <a href="/skills/">技能包</a>
+          · {skillCategoryMeta[d.category].zh}
+          · {statusLabel}
+        </p>
+        <h1>{d.title}</h1>
+      </header>
+
+      <figure class="skill-hero">
+        {d.demo_video ? (
+          <video
+            class="skill-hero-media"
+            autoplay
+            muted
+            loop
+            playsinline
+            poster={d.demo}
+            aria-label={d.demo_caption}
+          >
+            <source src={d.demo_video} type="video/mp4" />
+            <img src={d.demo} alt={d.demo_caption} width="960" height="540" />
+          </video>
+        ) : (
+          <img class="skill-hero-media" src={d.demo} alt={d.demo_caption} width="960" height="540" />
+        )}
+        <figcaption>{d.demo_caption}</figcaption>
+      </figure>
+
+      <div class="skill-result">
+        <p class="lead">{d.summary}</p>
+        {d.result_en && <p class="title-en">{d.result_en}</p>}
       </div>
-    </header>
 
-    <div class="prose">
-      <h2>绑定用例</h2>
-      <p>这些用例页继续免费。技能包不改用例正文，也不挡住阅读。</p>
-      <ul>
-        {bound.map((item) => (
-          <li>
-            <a href={`/cases/${item.slug}/`}>{item.title}</a>
-            <span> · /cases/{item.slug}/</span>
-          </li>
-        ))}
-      </ul>
+      <section class="skill-buy" id="buy" aria-label="购买">
+        <a class="btn" href="#" data-stripe-pending>Buy ${priceLabel}</a>
+        <p class="muted-note">Payment link opens after Stripe is live.</p>
+      </section>
 
-      <h2>你得到什么</h2>
-      <p>这一版是骨架说明，页上没有 zip。买到的是清单和闸门，不是密钥，也不是曝光位。</p>
-      <ol>
-        {d.deliverables.map((item) => <li>{item}</li>)}
-      </ol>
+      <section class="prompt-section" id="install" aria-label="安装">
+        <div class="prompt-box" data-prompt-box>
+          <div class="prompt-head">
+            <p class="prompt-title">安装提示</p>
+            <button class="copy-btn" type="button" data-copy-install aria-live="polite">复制</button>
+          </div>
+          <pre id="install-prompt">{d.install_prompt}</pre>
+        </div>
+        <div class="cta-row">
+          <a class="btn" href={d.zip} download={zipName}>Download ZIP</a>
+        </div>
+        <p class="muted-note">ZIP 现可下载。Stripe 上线后改为付款解锁。</p>
+      </section>
 
-      <h2>适用客户端</h2>
-      <ul>
-        {d.clients.map((item) => <li>{item}</li>)}
-      </ul>
+      <div class="prose skill-reqs">
+        <h2>自备密钥</h2>
+        <ul>
+          <li>客户端：{d.clients.join(' / ')}</li>
+          {d.requires_own_keys.map((item) => <li>{item}</li>)}
+        </ul>
 
-      <h2>自备密钥／账号</h2>
-      <p>密钥、店铺 token、OAuth 都由买家自己申请和保管。本站不代持、不转售、不代充。</p>
-      <ul>
-        {d.requires_own_keys.map((item) => <li>{item}</li>)}
-      </ul>
+        <h2>免费用例</h2>
+        <ul>
+          {bound.map((item) => (
+            <li>
+              <a href={`/cases/${item.slug}/`}>{item.title}</a>
+            </li>
+          ))}
+        </ul>
+        <p>用例免费；本页卖可装包。</p>
+      </div>
+    </article>
+    <script is:inline>
+      (function () {
+        document.querySelectorAll('[data-stripe-pending]').forEach(function (el) {
+          el.addEventListener('click', function (e) { e.preventDefault(); });
+        });
+        var btn = document.querySelector('[data-copy-install]');
+        btn?.addEventListener('click', async function () {
+          var text = document.getElementById('install-prompt')?.textContent || '';
+          var box = document.querySelector('[data-prompt-box]');
+          var done = function (label) {
+            btn.classList.add('is-copied');
+            box?.classList.add('is-copied');
+            btn.textContent = label;
+            setTimeout(function () {
+              btn.classList.remove('is-copied');
+              box?.classList.remove('is-copied');
+              btn.textContent = '复制';
+            }, 2000);
+          };
+          try {
+            await navigator.clipboard.writeText(text);
+            done('已复制');
+          } catch (err) {
+            var pre = document.getElementById('install-prompt');
+            if (pre) {
+              var range = document.createRange();
+              range.selectNodeContents(pre);
+              var sel = getSelection();
+              sel?.removeAllRanges();
+              sel?.addRange(range);
+            }
+            done('已选中，请手动复制');
+          }
+        });
+      })();
+    </script>
+  ) : (
+    <article class="skill-detail">
+      <header class="article-head">
+        <p class="kicker">
+          <a href="/skills/">技能包</a>
+          · {skillCategoryMeta[d.category].zh}
+          · {statusLabel}
+        </p>
+        <h1>{d.title}</h1>
+        <p class="lead">{d.summary}</p>
+        <p class="price-line">${priceLabel} <span class="price-unit">试价 · 邮件询购</span></p>
+        <p class="price-sub">{d.price_note}</p>
+        <div class="with-agents">
+          <span class="tag">{level.zh}</span>
+          {d.clients.map((name) => <span class="tag">{name}</span>)}
+        </div>
+      </header>
 
-      <h2>本站核验到哪</h2>
-      <p><strong>{level.zh}。</strong>{level.hint}</p>
-      <ul>
-        {d.verification_facts.map((item) => <li>{item}</li>)}
-      </ul>
+      <div class="prose">
+        <h2>绑定用例</h2>
+        <p>这些用例页继续免费。技能包不改用例正文，也不挡住阅读。</p>
+        <ul>
+          {bound.map((item) => (
+            <li>
+              <a href={`/cases/${item.slug}/`}>{item.title}</a>
+              <span> · /cases/{item.slug}/</span>
+            </li>
+          ))}
+        </ul>
 
-      <h2>人审闸门</h2>
-      <p>下面每条都要留下人。不能为了少步骤拿掉。</p>
-      <ol>
-        {d.human_gates.map((item) => <li>{item}</li>)}
-      </ol>
+        <h2>你得到什么</h2>
+        <p>这一版是骨架说明，页上没有 zip。买到的是清单和闸门，不是密钥，也不是曝光位。</p>
+        <ol>
+          {d.deliverables.map((item) => <li>{item}</li>)}
+        </ol>
 
-      <h2>安装轮廓</h2>
-      <p>步骤里的密钥位置只用占位符。不要替换成真实 secret 再贴回对话或仓库。</p>
-      <ol>
-        {d.install_steps.map((item) => <li>{item}</li>)}
-      </ol>
+        <h2>适用客户端</h2>
+        <ul>
+          {d.clients.map((item) => <li>{item}</li>)}
+        </ul>
 
-      <h2>更新记录</h2>
-      <ul>
-        {d.changelog.map((item) => (
-          <li><time datetime={item.date}>{item.date}</time> · {item.note}</li>
-        ))}
-      </ul>
+        <h2>自备密钥／账号</h2>
+        <p>密钥、店铺 token、OAuth 都由买家自己申请和保管。本站不代持、不转售、不代充。</p>
+        <ul>
+          {d.requires_own_keys.map((item) => <li>{item}</li>)}
+        </ul>
 
-      {seeAlso.length > 0 && (
-        <>
-          <h2>对照阅读</h2>
-          <p>这些用例不在本包必绑列表里，避免和主路径混成一件事。</p>
-          <ul>
-            {seeAlso.map((item) => (
-              <li>
-                <a href={`/cases/${item.slug}/`}>{item.title}</a>
-              </li>
-            ))}
-          </ul>
-        </>
+        <h2>本站核验到哪</h2>
+        <p><strong>{level.zh}。</strong>{level.hint}</p>
+        <ul>
+          {d.verification_facts.map((item) => <li>{item}</li>)}
+        </ul>
+
+        <h2>人审闸门</h2>
+        <p>下面每条都要留下人。不能为了少步骤拿掉。</p>
+        <ol>
+          {d.human_gates.map((item) => <li>{item}</li>)}
+        </ol>
+
+        <h2>安装轮廓</h2>
+        <p>步骤里的密钥位置只用占位符。不要替换成真实 secret 再贴回对话或仓库。</p>
+        <ol>
+          {d.install_steps.map((item) => <li>{item}</li>)}
+        </ol>
+
+        <h2>更新记录</h2>
+        <ul>
+          {d.changelog.map((item) => (
+            <li><time datetime={item.date}>{item.date}</time> · {item.note}</li>
+          ))}
+        </ul>
+
+        {seeAlso.length > 0 && (
+          <>
+            <h2>对照阅读</h2>
+            <p>这些用例不在本包必绑列表里，避免和主路径混成一件事。</p>
+            <ul>
+              {seeAlso.map((item) => (
+                <li>
+                  <a href={`/cases/${item.slug}/`}>{item.title}</a>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </div>
+
+      <section class="panel" id="pricing">
+        <h2>询购</h2>
+        <p class="price-line">${priceLabel} <span class="price-unit">草稿试价</span></p>
+        <p>付款链接为空，本页不收款。留下邮件即可询这一包怎么交付。</p>
+        <div class="cta-row">
+          <a class="btn" href={mailto}>邮件询购</a>
+          <a class="btn secondary" href="/skills/#pricing">看试价对照</a>
+        </div>
+        <p class="muted-note">
+          用例仍然免费。绑定用例若要买曝光位，去 <a href="/sponsor/">赞助</a>，和技能包分开。
+          库月订未开售{d.library_included ? '。' : '，这一包也还没计入库。'}
+        </p>
+      </section>
+
+      {others.length > 0 && (
+        <nav class="keep-browsing" aria-label="其他技能包">
+          <h2>其他草稿包</h2>
+          {others.map((item) => (
+            <a href={`/skills/${item.slug}/`}>{item.data.title} · ${formatUsd(item.data.price_usd)}</a>
+          ))}
+        </nav>
       )}
-    </div>
-
-    <section class="panel" id="pricing">
-      <h2>询购</h2>
-      <p class="price-line">${d.price_usd} <span class="price-unit">草稿试价</span></p>
-      <p>付款链接为空，本页不收款。留下邮件即可询这一包怎么交付。</p>
-      <div class="cta-row">
-        <a class="btn" href={mailto}>邮件询购</a>
-        <a class="btn secondary" href="/skills/#pricing">看试价对照</a>
-      </div>
-      <p class="muted-note">
-        用例仍然免费。绑定用例若要买曝光位，去 <a href="/sponsor/">赞助</a>，和技能包分开。
-        库月订未开售{d.library_included ? '。' : '，这一包也还没计入库。'}
-      </p>
-    </section>
-
-    {others.length > 0 && (
-      <nav class="keep-browsing" aria-label="其他技能包">
-        <h2>其他草稿包</h2>
-        {others.map((item) => (
-          <a href={`/skills/${item.slug}/`}>{item.data.title} · ${item.data.price_usd}</a>
-        ))}
-      </nav>
-    )}
-  </article>
+    </article>
+  )}
 </BaseLayout>
