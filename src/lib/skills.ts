@@ -38,10 +38,10 @@ export function assertSkillBindings(
   }
 }
 
-/** Buy pages point at files in public/. Fail the build if one is missing. */
+/** Pages point at files in public/. Fail the build if one is missing. */
 export function assertSkillAssets(skills: CollectionEntry<'skills'>[]): void {
   for (const skill of skills) {
-    for (const rel of [skill.data.demo, skill.data.demo_video, skill.data.zip]) {
+    for (const rel of [skill.data.demo, skill.data.demo_video, skill.data.zip, ...(skill.data.preview_files ?? [])]) {
       if (!rel) continue;
       const file = path.join(process.cwd(), 'public', rel.replace(/^\//, ''));
       if (!existsSync(file)) {

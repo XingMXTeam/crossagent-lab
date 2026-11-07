@@ -1453,6 +1453,52 @@ button.btn.secondary.save-btn.is-on {
 .skill-buy { margin-top: 1.1rem; }
 .skill-buy .muted-note { margin-top: 0.45rem; }
 .skill-reqs { margin-top: 0.35rem; }
+.run-output { margin-top: 1.4rem; }
+.run-output h2 {
+  margin: 0 0 0.6rem;
+  font-family: var(--display);
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.run-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.6rem;
+}
+.run-stat {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  padding: 0.7rem 0.8rem;
+}
+.run-stat b {
+  display: block;
+  font-family: var(--display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.run-stat span {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.ba-box {
+  margin-top: 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--panel);
+  padding: 0.85rem 0.95rem;
+}
+.ba-box .skill-meta-label { margin-top: 0.8rem; }
+.ba-box .skill-meta-label:first-child { margin-top: 0; }
+.ba-before { margin: 0.2rem 0 0; color: var(--muted); line-height: 1.65; }
+.ba-after { margin: 0.2rem 0 0; color: var(--text); font-weight: 500; line-height: 1.65; }
+.ba-box .muted-note { margin-top: 0.7rem; }
 .skill-detail .panel h2 {
   margin: 0 0 0.45rem;
   font-family: var(--display);

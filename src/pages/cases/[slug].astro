@@ -61,7 +61,7 @@ const catCount = all.filter((c) => c.data.category === d.category).length;
         <p>
           {pack.data.cta === 'buy' ? (
             <>
-              <strong>可安装版 ${formatUsd(pack.data.price_usd)}</strong>
+              <strong>可安装版 ${formatUsd(pack.data.price_usd ?? 0)}</strong>
               {' → '}
               <a href={`/skills/${pack.slug}/`}>/skills/{pack.slug}/</a>
               。用例正文仍免费。
@@ -70,7 +70,7 @@ const catCount = all.filter((c) => c.data.category === d.category).length;
             <>
               <strong>可安装版：</strong>本用例已收成技能包 →{' '}
               <a href={`/skills/${pack.slug}/`}>/skills/{pack.slug}/</a>
-              （交付：{pack.data.deliverables[0]}；标价 ${formatUsd(pack.data.price_usd)}；密钥自备。用例正文仍免费。）
+              （交付：{pack.data.deliverables[0]}；{pack.data.price_pending || pack.data.price_usd == null ? '定价待定' : `标价 $${formatUsd(pack.data.price_usd)}`}；密钥自备。用例正文仍免费。）
             </>
           )}
         </p>

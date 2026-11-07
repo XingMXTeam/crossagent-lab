@@ -51,7 +51,18 @@ const bundleMailto = skillMailto('三包一次（物流探针 + 店面就绪 + �
           <p class="tier-kicker">{skillCategoryMeta[d.category].zh} · 草稿 · {level.zh}</p>
           <h2><a href={`/skills/${skill.slug}/`}>{d.title}</a></h2>
           <p>{d.summary}</p>
-          <p class="price-line">${formatUsd(d.price_usd)} <span class="price-unit">{d.cta === 'buy' ? '草稿' : '试价'}</span></p>
+          {d.run_stats && (
+            <ul class="skill-chips" aria-label="真实产出">
+              {d.run_stats.slice(0, 3).map((s) => (
+                <li><strong>{s.value}</strong>&nbsp;{s.label}</li>
+              ))}
+            </ul>
+          )}
+          {d.price_pending || d.price_usd == null ? (
+            <p class="price-line">定价待定 <span class="price-unit">即将开放</span></p>
+          ) : (
+            <p class="price-line">${formatUsd(d.price_usd)} <span class="price-unit">{d.cta === 'buy' ? '草稿' : d.stripe_payment_link ? '一次性' : '试价'}</span></p>
+          )}
           <p class="skill-meta-label">绑定用例</p>
           <ul class="skill-links">
             {d.bound_case_urls.map((url) => {
@@ -65,9 +76,13 @@ const bundleMailto = skillMailto('三包一次（物流探针 + 店面就绪 + �
           </ul>
           <p class="muted-note">适用：{d.clients.join(' · ')}</p>
           <div class="cta-row">
-            <a class="btn secondary" href={`/skills/${skill.slug}/`}>{d.cta === 'buy' ? '看这一页' : '看骨架'}</a>
+            <a class="btn secondary" href={`/skills/${skill.slug}/`}>{d.cta === 'buy' ? '看这一页' : d.run_stats ? '看样例' : '看骨架'}</a>
             {d.cta === 'buy' ? (
-              <a class="btn" href={`/skills/${skill.slug}/#buy`}>Buy ${formatUsd(d.price_usd)}</a>
+              <a class="btn" href={`/skills/${skill.slug}/#buy`}>Buy ${formatUsd(d.price_usd ?? 0)}</a>
+            ) : d.stripe_payment_link ? (
+              <a class="btn" href={`/skills/${skill.slug}/#pricing`}>Buy ${formatUsd(d.price_usd ?? 0)}</a>
+            ) : d.price_pending ? (
+              <a class="btn" href={`mailto:${inbox}?subject=${encodeURIComponent(`订阅开通通知：${d.title}`)}`}>订阅开通通知</a>
             ) : (
               <a class="btn" href={skillMailto(d.title)}>邮件询购</a>
             )}

@@ -55,15 +55,16 @@ const cases = defineCollection({
 });
 
 /** Skill shelf categories. Not a cross-industry directory. */
-export const skillCategories = ['logistics', 'storefront', 'after-sales'] as const;
+export const skillCategories = ['logistics', 'storefront', 'after-sales', 'listing'] as const;
 
 export const skillCategoryMeta: Record<(typeof skillCategories)[number], { zh: string }> = {
   logistics: { zh: '物流合规' },
   storefront: { zh: 'Shopify 店面' },
   'after-sales': { zh: '售后闸门' },
+  listing: { zh: 'Listing 与评论' },
 };
 
-export const verificationLevels = ['lab_probed', 'docs_cited', 'hybrid'] as const;
+export const verificationLevels = ['lab_probed', 'docs_cited', 'hybrid', 'sample_run'] as const;
 
 export const verificationMeta: Record<
   (typeof verificationLevels)[number],
@@ -80,6 +81,10 @@ export const verificationMeta: Record<
   hybrid: {
     zh: '探针 + 文档',
     hint: '主路径有探针，辅路径仅文档',
+  },
+  sample_run: {
+    zh: '样例实跑',
+    hint: '本站已用公开数据把整条工作流完整跑通一遍并留档；跑的是样例，不是买家的店铺',
   },
 };
 
@@ -105,7 +110,9 @@ const skills = defineCollection({
     clients: z.array(z.string()).min(1),
     requires_own_keys: z.array(z.string()).min(1),
     verification_level: z.enum(verificationLevels),
-    price_usd: z.number().positive(),
+    /** True when the pack has no price yet. The price line renders 定价待定, never a number. */
+    price_pending: z.boolean().default(false),
+    price_usd: z.number().positive().optional(),
     price_note: z.string(),
     library_included: z.boolean(),
     deliverables: z.array(z.string()).min(1),
@@ -119,12 +126,15 @@ const skills = defineCollection({
       )
       .min(1),
     status: z.enum(skillStatuses),
-    // Stay null until a later explicit go-ahead to add a payment link.
+    // Null until an explicit go-ahead adds a live Stripe payment link (2026-11-07: first link live).
     stripe_payment_link: z
       .string()
       .url()
       .nullable()
-      .refine((value) => value === null, 'stripe_payment_link must stay null'),
+      .refine(
+        (value) => value === null || value.startsWith('https://buy.stripe.com/'),
+        'stripe_payment_link must be null or a buy.stripe.com URL',
+      ),
     category: z.enum(skillCategories),
     verification_facts: z.array(z.string()).min(1).max(3),
     install_steps: z.array(z.string()).min(3).max(7),
@@ -140,8 +150,34 @@ const skills = defineCollection({
     zip: z.string().regex(/^\/\S+\.zip$/).optional(),
     result_en: z.string().min(1).optional(),
     install_prompt: z.string().min(1).optional(),
+    /** Real-run output stats, shown first on the detail page and as badges on the shelf card. */
+    run_stats: z
+      .array(z.object({ value: z.string().min(1), label: z.string().min(1) }))
+      .min(1)
+      .max(6)
+      .optional(),
+    /** Caption under the run stats: which sample, which run, when. */
+    run_note: z.string().min(1).optional(),
+    /** Before / after title pair for the rewrite comparison block. */
+    before_title: z.string().min(1).optional(),
+    after_title: z.string().min(1).optional(),
+    /** What the seller prepares before running (inputs list). */
+    inputs: z.array(z.string()).min(1).optional(),
+    scope_for: z.array(z.string()).min(1).optional(),
+    scope_not: z.array(z.string()).min(1).optional(),
+    /** First-party / sources / demo-disclaimer lines. */
+    provenance: z.array(z.string()).min(1).optional(),
+    /** Extra static preview files under public/ (SKILL.md, templates). Existence is build-checked. */
+    preview_files: z.array(z.string().regex(/^\/\S+$/)).optional(),
   })
   .superRefine((data, ctx) => {
+    if (!data.price_pending && data.price_usd == null) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['price_usd'],
+        message: 'price_usd is required unless price_pending is true',
+      });
+    }
     if (data.cta !== 'buy') return;
     for (const key of ['demo', 'zip', 'install_prompt', 'demo_caption'] as const) {
       if (!data[key]) {

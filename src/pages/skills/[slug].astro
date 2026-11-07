@@ -2,7 +2,7 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { skillCategoryMeta, verificationMeta } from '../../content/config';
-import { assertSkillAssets, assertSkillBindings, caseSlugFromUrl, formatUsd, skillMailto } from '../../lib/skills';
+import { SKILL_INBOX, assertSkillAssets, assertSkillBindings, caseSlugFromUrl, formatUsd, skillMailto } from '../../lib/skills';
 
 export async function getStaticPaths() {
   const cases = await getCollection('cases');
@@ -24,7 +24,10 @@ const others = (await getCollection('skills')).filter(
 const level = verificationMeta[d.verification_level];
 const statusLabel = d.status === 'draft' ? '草稿' : d.status === 'listed' ? '在列' : '已撤';
 const mailto = skillMailto(d.title);
-const priceLabel = formatUsd(d.price_usd);
+const priceLabel = formatUsd(d.price_usd ?? 0);
+const priceOf = (x: { price_pending: boolean; price_usd?: number }) =>
+  x.price_pending || x.price_usd == null ? '定价待定' : `$${formatUsd(x.price_usd)}`;
+const notifyMailto = `mailto:${SKILL_INBOX}?subject=${encodeURIComponent(`订阅开通通知：${d.title}`)}`;
 
 function linksFor(urls: string[]) {
   return urls.map((url) => {
@@ -150,6 +153,217 @@ const zipName = d.zip?.split('/').pop() ?? '';
         });
       })();
     </script>
+  ) : d.run_stats ? (
+    <article class="skill-detail">
+      <header class="article-head">
+        <p class="kicker">
+          <a href="/skills/">技能包</a>
+          · {skillCategoryMeta[d.category].zh}
+          · {statusLabel}
+          · 原型预览版
+        </p>
+        <h1>{d.title}</h1>
+        <p class="lead">{d.summary}</p>
+        {d.result_en && <p class="title-en">{d.result_en}</p>}
+        {d.price_pending ? (
+          <p class="price-line">定价待定 <span class="price-unit">即将开放 · 本页不收款</span></p>
+        ) : (
+          <p class="price-line">${priceLabel} <span class="price-unit">一次性 · Stripe 付款</span></p>
+        )}
+        <p class="price-sub">{d.price_note}</p>
+        <div class="with-agents">
+          <span class="tag">{level.zh}</span>
+          {d.clients.map((name) => <span class="tag">{name}</span>)}
+        </div>
+      </header>
+
+      <section class="run-output" aria-label="真实产出">
+        <h2>先看真实产出</h2>
+        <div class="run-stats">
+          {d.run_stats.map((s) => (
+            <div class="run-stat">
+              <b>{s.value}</b>
+              <span>{s.label}</span>
+            </div>
+          ))}
+        </div>
+        {d.run_note && <p class="muted-note">{d.run_note}</p>}
+        {d.before_title && d.after_title && (
+          <div class="ba-box">
+            <p class="skill-meta-label">改写前 · 卖家模拟初稿的标题口径（演示构造，非 Veken 官方现行 Listing）</p>
+            <p class="ba-before">{d.before_title}</p>
+            <p class="skill-meta-label">改写后 · 本 Skill 产出的 Title（DRAFT）</p>
+            <p class="ba-after">{d.after_title}</p>
+            <p class="muted-note">
+              对照摘要：新 Title 187 字符，前 70 字符独立可读。改法是容量改口径不改数字（84 oz
+              是水箱总容量、饮水面是浅盘、需每日补水）、噪音从「完全无声」改成说明书口径（&lt;40
+              dB）并明说流水声可闻、删掉医疗宣称与绝对化说法。8 处改动逐条回链评论条号，另有 6
+              条删除清单，完整对照是交付物 04 的一部分。
+            </p>
+          </div>
+        )}
+      </section>
+
+      <div class="prose">
+        {d.scope_for && (
+          <>
+            <h2>这个 Skill 做什么</h2>
+            <ul>
+              {d.scope_for.map((item) => <li>{item}</li>)}
+            </ul>
+          </>
+        )}
+        {d.scope_not && (
+          <>
+            <h2>不做什么</h2>
+            <ul>
+              {d.scope_not.map((item) => <li>{item}</li>)}
+            </ul>
+          </>
+        )}
+
+        {d.inputs && (
+          <>
+            <h2>输入三件</h2>
+            <p>卖家不用会写 Prompt。准备好这三件，放进同一个工作文件夹：</p>
+            <ol>
+              {d.inputs.map((item) => <li>{item}</li>)}
+            </ol>
+          </>
+        )}
+        <h2>交付四件</h2>
+        <ol>
+          {d.deliverables.map((item) => <li>{item}</li>)}
+        </ol>
+
+        <h2>怎么安装使用</h2>
+        <p>
+          这是按 Agent Skills 开放格式写的指令包：一个 SKILL.md 加模板文件，装进支持该标准的
+          Agent（Claude Code、Codex、Cursor 等）就能被调用。包里不含密钥、不含评论数据。
+        </p>
+        {d.zip && (
+          <p>
+            原型预览版 v0.1.0-prototype：<a href={d.zip} download={zipName}>下载 zip</a>
+            ，解压后是 amazon-review-to-listing/ 文件夹。也可直接看包内文件：
+          </p>
+        )}
+        {d.preview_files && (
+          <ul>
+            {d.preview_files.map((f) => (
+              <li><a href={f}>{f.split('/').slice(-2).join('/')}</a></li>
+            ))}
+          </ul>
+        )}
+        <ol>
+          {d.install_steps.map((item) => <li>{item}</li>)}
+        </ol>
+
+        <h2>适用客户端</h2>
+        <ul>
+          {d.clients.map((item) => <li>{item}</li>)}
+        </ul>
+
+        <h2>自备密钥／账号</h2>
+        <p>密钥、店铺 token、OAuth 都由买家自己申请和保管。本站不代持、不转售、不代充。</p>
+        <ul>
+          {d.requires_own_keys.map((item) => <li>{item}</li>)}
+        </ul>
+
+        <h2>本站核验到哪</h2>
+        <p><strong>{level.zh}。</strong>{level.hint}</p>
+        <ul>
+          {d.verification_facts.map((item) => <li>{item}</li>)}
+        </ul>
+
+        <h2>人审闸门</h2>
+        <p>下面每条都要留下人。不能为了少步骤拿掉。</p>
+        <ol>
+          {d.human_gates.map((item) => <li>{item}</li>)}
+        </ol>
+
+        {d.provenance && (
+          <>
+            <h2>合规与来源</h2>
+            <ul>
+              {d.provenance.map((item) => <li>{item}</li>)}
+            </ul>
+          </>
+        )}
+
+        <h2>绑定用例</h2>
+        <p>这些用例页继续免费。技能包不改用例正文，也不挡住阅读。</p>
+        <ul>
+          {bound.map((item) => (
+            <li>
+              <a href={`/cases/${item.slug}/`}>{item.title}</a>
+              <span> · /cases/{item.slug}/</span>
+            </li>
+          ))}
+        </ul>
+
+        {seeAlso.length > 0 && (
+          <>
+            <h2>对照阅读</h2>
+            <ul>
+              {seeAlso.map((item) => (
+                <li>
+                  <a href={`/cases/${item.slug}/`}>{item.title}</a>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+
+        <h2>更新记录</h2>
+        <ul>
+          {d.changelog.map((item) => (
+            <li><time datetime={item.date}>{item.date}</time> · {item.note}</li>
+          ))}
+        </ul>
+      </div>
+
+      <section class="panel" id="pricing">
+        <h2>购买</h2>
+        {d.stripe_payment_link ? (
+          <>
+            <p class="price-line">${priceLabel} <span class="price-unit">一次性</span></p>
+            <p>
+              经 Stripe 付款，付款完成后自动跳回本页。付款前可以先下载原型预览包自己试跑；
+              交付与售后问题走页脚微信或邮件联系。
+            </p>
+            <div class="cta-row">
+              <a class="btn" href={d.stripe_payment_link}>Buy ${priceLabel}</a>
+              {d.zip && <a class="btn secondary" href={d.zip} download={zipName}>下载原型预览 zip</a>}
+            </div>
+          </>
+        ) : (
+          <>
+            <p class="price-line">定价待定 <span class="price-unit">即将开放</span></p>
+            <p>
+              这一包还在原型预览阶段，没有价格，也没有付款链接。开放购买时先邮件通知；现在可以先下载原型预览包自己试跑。
+            </p>
+            <div class="cta-row">
+              <a class="btn" href={notifyMailto}>邮件订阅开通通知</a>
+              {d.zip && <a class="btn secondary" href={d.zip} download={zipName}>下载原型预览 zip</a>}
+            </div>
+          </>
+        )}
+        <p class="muted-note">
+          微信联系在页脚联系区（微信号 maoxunxing、公众号「毛毛星」，附二维码）。用例仍然免费；
+          绑定用例若要买曝光位，去 <a href="/sponsor/">赞助</a>，和技能包分开。
+          库月订未开售，这一包也还没计入库。
+        </p>
+      </section>
+
+      {others.length > 0 && (
+        <nav class="keep-browsing" aria-label="其他技能包">
+          <h2>其他草稿包</h2>
+          {others.map((item) => (
+            <a href={`/skills/${item.slug}/`}>{item.data.title} · {priceOf(item.data)}</a>
+          ))}
+        </nav>
+      )}
+    </article>
   ) : (
     <article class="skill-detail">
       <header class="article-head">
@@ -255,7 +469,7 @@ const zipName = d.zip?.split('/').pop() ?? '';
         <nav class="keep-browsing" aria-label="其他技能包">
           <h2>其他草稿包</h2>
           {others.map((item) => (
-            <a href={`/skills/${item.slug}/`}>{item.data.title} · ${formatUsd(item.data.price_usd)}</a>
+            <a href={`/skills/${item.slug}/`}>{item.data.title} · {priceOf(item.data)}</a>
           ))}
         </nav>
       )}
