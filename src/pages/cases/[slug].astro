@@ -5,7 +5,7 @@ import VoteButton from '../../components/VoteButton.astro';
 import SaveButton from '../../components/SaveButton.astro';
 import { categoryMeta } from '../../content/config';
 import { agentCode, agentColor, formatDateNice, isNew, primaryAgent } from '../../lib/agents';
-import { skillsForCase } from '../../lib/skills';
+import { formatUsd, skillsForCase } from '../../lib/skills';
 
 export async function getStaticPaths() {
   const cases = await getCollection('cases');
@@ -59,9 +59,20 @@ const catCount = all.filter((c) => c.data.category === d.category).length;
     {installPacks.map((pack) => (
       <aside class="panel skill-install" aria-label="可安装版">
         <p>
-          <strong>可安装版：</strong>本用例已收成技能包 →{' '}
-          <a href={`/skills/${pack.slug}/`}>/skills/{pack.slug}/</a>
-          （交付：{pack.data.deliverables[0]}；标价 ${pack.data.price_usd}；密钥自备。用例正文仍免费。）
+          {pack.data.cta === 'buy' ? (
+            <>
+              <strong>可安装版 ${formatUsd(pack.data.price_usd)}</strong>
+              {' → '}
+              <a href={`/skills/${pack.slug}/`}>/skills/{pack.slug}/</a>
+              。用例正文仍免费。
+            </>
+          ) : (
+            <>
+              <strong>可安装版：</strong>本用例已收成技能包 →{' '}
+              <a href={`/skills/${pack.slug}/`}>/skills/{pack.slug}/</a>
+              （交付：{pack.data.deliverables[0]}；标价 ${formatUsd(pack.data.price_usd)}；密钥自备。用例正文仍免费。）
+            </>
+          )}
         </p>
       </aside>
     ))}

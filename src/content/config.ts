@@ -85,6 +85,8 @@ export const verificationMeta: Record<
 
 export const skillStatuses = ['draft', 'listed', 'retired'] as const;
 
+export const skillCtas = ['mailto', 'buy'] as const;
+
 const casePageUrl = z.string().url().refine((value) => {
   try {
     return /\/cases\/[^/]+\/?$/.test(new URL(value).pathname);
@@ -127,6 +129,37 @@ const skills = defineCollection({
     verification_facts: z.array(z.string()).min(1).max(3),
     install_steps: z.array(z.string()).min(3).max(7),
     see_also_case_urls: z.array(casePageUrl).default([]),
+    /** `buy` renders the short detail page. `mailto` keeps the essay shelf page. */
+    cta: z.enum(skillCtas).default('mailto'),
+    /** Site path of the hero GIF, e.g. /demos/logistics-hs-demo.gif */
+    demo: z.string().regex(/^\/\S+\.gif$/).optional(),
+    /** Optional hero MP4. The GIF stays the poster and the fallback frame. */
+    demo_video: z.string().regex(/^\/\S+\.mp4$/).optional(),
+    demo_caption: z.string().min(1).optional(),
+    /** Site path of the skill pack ZIP. */
+    zip: z.string().regex(/^\/\S+\.zip$/).optional(),
+    result_en: z.string().min(1).optional(),
+    install_prompt: z.string().min(1).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.cta !== 'buy') return;
+    for (const key of ['demo', 'zip', 'install_prompt', 'demo_caption'] as const) {
+      if (!data[key]) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [key],
+          message: `${key} is required when cta is buy`,
+        });
+      }
+    }
+    const lines = data.clients.length + data.requires_own_keys.length;
+    if (lines > 6) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['requires_own_keys'],
+        message: 'buy pages keep client + key lines to 6',
+      });
+    }
   }),
 });
 

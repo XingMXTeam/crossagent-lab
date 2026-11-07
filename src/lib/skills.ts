@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs';
+import path from 'node:path';
 import type { CollectionEntry } from 'astro:content';
 
 export const SKILL_INBOX = 'me@maoxunxing.com';
@@ -9,6 +11,10 @@ export function caseSlugFromUrl(url: string): string | null {
   } catch {
     return null;
   }
+}
+
+export function formatUsd(amount: number): string {
+  return Number.isInteger(amount) ? String(amount) : amount.toFixed(2);
 }
 
 export function skillMailto(title: string): string {
@@ -27,6 +33,19 @@ export function assertSkillBindings(
       const slug = caseSlugFromUrl(url);
       if (!slug || !slugs.has(slug)) {
         throw new Error(`Skill "${skill.slug}" points at a missing case: ${url}`);
+      }
+    }
+  }
+}
+
+/** Buy pages point at files in public/. Fail the build if one is missing. */
+export function assertSkillAssets(skills: CollectionEntry<'skills'>[]): void {
+  for (const skill of skills) {
+    for (const rel of [skill.data.demo, skill.data.demo_video, skill.data.zip]) {
+      if (!rel) continue;
+      const file = path.join(process.cwd(), 'public', rel.replace(/^\//, ''));
+      if (!existsSync(file)) {
+        throw new Error(`Skill "${skill.slug}" asset missing: ${rel}`);
       }
     }
   }

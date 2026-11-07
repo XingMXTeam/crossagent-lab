@@ -2,13 +2,14 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { skillCategories, skillCategoryMeta, verificationMeta } from '../../content/config';
-import { assertSkillBindings, caseSlugFromUrl, skillMailto } from '../../lib/skills';
+import { assertSkillAssets, assertSkillBindings, caseSlugFromUrl, formatUsd, skillMailto } from '../../lib/skills';
 
 const cases = await getCollection('cases');
 const skills = (await getCollection('skills'))
   .filter((entry) => entry.data.status !== 'retired')
   .sort((a, b) => skillCategories.indexOf(a.data.category) - skillCategories.indexOf(b.data.category));
 assertSkillBindings(skills, cases);
+assertSkillAssets(skills);
 
 const caseTitle = new Map(cases.map((entry) => [entry.slug, entry.data.title]));
 const inbox = 'me@maoxunxing.com';
@@ -50,7 +51,7 @@ const bundleMailto = skillMailto('三包一次（物流探针 + 店面就绪 + �
           <p class="tier-kicker">{skillCategoryMeta[d.category].zh} · 草稿 · {level.zh}</p>
           <h2><a href={`/skills/${skill.slug}/`}>{d.title}</a></h2>
           <p>{d.summary}</p>
-          <p class="price-line">${d.price_usd} <span class="price-unit">试价</span></p>
+          <p class="price-line">${formatUsd(d.price_usd)} <span class="price-unit">{d.cta === 'buy' ? '草稿' : '试价'}</span></p>
           <p class="skill-meta-label">绑定用例</p>
           <ul class="skill-links">
             {d.bound_case_urls.map((url) => {
@@ -64,8 +65,12 @@ const bundleMailto = skillMailto('三包一次（物流探针 + 店面就绪 + �
           </ul>
           <p class="muted-note">适用：{d.clients.join(' · ')}</p>
           <div class="cta-row">
-            <a class="btn secondary" href={`/skills/${skill.slug}/`}>看骨架</a>
-            <a class="btn" href={skillMailto(d.title)}>邮件询购</a>
+            <a class="btn secondary" href={`/skills/${skill.slug}/`}>{d.cta === 'buy' ? '看这一页' : '看骨架'}</a>
+            {d.cta === 'buy' ? (
+              <a class="btn" href={`/skills/${skill.slug}/#buy`}>Buy ${formatUsd(d.price_usd)}</a>
+            ) : (
+              <a class="btn" href={skillMailto(d.title)}>邮件询购</a>
+            )}
           </div>
         </article>
       );
@@ -110,8 +115,8 @@ const bundleMailto = skillMailto('三包一次（物流探针 + 店面就绪 + �
         </tr>
         <tr>
           <td>技能单包</td>
-          <td>$29／$39／$49 试价</td>
-          <td>骨架、闸门、绑定用例对照</td>
+          <td>$4.99／$39／$49</td>
+          <td>物流探针为可装 zip；其余为骨架、闸门与绑定用例对照</td>
           <td>曝光位</td>
         </tr>
         <tr>
@@ -133,7 +138,7 @@ const bundleMailto = skillMailto('三包一次（物流探针 + 店面就绪 + �
       Founding 不默认捆绑 Library。
     </p>
     <p>
-      用例自然排序和「已验证」不出售。试价落在 $19–$49／包。改价另批。
+      用例自然排序和「已验证」不出售。物流探针为 $4.99 草稿；其余试价仍在 $19–$49／包。改价另批。
     </p>
     <div class="cta-row">
       <a class="btn" href={bundleMailto}>邮件询三包</a>
